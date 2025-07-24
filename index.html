@@ -19,6 +19,7 @@
             display: flex;
             min-height: 100vh;
         }
+        /* Desktop sidebar styles */
         .sidebar {
             width: 280px;
             background-color: #343a40;
@@ -162,15 +163,14 @@
             align-items: center;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
+        /* Mobile-first adjustments */
+        /* Hide desktop sidebar and show hamburger on small screens */
+        @media (max-width: 767.98px) {
             .wrapper {
                 flex-direction: column;
             }
             .sidebar {
-                width: 100%;
-                border-radius: 0;
-                padding: 10px;
+                display: none; /* Hide the fixed sidebar on small screens */
             }
             .content {
                 padding: 15px;
@@ -181,13 +181,58 @@
                 padding: 15px;
             }
             .header .logo-section {
+                width: 100%; /* Make logo section full width */
+                justify-content: space-between; /* Space out logo and hamburger */
                 margin-bottom: 10px;
             }
             .header .farm-selector-section {
                 width: 100%;
+                flex-direction: column; /* Stack selector and buttons */
+                align-items: flex-start;
             }
             .header .farm-selector-section .form-select {
                 width: 100%;
+                margin-bottom: 10px; /* Add space below selector */
+            }
+            .header .farm-selector-section .btn {
+                width: 100%; /* Make buttons full width */
+                margin-bottom: 10px; /* Space out buttons */
+            }
+            .header .farm-selector-section .btn:last-child {
+                margin-bottom: 0; /* No margin for the last button */
+            }
+
+            /* Offcanvas specific styling for mobile sidebar */
+            .offcanvas {
+                background-color: #343a40; /* Match sidebar background */
+                color: #fff;
+            }
+            .offcanvas .nav-link {
+                color: #adb5bd;
+                padding: 10px 15px;
+                border-radius: 8px;
+                margin-bottom: 5px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+            .offcanvas .nav-link:hover, .offcanvas .nav-link.active {
+                background-color: #495057;
+                color: #fff;
+            }
+            .offcanvas-header {
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            .offcanvas-title {
+                color: #fff;
+            }
+            .btn-close {
+                filter: invert(1) grayscale(100%) brightness(200%); /* Make close button white */
+            }
+        }
+
+        /* Desktop specific adjustments (show fixed sidebar, hide hamburger) */
+        @media (min-width: 768px) {
+            .hamburger-menu-button {
+                display: none !important; /* Hide hamburger on desktop */
             }
         }
     </style>
@@ -198,8 +243,8 @@
     </div>
 
     <div class="wrapper">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
+        <!-- Desktop Sidebar Navigation (Hidden on mobile) -->
+        <nav class="sidebar d-none d-md-block">
             <h4 class="text-white mb-4">Assessment Modules</h4>
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -277,21 +322,110 @@
             </ul>
         </nav>
 
+        <!-- Mobile Offcanvas Sidebar -->
+        <div class="offcanvas offcanvas-start bg-dark" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title text-white" id="sidebarOffcanvasLabel">Assessment Modules</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-module="executive-summary" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-chart-line"></i> Executive Summary
+                            <span class="float-end badge bg-success" id="progress-executive-summary-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="business-description" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-building"></i> Business Description
+                            <span class="float-end badge bg-secondary" id="progress-business-description-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="financial-assessment" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-dollar-sign"></i> Financial Assessment
+                            <span class="float-end badge bg-secondary" id="progress-financial-assessment-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="commercial-marketing" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-store"></i> Commercial & Marketing
+                            <span class="float-end badge bg-secondary" id="progress-commercial-marketing-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="hr-management" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-users"></i> HR & Management
+                            <span class="float-end badge bg-secondary" id="progress-hr-management-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="environmental-assessment" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-leaf"></i> Environmental Assessment
+                            <span class="float-end badge bg-secondary" id="progress-environmental-assessment-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="legal-regulatory" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-balance-scale"></i> Legal & Regulatory
+                            <span class="float-end badge bg-secondary" id="progress-legal-regulatory-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="agricultural-technical" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-tractor"></i> Agricultural & Technical
+                            <span class="float-end badge bg-secondary" id="progress-agricultural-technical-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="risk-analysis" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-exclamation-triangle"></i> Risk Analysis
+                            <span class="float-end badge bg-secondary" id="progress-risk-analysis-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="scoring-classification" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-calculator"></i> Scoring & Classification
+                            <span class="float-end badge bg-secondary" id="progress-scoring-classification-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="viability-conclusion" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-check-circle"></i> Viability Conclusion
+                            <span class="float-end badge bg-secondary" id="progress-viability-conclusion-mobile">0%</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-module="reporting-system" data-bs-dismiss="offcanvas">
+                            <i class="fas fa-file-alt"></i> Reporting System
+                            <span class="float-end badge bg-secondary" id="progress-reporting-system-mobile">0%</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
         <!-- Main Content Area -->
         <div class="content">
             <!-- Header -->
             <div class="header">
                 <div class="d-flex align-items-center logo-section">
+                    <!-- Hamburger menu button for mobile -->
+                    <button class="btn btn-primary d-md-none me-3 hamburger-menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+                        <i class="fas fa-bars"></i>
+                    </button>
                     <img src="https://placehold.co/150x40/007bff/ffffff?text=Land+Bank" alt="Land Bank Logo" class="logo">
                     <h3 class="mb-0">Cattle Farm Viability Assessment</h3>
                 </div>
-                <div class="farm-selector-section d-flex align-items-center">
+                <div class="farm-selector-section d-flex align-items-center flex-wrap justify-content-center justify-content-md-end">
                     <label for="farmSelector" class="form-label mb-0 me-2">Select Farm:</label>
-                    <select class="form-select me-3" id="farmSelector" style="width: 200px;">
+                    <select class="form-select me-3 flex-grow-1" id="farmSelector" style="max-width: 200px;">
                         <!-- Options will be populated by JS -->
                     </select>
-                    <button class="btn btn-primary me-2" id="newFarmBtn"><i class="fas fa-plus"></i> New Farm</button>
-                    <button class="btn btn-secondary" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete Farm</button>
+                    <button class="btn btn-primary me-2 mt-2 mt-md-0" id="newFarmBtn"><i class="fas fa-plus"></i> New Farm</button>
+                    <button class="btn btn-secondary mt-2 mt-md-0" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete Farm</button>
                 </div>
             </div>
 
@@ -931,7 +1065,7 @@
             }
             updateFarmSelector();
             // Get the currently active module from the sidebar, or default to executive-summary
-            const activeModuleElement = document.querySelector('.sidebar .nav-link.active');
+            const activeModuleElement = document.querySelector('.sidebar .nav-link.active') || document.querySelector('.offcanvas-body .nav-link.active');
             const activeModuleName = activeModuleElement ? activeModuleElement.dataset.module : 'executive-summary';
             renderModule(activeModuleName);
             hideLoading();
@@ -2129,6 +2263,12 @@
             document.querySelector('#scoring-classification .badge.bg-info').textContent = totalWeightedScore.toFixed(2);
             document.querySelector('#scoring-classification .badge.bg-primary').textContent = classification;
 
+            // Update the Executive Summary module's viability display if it's currently rendered
+            const overallViabilityInput = document.getElementById('overallViability');
+            if (overallViabilityInput) {
+                overallViabilityInput.value = classification;
+            }
+
             saveCurrentFarmData();
             updateViabilityScoreChart();
             showStatus('Overall score calculated and saved.');
@@ -2367,24 +2507,29 @@
                     if (data.farmProfile.basicInfo.farmName) progress = 100;
                     break;
             }
-            const progressElement = document.getElementById(`progress-${moduleName}`);
-            if (progressElement) {
-                progressElement.textContent = `${progress}%`;
-                if (progress === 100) {
-                    progressElement.classList.remove('bg-secondary', 'bg-warning');
-                    progressElement.classList.add('bg-success');
-                } else if (progress > 0) {
-                    progressElement.classList.remove('bg-success', 'bg-secondary');
-                    progressElement.classList.add('bg-warning');
-                } else {
-                    progressElement.classList.remove('bg-success', 'bg-warning');
-                    progressElement.classList.add('bg-secondary');
+            // Update progress for both desktop and mobile sidebar elements
+            const desktopProgressElement = document.getElementById(`progress-${moduleName}`);
+            const mobileProgressElement = document.getElementById(`progress-${moduleName}-mobile`);
+
+            [desktopProgressElement, mobileProgressElement].forEach(element => {
+                if (element) {
+                    element.textContent = `${progress}%`;
+                    if (progress === 100) {
+                        element.classList.remove('bg-secondary', 'bg-warning');
+                        element.classList.add('bg-success');
+                    } else if (progress > 0) {
+                        element.classList.remove('bg-success', 'bg-secondary');
+                        element.classList.add('bg-warning');
+                    } else {
+                        element.classList.remove('bg-success', 'bg-warning');
+                        element.classList.add('bg-secondary');
+                    }
                 }
-            }
+            });
         }
 
         function updateAllModuleProgress() {
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            document.querySelectorAll('.sidebar .nav-link, .offcanvas-body .nav-link').forEach(link => {
                 const moduleName = link.dataset.module;
                 updateModuleProgress(moduleName);
             });
@@ -2464,13 +2609,20 @@
             hideLoading();
         });
 
-        // Sidebar navigation clicks
-        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+        // Sidebar navigation clicks (for both desktop and offcanvas)
+        document.querySelectorAll('.sidebar .nav-link, .offcanvas-body .nav-link').forEach(link => {
             link.addEventListener('click', (event) => {
                 event.preventDefault();
+                // Remove active class from all nav links in both desktop and offcanvas
                 document.querySelectorAll('.sidebar .nav-link').forEach(nav => nav.classList.remove('active'));
-                link.classList.add('active');
-                renderModule(link.dataset.module);
+                document.querySelectorAll('.offcanvas-body .nav-link').forEach(nav => nav.classList.remove('active'));
+
+                // Add active class to the clicked link (in both places if applicable, or just the one clicked)
+                const moduleName = link.dataset.module;
+                document.querySelector(`.sidebar .nav-link[data-module="${moduleName}"]`)?.classList.add('active');
+                document.querySelector(`.offcanvas-body .nav-link[data-module="${moduleName}"]`)?.classList.add('active');
+
+                renderModule(moduleName);
             });
         });
 
