@@ -1,0 +1,2491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cattle Farm Viability Assessment - Bank Grade</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjAjxN6j/gQremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 280px;
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px;
+            flex-shrink: 0;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #495057;
+            color: #fff;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        .header {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .header .logo {
+            height: 40px;
+            margin-right: 15px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            border-bottom: none;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px 15px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            border-radius: 8px;
+            padding: 10px 20px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+        }
+        .progress-bar {
+            border-radius: 5px;
+        }
+        .status-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        .status-panel.error {
+            background-color: #dc3545;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none; /* Hidden by default */
+        }
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #007bff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .score-input {
+            width: 80px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .list-group-item-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 10px;
+            }
+            .content {
+                padding: 15px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            .header .logo-section {
+                margin-bottom: 10px;
+            }
+            .header .farm-selector-section {
+                width: 100%;
+            }
+            .header .farm-selector-section .form-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="wrapper">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h4 class="text-white mb-4">Assessment Modules</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-module="executive-summary">
+                        <i class="fas fa-chart-line"></i> Executive Summary
+                        <span class="float-end badge bg-success" id="progress-executive-summary">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="business-description">
+                        <i class="fas fa-building"></i> Business Description
+                        <span class="float-end badge bg-secondary" id="progress-business-description">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="financial-assessment">
+                        <i class="fas fa-dollar-sign"></i> Financial Assessment
+                        <span class="float-end badge bg-secondary" id="progress-financial-assessment">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="commercial-marketing">
+                        <i class="fas fa-store"></i> Commercial & Marketing
+                        <span class="float-end badge bg-secondary" id="progress-commercial-marketing">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="hr-management">
+                        <i class="fas fa-users"></i> HR & Management
+                        <span class="float-end badge bg-secondary" id="progress-hr-management">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="environmental-assessment">
+                        <i class="fas fa-leaf"></i> Environmental Assessment
+                        <span class="float-end badge bg-secondary" id="progress-environmental-assessment">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="legal-regulatory">
+                        <i class="fas fa-balance-scale"></i> Legal & Regulatory
+                        <span class="float-end badge bg-secondary" id="progress-legal-regulatory">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="agricultural-technical">
+                        <i class="fas fa-tractor"></i> Agricultural & Technical
+                        <span class="float-end badge bg-secondary" id="progress-agricultural-technical">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="risk-analysis">
+                        <i class="fas fa-exclamation-triangle"></i> Risk Analysis
+                        <span class="float-end badge bg-secondary" id="progress-risk-analysis">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="scoring-classification">
+                        <i class="fas fa-calculator"></i> Scoring & Classification
+                        <span class="float-end badge bg-secondary" id="progress-scoring-classification">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="viability-conclusion">
+                        <i class="fas fa-check-circle"></i> Viability Conclusion
+                        <span class="float-end badge bg-secondary" id="progress-viability-conclusion">0%</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-module="reporting-system">
+                        <i class="fas fa-file-alt"></i> Reporting System
+                        <span class="float-end badge bg-secondary" id="progress-reporting-system">0%</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="content">
+            <!-- Header -->
+            <div class="header">
+                <div class="d-flex align-items-center logo-section">
+                    <img src="https://placehold.co/150x40/007bff/ffffff?text=Land+Bank" alt="Land Bank Logo" class="logo">
+                    <h3 class="mb-0">Cattle Farm Viability Assessment</h3>
+                </div>
+                <div class="farm-selector-section d-flex align-items-center">
+                    <label for="farmSelector" class="form-label mb-0 me-2">Select Farm:</label>
+                    <select class="form-select me-3" id="farmSelector" style="width: 200px;">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                    <button class="btn btn-primary me-2" id="newFarmBtn"><i class="fas fa-plus"></i> New Farm</button>
+                    <button class="btn btn-secondary" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete Farm</button>
+                </div>
+            </div>
+
+            <!-- Main Content Area for Modules -->
+            <div id="moduleContent">
+                <!-- Module content will be loaded here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Panel for messages -->
+    <div id="statusPanel" class="status-panel"></div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN6z+VdqzjrL2s" crossorigin="anonymous"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // --- Supabase Configuration (IMPORTANT: Replace with your actual Supabase project URL and Anon Key) ---
+        // You can find these in your Supabase project settings -> API
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // e.g., 'https://abcde12345.supabase.co'
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
+        // Initialize Supabase Client
+        const supabase = SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'
+            ? null // Supabase not configured, will operate in IndexedDB-only mode
+            : Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- Global Variables ---
+        let db; // IndexedDB instance
+        const DB_NAME = 'CattleFarmDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'farmAssessments';
+        let currentFarmId = null;
+        let farmAssessmentData = {}; // In-memory data for the current farm
+        let allFarmIds = []; // List of all farm IDs available
+
+        // Global variables for Firebase (not used in this version as per IndexedDB/Supabase request, but kept for reference if needed for other apps)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- UI Elements ---
+        const moduleContent = document.getElementById('moduleContent');
+        const farmSelector = document.getElementById('farmSelector');
+        const newFarmBtn = document.getElementById('newFarmBtn');
+        const deleteFarmBtn = document.getElementById('deleteFarmBtn');
+        const statusPanel = document.getElementById('statusPanel');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // --- Data Structure (Expanded for Granular Detail and Checklists) ---
+        const defaultFarmAssessmentData = {
+            farmProfile: {
+                basicInfo: {
+                    farmId: '',
+                    farmName: 'New Farm',
+                    establishedDate: '',
+                    totalHectares: 0,
+                    landTenure: '', // Owned/Leased
+                    farmType: '', // e.g., Beef, Dairy, Mixed
+                    operationalHistory: ''
+                },
+                location: {
+                    physicalAddress: '',
+                    gpsCoordinates: '',
+                    province: '',
+                    region: '',
+                    climateZone: ''
+                },
+                legalStructure: '', // Pty Ltd, Co-op, Sole Prop, Trust
+                ownership: {
+                    ownerDetails: [{ name: '', role: '', share: 0 }],
+                    shareholdingStructure: {},
+                    bbbeeStatus: { level: 0, scorecard: {}, certificationDate: '' },
+                    landRights: { titleDeedDetails: '', leaseAgreements: [], landReformStatus: '' }
+                },
+                infrastructure: {
+                    buildings: [{ type: '', condition: '', adequacy: '' }], // e.g., 'Barn', 'Good', 'Adequate'
+                    equipment: [{ type: '', condition: '', lastMaintenance: '' }], // e.g., 'Tractor', 'Fair', '2023-01-15'
+                    irrigationSystems: [{ type: '', coverage: '', efficiency: 0 }], // e.g., 'Pivot', 'Full', 0.85
+                    processingFacilities: [{ type: '', capacity: 0, compliance: '' }], // e.g., 'Abattoir', 100, 'Compliant'
+                    totalInfrastructureValue: 0
+                },
+                coreActivities: {
+                    primaryCommodities: [], // e.g., ['Beef', 'Milk']
+                    livestockTypes: [], // e.g., ['Cattle']
+                    productionCycles: { beef: '', dairy: '' }, // e.g., 'Year-round', 'Seasonal'
+                    valueChainPosition: '', // e.g., 'Producer', 'Processor'
+                    keyPartnerships: [{ name: '', type: '', relationshipStrength: '' }] // e.g., 'Feed Supplier', 'Supplier', 'Strong'
+                },
+                herdDetails: { // NEW: Specific to Cattle
+                    totalHead: 0,
+                    breedingCows: 0,
+                    bulls: 0,
+                    calves: 0,
+                    heifers: 0,
+                    steers: 0,
+                    mainBreeds: [], // e.g., ['Brahman', 'Angus']
+                    averageAge: 0, // in months
+                    identificationSystem: '', // e.g., 'Ear Tags', 'RFID'
+                    herdHealthStatus: '', // e.g., 'Good', 'Fair', 'Poor'
+                    averageValuePerHead: 0 // NEW: For cattle valuation
+                }
+            },
+            financialAssessment: {
+                historicalData: {
+                    year1: { revenue: 0, operatingCosts: 0, capitalExpenditure: 0, totalAssets: 0, totalLiabilities: 0, netIncome: 0, ebit: 0, interestExpense: 0, currentAssets: 0, currentLiabilities: 0, inventory: 0, totalEquity: 0 },
+                    year2: { revenue: 0, operatingCosts: 0, capitalExpenditure: 0, totalAssets: 0, totalLiabilities: 0, netIncome: 0, ebit: 0, interestExpense: 0, currentAssets: 0, currentLiabilities: 0, inventory: 0, totalEquity: 0 },
+                    year3: { revenue: 0, operatingCosts: 0, capitalExpenditure: 0, totalAssets: 0, totalLiabilities: 0, netIncome: 0, ebit: 0, interestExpense: 0, currentAssets: 0, currentLiabilities: 0, inventory: 0, totalEquity: 0 },
+                    auditStatus: ''
+                },
+                liabilityAssessment: { currentLiabilities: 0, contingentLiabilities: 0, guaranteeAnalysis: '', repaymentTerms: '' },
+                revenueAnalysis: { growthPatterns: '', customerConcentration: '', seasonalVariations: '' },
+                costStructure: { operatingExpenseTrends: '', variableFixedBreakdown: '', efficiencyMetrics: '' },
+                workingCapital: { requirementsAnalysis: '', seasonalVariations: '', cashConversionCycle: 0 },
+                capitalExpenditure: { investmentNeeds: '', deferredExpenditures: '', infrastructureRequirements: '' },
+                assetEvaluation: { tangibleAssetCondition: '', depreciationAnalysis: '', marketValueAssessment: '' },
+                debtAnalysis: { outstandingIndebtedness: 0, ownerGuarantees: '', repaymentSchedules: [] },
+                ageAnalysis: { accountsReceivableAging: '', accountsPayableAging: '', collectionEfficiency: 0 },
+                budgetAnalysis: { capitalBudgetAppropriateness: '', operatingBudgetAppropriateness: '', varianceAnalysis: '' },
+                seasonalityAssessment: { revenueSeasonalPatterns: '', workingCapitalSeasonalPatterns: '' },
+                financialProjections: { integratedModelAssumptions: '', scenarioAnalysis: '' },
+                breakEvenAnalysis: { revenueThreshold: 0, unitBreakEven: 0, marginOfSafety: 0 },
+                financialRatios: {
+                    debtServiceCoverage: 0, returnOnAssets: 0, currentRatio: 0, operatingMargin: 0,
+                    assetTurnover: 0, equityRatio: 0, quickRatio: 0, interestCoverage: 0, workingCapitalRatio: 0
+                }
+            },
+            commercialAssessment: {
+                customerAnalysis: {
+                    top10Customers: [{ name: '', revenueShare: 0, servicingCost: 0 }],
+                    customerConcentration: 0,
+                    retentionRate: 0,
+                    satisfactionScores: {},
+                    relationshipStrength: ''
+                },
+                customerBaseDynamics: { growthTrends: '', pipelineAnalysis: '', leadGeneration: '' },
+                salesPerformance: { pipelineEffectiveness: '', conversionRates: '', seasonalPatterns: '' },
+                warrantyService: { obligationsAssessment: '', serviceQuality: '', returnExchangePolicies: '' },
+                salesCompensation: { structureAnalysis: '', motivationSystems: '', financialIncentiveImpact: '' },
+                distributionChannels: { representatives: [], distributors: [], agencies: [], franchiseArrangements: '' },
+                salesStrategy: { marketingPlanEvaluation: '', pricingStrategy: '', promotionalEffectiveness: '' },
+                salesDocumentation: { standardForms: '', literature: '', priceLists: '', catalogs: '', purchaseOrders: '' }
+            },
+            hrManagement: {
+                organizationStructure: {
+                    organizationalChart: '',
+                    reportingRelationships: '',
+                    roleClarity: '',
+                    managementLevels: 0,
+                    totalEmployees: 0,
+                    keyPersonnel: [{ name: '', role: '', competencyScore: 0, experience: '' }],
+                },
+                hrPolicies: { employmentContracts: false, procedures: '', policyAdequacy: '' },
+                laborRelations: { historicalStoppages: '', slowdowns: '', disputes: '', unionRelationships: '' },
+                compensationAnalysis: { officerCompensation: 0, employeeCompensation: 0, nonCashBenefits: '', marketBenchmarking: '' },
+                legalCompliance: { criminalProceedings: '', civilLitigationInvolvement: '', regulatoryIssues: '' },
+                employmentLaw: { minimumWageCompliance: false, overtimeCompliance: false, immigrationCompliance: false, equityLegislationCompliance: false },
+                retentionStrategies: { keyEmployeeAgreements: '', incentiveArrangements: '', successionPlanning: '' },
+                severanceObligations: { layoffCosts: 0, terminationLiabilities: 0, restructuringImpact: '' },
+                turnoverAnalysis: { employeeTurnoverRate: 0, consultantTurnoverRate: 0, retentionEffectiveness: '' },
+                payrollCompliance: { uifPayments: false, statutoryDeductions: false, taxCompliance: false },
+                managementCompetency: { successionPlanning: '' } // Ensured this path exists
+            },
+            environmentalAssessment: {
+                regulatoryCompliance: { environmentalAudits: '', records: '', complianceReports: '' },
+                hazardousSubstances: { inventory: '', handlingProcedures: '', safetyProtocols: '' },
+                permitsLicenses: { environmentalPermits: [], complianceStatus: '', renewalRequirements: '' },
+                regulatoryCommunications: { eiaCorrespondence: '', agencyInteractions: '', complianceNotices: '' },
+                environmentalLitigation: { claims: [], investigations: [], regulatoryProceedings: '' },
+                contingentLiabilities: { environmentalCleanupObligations: 0, futureComplianceCosts: 0 },
+                resourceManagement: { waterUsage: '', soilHealth: '', conservationPractices: '' },
+                sustainabilityPractices: { renewableEnergy: false, wasteReduction: false, carbonFootprint: '' },
+                climateAdaptation: { resiliencePlanning: '', riskMitigation: '', adaptationStrategies: '' }
+            },
+            legalCompliance: {
+                corporateCompliance: { incorporationDocuments: '', validity: '', directorCompliance: false, governanceScore: 0, registrationStatus: '' },
+                legalProceedings: { pendingThreatenedInvestigations: [], governmentalProceedings: [] },
+                regulatoryCommunications: { governmentCorrespondence: '', municipalInteractions: '' },
+                complianceCertification: { regulatoryStandardsCompliance: false, deficiencyAnalysis: '' },
+                permitsLicenses: { requiredPermits: [], canceledTerminatedLicenses: [], exemptions: [] },
+                taxCompliance: { incomeTax: false, vat: false, paye: false, municipalTaxes: false, clearanceCertificates: [] },
+                taxLitigation: { pendingDisputes: [], auditFindings: [], settlementAgreements: [] },
+                legalSettlements: { arbitrationMatters: [], disputeResolutions: [], ongoingLitigation: [] },
+                insurancePortfolio: { coverageAdequacy: '', claimsHistory: '', riskExposureGaps: '' },
+                contractCompliance: { materialAgreements: [], performanceObligations: '', breachRisks: '' }
+            },
+            agriculturalTechnical: {
+                industryContext: { agriculturalSectorAnalysis: '', marketDynamics: '', regulatoryEnvironment: '' },
+                landUtilization: { soilPotential: '', carryingCapacity: 0, sustainableCultivationAssessment: '', soilQualityScore: 0, landUseEfficiency: 0 },
+                soilAnalysis: { physicalChemicalProperties: '', enhancementCapability: '', preparationNeeds: '' },
+                waterResources: { availability: '', suitability: '', licensingStatus: '', irrigationEfficiency: 0 },
+                livestockManagement: { // Expanded Cattle Specifics
+                    breedSelection: '',
+                    breedingPrograms: { type: '', successRate: 0, geneticsOptimization: '' }, // e.g., 'AI', 0.85
+                    nutritionPrograms: { feedEfficiency: 0, integratedNutritionSystems: '', costOptimization: '' },
+                    grazingManagement: { rotationalSystems: false, landUseOptimization: '', carryingCapacityPerHa: 0 },
+                    animalHealth: { veterinaryPrograms: '', diseaseManagement: '', preventiveCare: '' },
+                    animalHousing: { type: '', condition: '', adequacy: '' } // e.g., 'Kraals', 'Good', 'Adequate'
+                },
+                productionEfficiency: {
+                    yieldPerHectare: 0,
+                    feedConversionRatio: 0,
+                    mortalityRate: 0, // overall
+                    calvingRate: 0, // cattle specific
+                    weaningWeight: 0, // cattle specific
+                    averageDailyGain: 0 // cattle specific
+                },
+                qualityStandards: { productQualityMetrics: '', certificationStatus: '', premiumPositioning: '' },
+                technologyAdoption: { precisionAgriculture: false, automationLevel: '', modernFarmingTechniques: '', innovationScore: 0 },
+                exportPotential: { internationalMarketAccess: false, certificationRequirements: '', competitiveAdvantage: '' }
+            },
+            riskAssessment: {
+                productionRisks: {
+                    weatherPatterns: { likelihood: 0, impact: 0, details: '' },
+                    pestDiseaseManagement: { likelihood: 0, impact: 0, details: '' },
+                    inputAvailabilityCost: { likelihood: 0, impact: 0, details: '' },
+                    technologyRisk: { likelihood: 0, impact: 0, details: '' }
+                },
+                marketRisks: {
+                    priceVolatility: { likelihood: 0, impact: 0, details: '' },
+                    demandFluctuations: { likelihood: 0, impact: 0, details: '' },
+                    competitionIntensity: { likelihood: 0, impact: 0, details: '' },
+                    keyCustomerLoss: { likelihood: 0, impact: 0, details: '' },
+                    exchangeRateExposure: { likelihood: 0, impact: 0, details: '' }
+                },
+                financialRisks: {
+                    interestRateSensitivity: { likelihood: 0, impact: 0, details: '' },
+                    creditAccess: { likelihood: 0, impact: 0, details: '' },
+                    cashFlowStability: { likelihood: 0, impact: 0, details: '' },
+                    costInflation: { likelihood: 0, impact: 0, details: '' },
+                    debtBurdenManagement: { likelihood: 0, impact: 0, details: '' }
+                },
+                operationalRisks: {
+                    laborAvailability: { likelihood: 0, impact: 0, details: '' },
+                    equipmentReliability: { likelihood: 0, impact: 0, details: '' },
+                    supplyChainDisruptions: { likelihood: 0, impact: 0, details: '' },
+                    infrastructureRisks: { likelihood: 0, impact: 0, details: '' },
+                    fireTheft: { likelihood: 0, impact: 0, details: '' }
+                },
+                environmentalRisks: {
+                    climateChange: { likelihood: 0, impact: 0, details: '' },
+                    droughtFlood: { likelihood: 0, impact: 0, details: '' },
+                    soilDegradation: { likelihood: 0, impact: 0, details: '' },
+                    waterRestrictions: { likelihood: 0, impact: 0, details: '' }
+                },
+                regulatoryComplianceRisks: {
+                    policyChanges: { likelihood: 0, impact: 0, details: '' },
+                    landReform: { likelihood: 0, impact: 0, details: '' },
+                    waterRights: { likelihood: 0, impact: 0, details: '' },
+                    laborLawCompliance: { likelihood: 0, impact: 0, details: '' },
+                    bbbeeRequirements: { likelihood: 0, impact: 0, details: '' },
+                    exportRegulations: { likelihood: 0, impact: 0, details: '' }
+                },
+                managementStrategicRisks: {
+                    keyPersonDependency: { likelihood: 0, impact: 0, details: '' },
+                    skillsGaps: { likelihood: 0, impact: 0, details: '' },
+                    strategicPositioning: { likelihood: 0, impact: 0, details: '' }
+                },
+                mitigationStrategies: '',
+                contingencyPlanning: '',
+                monitoringFramework: ''
+            },
+            scoring: {
+                componentScores: { financial: 0, operational: 0, market: 0, management: 0, compliance: 0, agricultural: 0 },
+                weightedScore: 0,
+                classification: '',
+                benchmarkComparison: {},
+                trendAnalysis: {}
+            },
+            recommendations: {
+                swotAnalysis: { strengths: [], weaknesses: [], opportunities: [], threats: [] },
+                viabilityConclusion: '',
+                criticalSuccessFactors: [],
+                interventionPlan: [],
+                conditions: [],
+                monitoringFramework: {}
+            }
+        };
+
+        // Weights for the main components (sum to 1.0)
+        const COMPONENT_WEIGHTS = {
+            financial: 0.25,
+            operational: 0.20,
+            market: 0.20,
+            management: 0.15,
+            compliance: 0.10,
+            agricultural: 0.10
+        };
+
+        // --- Utility Functions ---
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        function showStatus(message, isError = false) {
+            statusPanel.textContent = message;
+            statusPanel.classList.remove('error');
+            if (isError) {
+                statusPanel.classList.add('error');
+            }
+            statusPanel.style.display = 'block';
+            setTimeout(() => {
+                statusPanel.style.display = 'none';
+            }, 5000); // Hide after 5 seconds
+        }
+
+        function generateUniqueId() {
+            return 'farm-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+        }
+
+        // Helper to get nested property value safely
+        function getNestedValue(obj, path, defaultValue = '') {
+            const parts = path.split('.');
+            let current = obj;
+            for (let i = 0; i < parts.length; i++) {
+                if (current === null || typeof current !== 'object' || !current.hasOwnProperty(parts[i])) {
+                    return defaultValue;
+                }
+                current = current[parts[i]];
+            }
+            return current;
+        }
+
+        // Helper to set nested property value
+        function setNestedValue(obj, path, value) {
+            const parts = path.split('.');
+            let current = obj;
+            for (let i = 0; i < parts.length - 1; i++) {
+                if (!current[parts[i]]) current[parts[i]] = {};
+                current = current[parts[i]];
+            }
+            current[parts[parts.length - 1]] = value;
+        }
+
+        // --- IndexedDB Functions ---
+        function openIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'farmId' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log('IndexedDB opened successfully');
+                    resolve(db);
+                };
+
+                request.onerror = (event) => {
+                    console.error('IndexedDB error:', event.target.errorCode);
+                    showStatus('Error opening local database.', true);
+                    reject(event.target.errorCode);
+                };
+            });
+        }
+
+        async function saveFarmDataIndexedDB(farmId, data) {
+            showLoading();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.put({ farmId: farmId, data: JSON.parse(JSON.stringify(data)) }); // Deep copy to avoid mutation issues
+
+                request.onsuccess = () => {
+                    console.log(`Farm ${farmId} saved to IndexedDB`);
+                    hideLoading();
+                    showStatus('Data saved locally.');
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error saving to IndexedDB:', event.target.error);
+                    hideLoading();
+                    showStatus('Error saving data locally.', true);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        async function loadFarmDataIndexedDB(farmId) {
+            showLoading();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.get(farmId);
+
+                request.onsuccess = () => {
+                    hideLoading();
+                    if (request.result) {
+                        console.log(`Farm ${farmId} loaded from IndexedDB`);
+                        resolve(request.result.data);
+                    } else {
+                        console.warn(`Farm ${farmId} not found in IndexedDB`);
+                        resolve(null);
+                    }
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error loading from IndexedDB:', event.target.error);
+                    hideLoading();
+                    showStatus('Error loading data locally.', true);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        async function getAllFarmIdsIndexedDB() {
+            showLoading();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAllKeys();
+
+                request.onsuccess = () => {
+                    hideLoading();
+                    resolve(request.result);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error getting all farm IDs from IndexedDB:', event.target.error);
+                    hideLoading();
+                    showStatus('Error retrieving farm list locally.', true);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        async function deleteFarmDataIndexedDB(farmId) {
+            showLoading();
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.delete(farmId);
+
+                request.onsuccess = () => {
+                    console.log(`Farm ${farmId} deleted from IndexedDB`);
+                    hideLoading();
+                    showStatus('Farm deleted locally.');
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error deleting from IndexedDB:', event.target.error);
+                    hideLoading();
+                    showStatus('Error deleting farm locally.', true);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // --- Supabase Functions ---
+        async function syncToSupabase(farmId, data) {
+            if (!supabase) {
+                console.warn('Supabase not configured. Skipping cloud sync.');
+                return;
+            }
+            showLoading();
+            try {
+                // Get current user ID (using anonymous sign-in for simplicity)
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                if (authError) throw authError;
+                const userId = authData.user.id;
+
+                // Check if record exists
+                const { data: existingData, error: fetchError } = await supabase
+                    .from('farm_assessments')
+                    .select('*')
+                    .eq('farm_id', farmId)
+                    .eq('user_id', userId)
+                    .single();
+
+                if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means "no rows found"
+                    throw fetchError;
+                }
+
+                if (existingData) {
+                    // Update existing record
+                    const { error: updateError } = await supabase
+                        .from('farm_assessments')
+                        .update({ data: JSON.parse(JSON.stringify(data)), updated_at: new Date().toISOString() })
+                        .eq('farm_id', farmId)
+                        .eq('user_id', userId);
+                    if (updateError) throw updateError;
+                    console.log(`Farm ${farmId} updated in Supabase`);
+                    showStatus('Data synced to cloud.');
+                } else {
+                    // Insert new record
+                    const { error: insertError } = await supabase
+                        .from('farm_assessments')
+                        .insert([{ farm_id: farmId, user_id: userId, data: JSON.parse(JSON.stringify(data)) }]);
+                    if (insertError) throw insertError;
+                    console.log(`Farm ${farmId} inserted into Supabase`);
+                    showStatus('Data synced to cloud.');
+                }
+            } catch (error) {
+                console.error('Error syncing to Supabase:', error.message);
+                showStatus(`Error syncing to cloud: ${error.message}`, true);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadFromSupabase(farmId) {
+            if (!supabase) {
+                console.warn('Supabase not configured. Skipping cloud load.');
+                return null;
+            }
+            showLoading();
+            try {
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                if (authError) throw authError;
+                const userId = authData.user.id;
+
+                const { data, error } = await supabase
+                    .from('farm_assessments')
+                    .select('data')
+                    .eq('farm_id', farmId)
+                    .eq('user_id', userId)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') { // PGRST116 means "no rows found"
+                    throw error;
+                }
+
+                if (data) {
+                    console.log(`Farm ${farmId} loaded from Supabase`);
+                    showStatus('Data loaded from cloud.');
+                    return data.data;
+                } else {
+                    console.warn(`Farm ${farmId} not found in Supabase`);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error loading from Supabase:', error.message);
+                showStatus(`Error loading from cloud: ${error.message}`, true);
+                return null;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deleteFarmDataSupabase(farmId) {
+            if (!supabase) {
+                console.warn('Supabase not configured. Skipping cloud delete.');
+                return;
+            }
+            showLoading();
+            try {
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                if (authError) throw authError;
+                const userId = authData.user.id;
+
+                const { error } = await supabase
+                    .from('farm_assessments')
+                    .delete()
+                    .eq('farm_id', farmId)
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+                console.log(`Farm ${farmId} deleted from Supabase`);
+                showStatus('Farm deleted from cloud.');
+            } catch (error) {
+                console.error('Error deleting from Supabase:', error.message);
+                showStatus(`Error deleting from cloud: ${error.message}`, true);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function getAllFarmIdsSupabase() {
+            if (!supabase) {
+                console.warn('Supabase not configured. Skipping cloud farm list.');
+                return [];
+            }
+            showLoading();
+            try {
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                if (authError) throw authError;
+                const userId = authData.user.id;
+
+                const { data, error } = await supabase
+                    .from('farm_assessments')
+                    .select('farm_id')
+                    .eq('user_id', userId);
+
+                if (error) throw error;
+                hideLoading();
+                return data.map(row => row.farm_id);
+            } catch (error) {
+                console.error('Error getting all farm IDs from Supabase:', error.message);
+                showStatus(`Error retrieving cloud farm list: ${error.message}`, true);
+                hideLoading();
+                return [];
+            }
+        }
+
+        // --- Core Application Logic ---
+
+        async function loadFarm(farmId) {
+            showLoading();
+            currentFarmId = farmId;
+
+            // Try loading from IndexedDB first
+            let data = await loadFarmDataIndexedDB(farmId);
+
+            // If not in IndexedDB or if Supabase is configured, try Supabase
+            if (!data && supabase) {
+                data = await loadFromSupabase(farmId);
+                if (data) {
+                    // If loaded from Supabase, save it to IndexedDB for offline access
+                    await saveFarmDataIndexedDB(farmId, data);
+                }
+            }
+
+            if (data) {
+                farmAssessmentData = data;
+                farmAssessmentData.farmProfile.basicInfo.farmId = farmId; // Ensure farmId is consistent
+                showStatus(`Loaded data for farm: ${farmAssessmentData.farmProfile.basicInfo.farmName}`);
+            } else {
+                // If no data found, initialize with default structure
+                farmAssessmentData = JSON.parse(JSON.stringify(defaultFarmAssessmentData));
+                farmAssessmentData.farmProfile.basicInfo.farmId = farmId;
+                farmAssessmentData.farmProfile.basicInfo.farmName = `New Farm ${allFarmIds.length + 1}`;
+                showStatus('Initialized new farm data.');
+            }
+            updateFarmSelector();
+            // Get the currently active module from the sidebar, or default to executive-summary
+            const activeModuleElement = document.querySelector('.sidebar .nav-link.active');
+            const activeModuleName = activeModuleElement ? activeModuleElement.dataset.module : 'executive-summary';
+            renderModule(activeModuleName);
+            hideLoading();
+        }
+
+        async function saveCurrentFarmData() {
+            if (!currentFarmId) {
+                showStatus('No farm selected to save.', true);
+                return;
+            }
+            await saveFarmDataIndexedDB(currentFarmId, farmAssessmentData);
+            await syncToSupabase(currentFarmId, farmAssessmentData);
+        }
+
+        async function createNewFarm() {
+            const newId = generateUniqueId();
+            const newFarmName = `New Farm ${allFarmIds.length + 1}`;
+            const newFarmData = JSON.parse(JSON.stringify(defaultFarmAssessmentData));
+            newFarmData.farmProfile.basicInfo.farmId = newId;
+            newFarmData.farmProfile.basicInfo.farmName = newFarmName;
+
+            allFarmIds.push(newId);
+            await saveFarmDataIndexedDB(newId, newFarmData);
+            await syncToSupabase(newId, newFarmData); // Sync new farm immediately
+            await loadFarm(newId);
+            showStatus(`Created new farm: ${newFarmName}`);
+        }
+
+        async function deleteCurrentFarm() {
+            if (!currentFarmId) {
+                showStatus('No farm selected to delete.', true);
+                return;
+            }
+
+            const confirmDelete = await showCustomConfirm(`Are you sure you want to delete "${farmAssessmentData.farmProfile.basicInfo.farmName}"? This action cannot be undone.`);
+            if (!confirmDelete) {
+                return;
+            }
+
+            await deleteFarmDataIndexedDB(currentFarmId);
+            await deleteFarmDataSupabase(currentFarmId);
+
+            allFarmIds = allFarmIds.filter(id => id !== currentFarmId);
+            currentFarmId = null;
+            farmAssessmentData = {};
+
+            if (allFarmIds.length > 0) {
+                await loadFarm(allFarmIds[0]);
+            } else {
+                // No farms left, create a new one
+                await createNewFarm();
+            }
+            showStatus('Farm deleted successfully.');
+        }
+
+        function updateFarmSelector() {
+            farmSelector.innerHTML = '';
+            if (allFarmIds.length === 0) {
+                farmSelector.innerHTML = '<option value="">No Farms</option>';
+                farmSelector.disabled = true;
+                deleteFarmBtn.disabled = true;
+            } else {
+                farmSelector.disabled = false;
+                deleteFarmBtn.disabled = false;
+                allFarmIds.forEach(id => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    // Attempt to get farm name from in-memory data if available, otherwise use ID
+                    // This is a simplified approach; in a real app, you might store farm names separately
+                    // or fetch them when populating the selector.
+                    let farmNameFromData = '';
+                    if (id === currentFarmId && farmAssessmentData.farmProfile && farmAssessmentData.farmProfile.basicInfo) {
+                        farmNameFromData = farmAssessmentData.farmProfile.basicInfo.farmName;
+                    } else {
+                        // If not the current farm, try to load its name from IndexedDB if possible
+                        // This would require an async call here, which might slow down UI.
+                        // For simplicity, we'll just use the ID if not the current farm.
+                        farmNameFromData = id;
+                    }
+                    option.textContent = farmNameFromData;
+                    option.selected = (id === currentFarmId); // Set selected option
+                    farmSelector.appendChild(option);
+                });
+            }
+        }
+
+        // --- Module Rendering Functions ---
+        function renderModule(moduleName) {
+            let html = '';
+            switch (moduleName) {
+                case 'executive-summary':
+                    html = renderExecutiveSummaryModule();
+                    break;
+                case 'business-description':
+                    html = renderBusinessDescriptionModule();
+                    break;
+                case 'financial-assessment':
+                    html = renderFinancialAssessmentModule();
+                    break;
+                case 'commercial-marketing':
+                    html = renderCommercialMarketingModule();
+                    break;
+                case 'hr-management':
+                    html = renderHRManagementModule();
+                    break;
+                case 'environmental-assessment':
+                    html = renderEnvironmentalAssessmentModule();
+                    break;
+                case 'legal-regulatory':
+                    html = renderLegalRegulatoryModule();
+                    break;
+                case 'agricultural-technical':
+                    html = renderAgriculturalTechnicalModule();
+                    break;
+                case 'risk-analysis':
+                    html = renderRiskAnalysisModule();
+                    break;
+                case 'scoring-classification':
+                    html = renderScoringClassificationModule();
+                    break;
+                case 'viability-conclusion':
+                    html = renderViabilityConclusionModule();
+                    break;
+                case 'reporting-system':
+                    html = renderReportingSystemModule();
+                    break;
+                default:
+                    html = `<h3>Welcome to the Cattle Farm Viability Assessment App!</h3>
+                            <p>Please select a module from the sidebar to begin.</p>`;
+            }
+            moduleContent.innerHTML = html;
+            attachModuleEventListeners(moduleName);
+            updateModuleProgress(moduleName); // Update progress after rendering
+        }
+
+        function attachModuleEventListeners(moduleName) {
+            // Attach common event listeners for input changes to trigger auto-save
+            moduleContent.querySelectorAll('input, textarea, select').forEach(element => {
+                element.addEventListener('change', (event) => {
+                    const path = event.target.name;
+                    let value;
+                    if (event.target.type === 'number') {
+                        value = parseFloat(event.target.value) || 0;
+                    } else if (event.target.type === 'checkbox') {
+                        value = event.target.checked;
+                    } else if (event.target.dataset.arrayType === 'string') { // For comma-separated string arrays
+                        value = event.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                    } else {
+                        value = event.target.value;
+                    }
+                    setNestedValue(farmAssessmentData, path, value);
+                    saveCurrentFarmData();
+                    updateModuleProgress(moduleName); // Update progress on data change
+                });
+            });
+
+            // Specific event listeners for modules
+            if (moduleName === 'financial-assessment') {
+                const calculateRatiosBtn = document.getElementById('calculateRatiosBtn');
+                if (calculateRatiosBtn) {
+                    calculateRatiosBtn.addEventListener('click', calculateFinancialRatios);
+                }
+                updateFinancialRatiosChart(); // Ensure chart is drawn on module load
+            }
+            if (moduleName === 'scoring-classification') {
+                const calculateOverallScoreBtn = document.getElementById('calculateOverallScoreBtn');
+                if (calculateOverallScoreBtn) {
+                    calculateOverallScoreBtn.addEventListener('click', calculateOverallScore);
+                }
+                updateViabilityScoreChart(); // Ensure chart is drawn on module load
+            }
+            if (moduleName === 'reporting-system') {
+                const generateExecutiveReportBtn = document.getElementById('generateExecutiveReportBtn');
+                if (generateExecutiveReportBtn) {
+                    generateExecutiveReportBtn.addEventListener('click', () => generateReport('executive'));
+                }
+                const generateDetailedReportBtn = document.getElementById('generateDetailedReportBtn');
+                if (generateDetailedReportBtn) {
+                    generateDetailedReportBtn.addEventListener('click', () => generateReport('detailed'));
+                }
+            }
+        }
+
+        // --- Module HTML Templates ---
+
+        function renderExecutiveSummaryModule() {
+            const data = farmAssessmentData.farmProfile.basicInfo;
+            const swot = farmAssessmentData.recommendations.swotAnalysis;
+            const financialRatios = farmAssessmentData.financialAssessment.financialRatios;
+            const calculatedViability = farmAssessmentData.scoring.classification || 'Not Assessed';
+
+
+            return `
+                <div class="card">
+                    <div class="card-header">Executive Summary</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Business Overview</h4>
+                        <div class="mb-3">
+                            <label for="farmName" class="form-label">Farm Name</label>
+                            <input type="text" class="form-control" id="farmName" name="farmProfile.basicInfo.farmName" value="${data.farmName || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="farmId" class="form-label">Farm ID</label>
+                            <input type="text" class="form-control" id="farmId" value="${data.farmId || ''}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="farmType" class="form-label">Farm Type</label>
+                            <input type="text" class="form-control" id="farmType" name="farmProfile.basicInfo.farmType" value="${data.farmType || ''}" placeholder="e.g., Beef, Dairy, Mixed">
+                        </div>
+                        <div class="mb-3">
+                            <label for="operationalHistory" class="form-label">Operational History</label>
+                            <textarea class="form-control" id="operationalHistory" name="farmProfile.basicInfo.operationalHistory" rows="3">${data.operationalHistory || ''}</textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Key Findings (SWOT Analysis)</h4>
+                        <div class="mb-3">
+                            <label for="strengths" class="form-label">Strengths (comma-separated)</label>
+                            <textarea class="form-control" id="strengths" name="recommendations.swotAnalysis.strengths" data-array-type="string" rows="3">${(swot.strengths || []).join(', ')}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="weaknesses" class="form-label">Weaknesses (comma-separated)</label>
+                            <textarea class="form-control" id="weaknesses" name="recommendations.swotAnalysis.weaknesses" data-array-type="string" rows="3">${(swot.weaknesses || []).join(', ')}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="opportunities" class="form-label">Opportunities (comma-separated)</label>
+                            <textarea class="form-control" id="opportunities" name="recommendations.swotAnalysis.opportunities" data-array-type="string" rows="3">${(swot.opportunities || []).join(', ')}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="threats" class="form-label">Threats (comma-separated)</label>
+                            <textarea class="form-control" id="threats" name="recommendations.swotAnalysis.threats" data-array-type="string" rows="3">${(swot.threats || []).join(', ')}</textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Financial Viability Snapshot</h4>
+                        <p>Calculated ratios from Financial Assessment module:</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Debt Service Coverage Ratio: <span>${financialRatios.debtServiceCoverage.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Return on Assets: <span>${(financialRatios.returnOnAssets * 100).toFixed(2)}%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Current Ratio: <span>${financialRatios.currentRatio.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Operating Margin: <span>${(financialRatios.operatingMargin * 100).toFixed(2)}%</span>
+                            </li>
+                        </ul>
+
+                        <h4 class="mt-4 mb-3">Overall Viability Recommendation (App-Derived)</h4>
+                        <div class="mb-3">
+                            <label for="overallViability" class="form-label">Recommendation</label>
+                            <input type="text" class="form-control" id="overallViability" value="${calculatedViability}" readonly disabled>
+                            <small class="form-text text-muted">This recommendation is automatically generated by the app based on your inputs and scoring. Use the 'Key Recommendations' below for manual notes and mitigations.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keyRecommendations" class="form-label">Key Recommendations & Mitigations (manual notes, comma-separated)</label>
+                            <textarea class="form-control" id="keyRecommendations" name="recommendations.interventionPlan" data-array-type="string" rows="5">${(farmAssessmentData.recommendations.interventionPlan || []).join(', ')}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBusinessDescriptionModule() {
+            const data = farmAssessmentData.farmProfile;
+            return `
+                <div class="card">
+                    <div class="card-header">Business Description and Structure</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Basic Information</h4>
+                        <div class="mb-3">
+                            <label for="establishedDate" class="form-label">Established Date</label>
+                            <input type="date" class="form-control" id="establishedDate" name="farmProfile.basicInfo.establishedDate" value="${data.basicInfo.establishedDate || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="totalHectares" class="form-label">Total Hectares</label>
+                            <input type="number" class="form-control" id="totalHectares" name="farmProfile.basicInfo.totalHectares" value="${data.basicInfo.totalHectares || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="landTenure" class="form-label">Land Tenure</label>
+                            <input type="text" class="form-control" id="landTenure" name="farmProfile.basicInfo.landTenure" value="${data.basicInfo.landTenure || ''}" placeholder="e.g., Owned, Leased">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Location Analysis</h4>
+                        <div class="mb-3">
+                            <label for="physicalAddress" class="form-label">Physical Address</label>
+                            <input type="text" class="form-control" id="physicalAddress" name="farmProfile.location.physicalAddress" value="${data.location.physicalAddress || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="province" class="form-label">Province</label>
+                            <input type="text" class="form-control" id="province" name="farmProfile.location.province" value="${data.location.province || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="climateZone" class="form-label">Climate Zone</label>
+                            <input type="text" class="form-control" id="climateZone" name="farmProfile.location.climateZone" value="${data.location.climateZone || ''}" placeholder="e.g., Arid, Temperate">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Legal Structure & Ownership</h4>
+                        <div class="mb-3">
+                            <label for="legalStructure" class="form-label">Legal Structure</label>
+                            <input type="text" class="form-control" id="legalStructure" name="farmProfile.legalStructure" value="${data.legalStructure || ''}" placeholder="e.g., Pty Ltd, Co-op, Sole Prop, Trust">
+                        </div>
+                        <!-- Simplified owner details input for demo -->
+                        <div class="mb-3">
+                            <label for="ownerName" class="form-label">Primary Owner Name</label>
+                            <input type="text" class="form-control" id="ownerName" name="farmProfile.ownership.ownerDetails.0.name" value="${(data.ownership.ownerDetails[0] && data.ownership.ownerDetails[0].name) || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="bbbeeLevel" class="form-label">B-BBEE Level</label>
+                            <input type="number" class="form-control" id="bbbeeLevel" name="farmProfile.ownership.bbbeeStatus.level" value="${data.ownership.bbbeeStatus.level || 0}" min="0" max="8">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Infrastructure Assessment</h4>
+                        <div class="mb-3">
+                            <label for="buildingType" class="form-label">Main Building Type</label>
+                            <input type="text" class="form-control" id="buildingType" name="farmProfile.infrastructure.buildings.0.type" value="${(data.infrastructure.buildings[0] && data.infrastructure.buildings[0].type) || ''}" placeholder="e.g., Barn, Milking Parlor">
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipmentType" class="form-label">Key Equipment Type</label>
+                            <input type="text" class="form-control" id="equipmentType" name="farmProfile.infrastructure.equipment.0.type" value="${(data.infrastructure.equipment[0] && data.infrastructure.equipment[0].type) || ''}" placeholder="e.g., Tractor, Loader">
+                        </div>
+                        <div class="mb-3">
+                            <label for="totalInfrastructureValue" class="form-label">Total Infrastructure Value (ZAR)</label>
+                            <input type="number" class="form-control" id="totalInfrastructureValue" name="farmProfile.infrastructure.totalInfrastructureValue" value="${data.infrastructure.totalInfrastructureValue || 0}">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Core Agricultural Activities</h4>
+                        <div class="mb-3">
+                            <label for="primaryCommodities" class="form-label">Primary Commodities (comma-separated)</label>
+                            <input type="text" class="form-control" id="primaryCommodities" name="farmProfile.coreActivities.primaryCommodities" data-array-type="string" value="${(data.coreActivities.primaryCommodities || []).join(', ')}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="livestockTypes" class="form-label">Livestock Types (comma-separated)</label>
+                            <input type="text" class="form-control" id="livestockTypes" name="farmProfile.coreActivities.livestockTypes" data-array-type="string" value="${(data.coreActivities.livestockTypes || []).join(', ')}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="valueChainPosition" class="form-label">Value Chain Position</label>
+                            <input type="text" class="form-control" id="valueChainPosition" name="farmProfile.coreActivities.valueChainPosition" value="${data.coreActivities.valueChainPosition || ''}" placeholder="e.g., Producer, Processor, Retailer">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Herd Details (Cattle Specific)</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="totalHead" class="form-label">Total Head Count</label>
+                                <input type="number" class="form-control" id="totalHead" name="farmProfile.herdDetails.totalHead" value="${data.herdDetails.totalHead || 0}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="averageValuePerHead" class="form-label">Average Value Per Head (ZAR)</label>
+                                <input type="number" class="form-control" id="averageValuePerHead" name="farmProfile.herdDetails.averageValuePerHead" value="${data.herdDetails.averageValuePerHead || 0}" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="breedingCows" class="form-label">Breeding Cows</label>
+                                <input type="number" class="form-control" id="breedingCows" name="farmProfile.herdDetails.breedingCows" value="${data.herdDetails.breedingCows || 0}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="bulls" class="form-label">Bulls</label>
+                                <input type="number" class="form-control" id="bulls" name="farmProfile.herdDetails.bulls" value="${data.herdDetails.bulls || 0}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="calves" class="form-label">Calves (under 1 year)</label>
+                                <input type="number" class="form-control" id="calves" name="farmProfile.herdDetails.calves" value="${data.herdDetails.calves || 0}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="mainBreeds" class="form-label">Main Breeds (comma-separated)</label>
+                                <input type="text" class="form-control" id="mainBreeds" name="farmProfile.herdDetails.mainBreeds" data-array-type="string" value="${(data.herdDetails.mainBreeds || []).join(', ')}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="herdHealthStatus" class="form-label">Herd Health Status</label>
+                                <input type="text" class="form-control" id="herdHealthStatus" name="farmProfile.herdDetails.herdHealthStatus" value="${data.herdDetails.herdHealthStatus || ''}" placeholder="e.g., Good, Fair, Poor">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="identificationSystem" class="form-label">Identification System</label>
+                                <input type="text" class="form-control" id="identificationSystem" name="farmProfile.herdDetails.identificationSystem" value="${data.herdDetails.identificationSystem || ''}" placeholder="e.g., Ear Tags, RFID">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFinancialAssessmentModule() {
+            const histData = farmAssessmentData.financialAssessment.historicalData;
+            const ratios = farmAssessmentData.financialAssessment.financialRatios;
+            const fa = farmAssessmentData.financialAssessment;
+
+            return `
+                <div class="card">
+                    <div class="card-header">Comprehensive Financial Assessment</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Historical Financial Data (Last 3 Years)</h4>
+                        <p class="text-muted">Enter values for Year 1 (oldest) to Year 3 (most recent). Total Assets should represent non-livestock assets; livestock value will be added automatically.</p>
+                        ${[1, 2, 3].map(yearNum => `
+                            <div class="row mb-3 border-bottom pb-3">
+                                <div class="col-12"><h5>Year ${yearNum}</h5></div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}revenue" class="form-label">Revenue</label>
+                                    <input type="number" class="form-control" id="y${yearNum}revenue" name="financialAssessment.historicalData.year${yearNum}.revenue" value="${histData[`year${yearNum}`].revenue || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}operatingCosts" class="form-label">Operating Costs</label>
+                                    <input type="number" class="form-control" id="y${yearNum}operatingCosts" name="financialAssessment.historicalData.year${yearNum}.operatingCosts" value="${histData[`year${yearNum}`].operatingCosts || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}capitalExpenditure" class="form-label">Capital Expenditure</label>
+                                    <input type="number" class="form-control" id="y${yearNum}capitalExpenditure" name="financialAssessment.historicalData.year${yearNum}.capitalExpenditure" value="${histData[`year${yearNum}`].capitalExpenditure || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}totalAssets" class="form-label">Total Assets (Excl. Livestock)</label>
+                                    <input type="number" class="form-control" id="y${yearNum}totalAssets" name="financialAssessment.historicalData.year${yearNum}.totalAssets" value="${histData[`year${yearNum}`].totalAssets || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}totalLiabilities" class="form-label">Total Liabilities</label>
+                                    <input type="number" class="form-control" id="y${yearNum}totalLiabilities" name="financialAssessment.historicalData.year${yearNum}.totalLiabilities" value="${histData[`year${yearNum}`].totalLiabilities || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}netIncome" class="form-label">Net Income</label>
+                                    <input type="number" class="form-control" id="y${yearNum}netIncome" name="financialAssessment.historicalData.year${yearNum}.netIncome" value="${histData[`year${yearNum}`].netIncome || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}ebit" class="form-label">EBIT</label>
+                                    <input type="number" class="form-control" id="y${yearNum}ebit" name="financialAssessment.historicalData.year${yearNum}.ebit" value="${histData[`year${yearNum}`].ebit || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}interestExpense" class="form-label">Interest Expense</label>
+                                    <input type="number" class="form-control" id="y${yearNum}interestExpense" name="financialAssessment.historicalData.year${yearNum}.interestExpense" value="${histData[`year${yearNum}`].interestExpense || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}currentAssets" class="form-label">Current Assets</label>
+                                    <input type="number" class="form-control" id="y${yearNum}currentAssets" name="financialAssessment.historicalData.year${yearNum}.currentAssets" value="${histData[`year${yearNum}`].currentAssets || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}currentLiabilities" class="form-label">Current Liabilities</label>
+                                    <input type="number" class="form-control" id="y${yearNum}currentLiabilities" name="financialAssessment.historicalData.year${yearNum}.currentLiabilities" value="${histData[`year${yearNum}`].currentLiabilities || 0}">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label for="y${yearNum}inventory" class="form-label">Inventory</label>
+                                    <input type="number" class="form-control" id="y${yearNum}inventory" name="financialAssessment.historicalData.year${yearNum}.inventory" value="${histData[`year${yearNum}`].inventory || 0}">
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="mb-3">
+                            <label for="auditStatus" class="form-label">Audit Status</label>
+                            <input type="text" class="form-control" id="auditStatus" name="financialAssessment.historicalData.auditStatus" value="${histData.auditStatus || ''}" placeholder="e.g., Audited, Unaudited">
+                        </div>
+
+                        <button class="btn btn-primary mb-4" id="calculateRatiosBtn">Calculate Financial Ratios</button>
+
+                        <h4 class="mt-4 mb-3">Calculated Financial Ratios</h4>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Debt Service Coverage Ratio: <span id="dsr">${ratios.debtServiceCoverage.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Return on Assets: <span id="roa">${(ratios.returnOnAssets * 100).toFixed(2)}%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Current Ratio: <span id="cr">${ratios.currentRatio.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Operating Margin: <span>${(ratios.operatingMargin * 100).toFixed(2)}%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Asset Turnover: <span id="at">${ratios.assetTurnover.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Equity Ratio: <span id="er">${(ratios.equityRatio * 100).toFixed(2)}%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Quick Ratio: <span id="qr">${ratios.quickRatio.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Interest Coverage: <span id="ic">${ratios.interestCoverage.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Working Capital Ratio: <span id="wcr">${(ratios.workingCapitalRatio * 100).toFixed(2)}%</span>
+                            </li>
+                        </ul>
+                        <canvas id="financialRatiosChart" width="400" height="200"></canvas>
+
+                        <h4 class="mt-4 mb-3">Additional Financial Details</h4>
+                        <div class="mb-3">
+                            <label for="contingentLiabilities" class="form-label">Contingent Liabilities (ZAR)</label>
+                            <input type="number" class="form-control" id="contingentLiabilities" name="financialAssessment.liabilityAssessment.contingentLiabilities" value="${fa.liabilityAssessment.contingentLiabilities || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="cashConversionCycle" class="form-label">Cash Conversion Cycle (Days)</label>
+                            <input type="number" class="form-control" id="cashConversionCycle" name="financialAssessment.workingCapital.cashConversionCycle" value="${fa.workingCapital.cashConversionCycle || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="outstandingIndebtedness" class="form-label">Outstanding Indebtedness (ZAR)</label>
+                            <input type="number" class="form-control" id="outstandingIndebtedness" name="financialAssessment.debtAnalysis.outstandingIndebtedness" value="${fa.debtAnalysis.outstandingIndebtedness || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="revenueSeasonalPatterns" class="form-label">Revenue Seasonal Patterns</label>
+                            <textarea class="form-control" id="revenueSeasonalPatterns" name="financialAssessment.seasonalityAssessment.revenueSeasonalPatterns" rows="2">${fa.seasonalityAssessment.revenueSeasonalPatterns || ''}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="revenueThreshold" class="form-label">Break-even Revenue Threshold (ZAR)</label>
+                            <input type="number" class="form-control" id="revenueThreshold" name="financialAssessment.breakEvenAnalysis.revenueThreshold" value="${fa.breakEvenAnalysis.revenueThreshold || 0}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCommercialMarketingModule() {
+            const data = farmAssessmentData.commercialAssessment;
+            return `
+                <div class="card">
+                    <div class="card-header">Commercial and Marketing Assessment</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Customer Analysis</h4>
+                        <div class="mb-3">
+                            <label for="customerConcentration" class="form-label">Customer Concentration (%)</label>
+                            <input type="number" class="form-control" id="customerConcentration" name="commercialAssessment.customerAnalysis.customerConcentration" value="${data.customerAnalysis.customerConcentration || 0}" min="0" max="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="retentionRate" class="form-label">Customer Retention Rate (%)</label>
+                            <input type="number" class="form-control" id="retentionRate" name="commercialAssessment.customerAnalysis.retentionRate" value="${data.customerAnalysis.retentionRate || 0}" min="0" max="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="relationshipStrength" class="form-label">Customer Relationship Strength</label>
+                            <input type="text" class="form-control" id="relationshipStrength" name="commercialAssessment.customerAnalysis.relationshipStrength" value="${data.customerAnalysis.relationshipStrength || ''}" placeholder="e.g., Strong, Moderate, Weak">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Sales Performance</h4>
+                        <div class="mb-3">
+                            <label for="pipelineEffectiveness" class="form-label">Sales Pipeline Effectiveness</label>
+                            <input type="text" class="form-control" id="pipelineEffectiveness" name="commercialAssessment.salesPerformance.pipelineEffectiveness" value="${data.salesPerformance.pipelineEffectiveness || ''}" placeholder="e.g., High, Medium, Low">
+                        </div>
+                        <div class="mb-3">
+                            <label for="conversionRates" class="form-label">Conversion Rates</label>
+                            <input type="text" class="form-control" id="conversionRates" name="commercialAssessment.salesPerformance.conversionRates" value="${data.salesPerformance.conversionRates || ''}" placeholder="e.g., Good, Average">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Distribution Channels</h4>
+                        <div class="mb-3">
+                            <label for="distributors" class="form-label">Main Distributors (comma-separated)</label>
+                            <textarea class="form-control" id="distributors" name="commercialAssessment.distributionChannels.distributors" data-array-type="string" rows="2">${(data.distributionChannels.distributors || []).join(', ')}</textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Sales Strategy</h4>
+                        <div class="mb-3">
+                            <label for="marketingPlanEvaluation" class="form-label">Marketing Plan Evaluation</label>
+                            <input type="text" class="form-control" id="marketingPlanEvaluation" name="commercialAssessment.salesStrategy.marketingPlanEvaluation" value="${data.salesStrategy.marketingPlanEvaluation || ''}" placeholder="e.g., Effective, Needs Improvement">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pricingStrategy" class="form-label">Pricing Strategy</label>
+                            <input type="text" class="form-control" id="pricingStrategy" name="commercialAssessment.salesStrategy.pricingStrategy" value="${data.salesStrategy.pricingStrategy || ''}" placeholder="e.g., Competitive, Premium">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHRManagementModule() {
+            const data = farmAssessmentData.hrManagement;
+            return `
+                <div class="card">
+                    <div class="card-header">Human Resources and Management Assessment</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Organization Structure</h4>
+                        <div class="mb-3">
+                            <label for="totalEmployees" class="form-label">Total Employees</label>
+                            <input type="number" class="form-control" id="totalEmployees" name="hrManagement.organizationStructure.totalEmployees" value="${data.organizationStructure.totalEmployees || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="organizationalChart" class="form-label">Organizational Chart Availability</label>
+                            <input type="text" class="form-control" id="organizationalChart" name="hrManagement.organizationStructure.organizationalChart" value="${data.organizationStructure.organizationalChart || ''}" placeholder="e.g., Available, Not Available">
+                        </div>
+                        <div class="mb-3">
+                            <label for="roleClarity" class="form-label">Role Clarity</label>
+                            <input type="text" class="form-control" id="roleClarity" name="hrManagement.organizationStructure.roleClarity" value="${data.organizationStructure.roleClarity || ''}" placeholder="e.g., Clear, Ambiguous">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Key Personnel & Competency</h4>
+                        <div class="mb-3">
+                            <label for="keyPersonnelName" class="form-label">Key Personnel Name (e.g., Farm Manager)</label>
+                            <input type="text" class="form-control" id="keyPersonnelName" name="hrManagement.organizationStructure.keyPersonnel.0.name" value="${(data.organizationStructure.keyPersonnel[0] && data.organizationStructure.keyPersonnel[0].name) || ''}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="keyPersonnelCompetency" class="form-label">Key Personnel Competency Score (1-5)</label>
+                            <input type="number" class="form-control" id="keyPersonnelCompetency" name="hrManagement.organizationStructure.keyPersonnel.0.competencyScore" value="${(data.organizationStructure.keyPersonnel[0] && data.organizationStructure.keyPersonnel[0].competencyScore) || 0}" min="1" max="5">
+                        </div>
+                        <div class="mb-3">
+                            <label for="successionPlanning" class="form-label">Succession Planning Status</label>
+                            <input type="text" class="form-control" id="successionPlanning" name="hrManagement.managementCompetency.successionPlanning" value="${getNestedValue(data, 'managementCompetency.successionPlanning')}" placeholder="e.g., In Place, Developing, None">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">HR Policies & Labor Relations</h4>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="employmentContracts" name="hrManagement.hrPolicies.employmentContracts" ${data.hrPolicies.employmentContracts ? 'checked' : ''}>
+                            <label class="form-check-label" for="employmentContracts">Employment Contracts in Place?</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="laborRelations" class="form-label">Labor Relations History</label>
+                            <input type="text" class="form-control" id="laborRelations" name="hrManagement.laborRelations.unionRelationships" value="${data.laborRelations.unionRelationships || ''}" placeholder="e.g., Good, History of Disputes">
+                        </div>
+                        <div class="mb-3">
+                            <label for="employeeTurnoverRate" class="form-label">Employee Turnover Rate (%)</label>
+                            <input type="number" class="form-control" id="employeeTurnoverRate" name="hrManagement.turnoverAnalysis.employeeTurnoverRate" value="${data.turnoverAnalysis.employeeTurnoverRate || 0}" min="0" max="100">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEnvironmentalAssessmentModule() {
+            const data = farmAssessmentData.environmentalAssessment;
+            return `
+                <div class="card">
+                    <div class="card-header">Environmental Assessment</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Regulatory Compliance</h4>
+                        <div class="mb-3">
+                            <label for="environmentalAudits" class="form-label">Environmental Audits Conducted?</label>
+                            <input type="text" class="form-control" id="environmentalAudits" name="environmentalAssessment.regulatoryCompliance.environmentalAudits" value="${data.regulatoryCompliance.environmentalAudits || ''}" placeholder="e.g., Annually, Never">
+                        </div>
+                        <div class="mb-3">
+                            <label for="complianceStatus" class="form-label">Permits Compliance Status</label>
+                            <input type="text" class="form-control" id="complianceStatus" name="environmentalAssessment.permitsLicenses.complianceStatus" value="${data.permitsLicenses.complianceStatus || ''}" placeholder="e.g., Fully Compliant, Minor Issues">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Hazardous Substances</h4>
+                        <div class="mb-3">
+                            <label for="hazardousInventory" class="form-label">Hazardous Substances Inventory</label>
+                            <input type="text" class="form-control" id="hazardousInventory" name="environmentalAssessment.hazardousSubstances.inventory" value="${data.hazardousSubstances.inventory || ''}" placeholder="e.g., Available, Not Available">
+                        </div>
+                        <div class="mb-3">
+                            <label for="safetyProtocols" class="form-label">Safety Protocols for Hazardous Substances</label>
+                            <input type="text" class="form-control" id="safetyProtocols" name="environmentalAssessment.hazardousSubstances.safetyProtocols" value="${data.hazardousSubstances.safetyProtocols || ''}" placeholder="e.g., Documented, Lacking">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Resource Management & Sustainability</h4>
+                        <div class="mb-3">
+                            <label for="waterUsage" class="form-label">Water Usage Monitoring</label>
+                            <input type="text" class="form-control" id="waterUsage" name="environmentalAssessment.resourceManagement.waterUsage" value="${data.resourceManagement.waterUsage || ''}" placeholder="e.g., Monitored, Not Monitored">
+                        </div>
+                        <div class="mb-3">
+                            <label for="soilHealth" class="form-label">Soil Health Management Practices</label>
+                            <input type="text" class="form-control" id="soilHealth" name="environmentalAssessment.resourceManagement.soilHealth" value="${data.resourceManagement.soilHealth || ''}" placeholder="e.g., Crop Rotation, No-Till">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="renewableEnergy" name="environmentalAssessment.sustainabilityPractices.renewableEnergy" ${data.sustainabilityPractices.renewableEnergy ? 'checked' : ''}>
+                            <label class="form-check-label" for="renewableEnergy">Uses Renewable Energy?</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="carbonFootprint" class="form-label">Carbon Footprint Assessment</label>
+                            <input type="text" class="form-control" id="carbonFootprint" name="environmentalAssessment.sustainabilityPractices.carbonFootprint" value="${data.sustainabilityPractices.carbonFootprint || ''}" placeholder="e.g., Assessed, Not Assessed">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Environmental Risks & Liabilities</h4>
+                        <div class="mb-3">
+                            <label for="environmentalCleanupObligations" class="form-label">Environmental Cleanup Obligations (ZAR)</label>
+                            <input type="number" class="form-control" id="environmentalCleanupObligations" name="environmentalAssessment.contingentLiabilities.environmentalCleanupObligations" value="${data.contingentLiabilities.environmentalCleanupObligations || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="climateAdaptationStrategies" class="form-label">Climate Adaptation Strategies</label>
+                            <textarea class="form-control" id="climateAdaptationStrategies" name="environmentalAssessment.climateAdaptation.adaptationStrategies" rows="3">${data.climateAdaptation.adaptationStrategies || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLegalRegulatoryModule() {
+            const data = farmAssessmentData.legalCompliance;
+            return `
+                <div class="card">
+                    <div class="card-header">Legal and Regulatory Compliance</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Corporate Compliance</h4>
+                        <div class="mb-3">
+                            <label for="registrationStatus" class="form-label">Registration Status</label>
+                            <input type="text" class="form-control" id="registrationStatus" name="legalCompliance.corporateCompliance.registrationStatus" value="${data.corporateCompliance.registrationStatus || ''}" placeholder="e.g., Active, Dormant">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="directorCompliance" name="legalCompliance.corporateCompliance.directorCompliance" ${data.corporateCompliance.directorCompliance ? 'checked' : ''}>
+                            <label class="form-check-label" for="directorCompliance">Director Compliance (e.g., no disqualifications)?</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="governanceScore" class="form-label">Governance Score (1-5)</label>
+                            <input type="number" class="form-control" id="governanceScore" name="legalCompliance.corporateCompliance.governanceScore" value="${data.corporateCompliance.governanceScore || 0}" min="1" max="5">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Regulatory Compliance</h4>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="regulatoryStandardsCompliance" name="legalCompliance.complianceCertification.regulatoryStandardsCompliance" ${data.complianceCertification.regulatoryStandardsCompliance ? 'checked' : ''}>
+                            <label class="form-check-label" for="regulatoryStandardsCompliance">Compliant with Regulatory Standards?</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="requiredPermits" class="form-label">Required Permits (comma-separated)</label>
+                            <textarea class="form-control" id="requiredPermits" name="legalCompliance.permitsLicenses.requiredPermits" data-array-type="string" rows="2">${(data.permitsLicenses.requiredPermits || []).join(', ')}</textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Tax Compliance</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="incomeTax" name="legalCompliance.taxCompliance.incomeTax" ${data.taxCompliance.incomeTax ? 'checked' : ''}>
+                                <label class="form-check-label" for="incomeTax">Income Tax Compliant?</label>
+                            </div>
+                            <div class="col-md-6 mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="vat" name="legalCompliance.taxCompliance.vat" ${data.taxCompliance.vat ? 'checked' : ''}>
+                                <label class="form-check-label" for="vat">VAT Compliant?</label>
+                            </div>
+                            <div class="col-md-6 mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="paye" name="legalCompliance.taxCompliance.paye" ${data.taxCompliance.paye ? 'checked' : ''}>
+                                <label class="form-check-label" for="paye">PAYE Compliant?</label>
+                            </div>
+                            <div class="col-md-6 mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="municipalTaxes" name="legalCompliance.taxCompliance.municipalTaxes" ${data.taxCompliance.municipalTaxes ? 'checked' : ''}>
+                                <label class="form-check-label" for="municipalTaxes">Municipal Taxes Compliant?</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clearanceCertificates" class="form-label">Clearance Certificates (comma-separated)</label>
+                            <textarea class="form-control" id="clearanceCertificates" name="legalCompliance.taxCompliance.clearanceCertificates" data-array-type="string" rows="2">${(data.taxCompliance.clearanceCertificates || []).join(', ')}</textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Litigation & Insurance</h4>
+                        <div class="mb-3">
+                            <label for="pendingThreatenedInvestigations" class="form-label">Pending/Threatened Investigations (comma-separated)</label>
+                            <textarea class="form-control" id="pendingThreatenedInvestigations" name="legalCompliance.legalProceedings.pendingThreatenedInvestigations" data-array-type="string" rows="3">${(data.legalProceedings.pendingThreatenedInvestigations || []).join(', ')}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="coverageAdequacy" class="form-label">Insurance Coverage Adequacy</label>
+                            <input type="text" class="form-control" id="coverageAdequacy" name="legalCompliance.insurancePortfolio.coverageAdequacy" value="${data.insurancePortfolio.coverageAdequacy || ''}" placeholder="e.g., Adequate, Gaps Identified">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAgriculturalTechnicalModule() {
+            const data = farmAssessmentData.agriculturalTechnical;
+            const herdDetails = farmAssessmentData.farmProfile.herdDetails;
+            return `
+                <div class="card">
+                    <div class="card-header">Agricultural and Technical Assessment</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Industry Context</h4>
+                        <div class="mb-3">
+                            <label for="agriculturalSectorAnalysis" class="form-label">Agricultural Sector Analysis</label>
+                            <input type="text" class="form-control" id="agriculturalSectorAnalysis" name="agriculturalTechnical.industryContext.agriculturalSectorAnalysis" value="${data.industryContext.agriculturalSectorAnalysis || ''}" placeholder="e.g., Stable, Growing, Declining">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Land Utilization & Soil/Water Resources</h4>
+                        <div class="mb-3">
+                            <label for="soilPotential" class="form-label">Soil Potential</label>
+                            <input type="text" class="form-control" id="soilPotential" name="agriculturalTechnical.landUtilization.soilPotential" value="${data.landUtilization.soilPotential || ''}" placeholder="e.g., High, Medium, Low">
+                        </div>
+                        <div class="mb-3">
+                            <label for="carryingCapacity" class="form-label">Carrying Capacity (LSU/ha)</label>
+                            <input type="number" class="form-control" id="carryingCapacity" name="agriculturalTechnical.landUtilization.carryingCapacity" value="${data.landUtilization.carryingCapacity || 0}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="waterAvailability" class="form-label">Water Availability</label>
+                            <input type="text" class="form-control" id="waterAvailability" name="agriculturalTechnical.waterResources.availability" value="${data.waterResources.availability || ''}" placeholder="e.g., Abundant, Limited">
+                        </div>
+                        <div class="mb-3">
+                            <label for="irrigationEfficiency" class="form-label">Irrigation Efficiency (%)</label>
+                            <input type="number" class="form-control" id="irrigationEfficiency" name="agriculturalTechnical.waterResources.irrigationEfficiency" value="${data.waterResources.irrigationEfficiency || 0}" min="0" max="100">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Livestock Management (Cattle Specific)</h4>
+                        <div class="mb-3">
+                            <label for="breedSelection" class="form-label">Breed Selection Strategy</label>
+                            <input type="text" class="form-control" id="breedSelection" name="agriculturalTechnical.livestockManagement.breedSelection" value="${data.livestockManagement.breedSelection || ''}" placeholder="e.g., Adapted, High-Yield">
+                        </div>
+                        <div class="mb-3">
+                            <label for="breedingProgramsType" class="form-label">Breeding Program Type</label>
+                            <input type="text" class="form-control" id="breedingProgramsType" name="agriculturalTechnical.livestockManagement.breedingPrograms.type" value="${data.livestockManagement.breedingPrograms.type || ''}" placeholder="e.g., Natural, AI, Embryo Transfer">
+                        </div>
+                        <div class="mb-3">
+                            <label for="breedingSuccessRate" class="form-label">Breeding Success Rate (%)</label>
+                            <input type="number" class="form-control" id="breedingSuccessRate" name="agriculturalTechnical.livestockManagement.breedingPrograms.successRate" value="${data.livestockManagement.breedingPrograms.successRate || 0}" min="0" max="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nutritionPrograms" class="form-label">Nutrition Programs</label>
+                            <input type="text" class="form-control" id="nutritionPrograms" name="agriculturalTechnical.livestockManagement.nutritionPrograms.integratedNutritionSystems" value="${data.livestockManagement.nutritionPrograms.integratedNutritionSystems || ''}" placeholder="e.g., Pasture-based, Feedlot, Supplemented">
+                        </div>
+                        <div class="mb-3">
+                            <label for="grazingManagement" class="form-label">Grazing Management</label>
+                            <input type="text" class="form-control" id="grazingManagement" name="agriculturalTechnical.livestockManagement.grazingManagement.landUseOptimization" value="${data.livestockManagement.grazingManagement.landUseOptimization || ''}" placeholder="e.g., Rotational, Continuous">
+                        </div>
+                        <div class="mb-3">
+                            <label for="veterinaryPrograms" class="form-label">Veterinary Programs</label>
+                            <input type="text" class="form-control" id="veterinaryPrograms" name="agriculturalTechnical.livestockManagement.animalHealth.veterinaryPrograms" value="${data.livestockManagement.animalHealth.veterinaryPrograms || ''}" placeholder="e.g., Comprehensive, Reactive">
+                        </div>
+                        <div class="mb-3">
+                            <label for="animalHousing" class="form-label">Animal Housing Type</label>
+                            <input type="text" class="form-control" id="animalHousing" name="agriculturalTechnical.livestockManagement.animalHousing.type" value="${data.livestockManagement.animalHousing.type || ''}" placeholder="e.g., Kraals, Sheds, Open Pasture">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Production Efficiency (Cattle Specific)</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="calvingRate" class="form-label">Calving Rate (%)</label>
+                                <input type="number" class="form-control" id="calvingRate" name="agriculturalTechnical.productionEfficiency.calvingRate" value="${data.productionEfficiency.calvingRate || 0}" min="0" max="100">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="weaningWeight" class="form-label">Average Weaning Weight (kg)</label>
+                                <input type="number" class="form-control" id="weaningWeight" name="agriculturalTechnical.productionEfficiency.weaningWeight" value="${data.productionEfficiency.weaningWeight || 0}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="averageDailyGain" class="form-label">Average Daily Gain (kg/day)</label>
+                                <input type="number" class="form-control" id="averageDailyGain" name="agriculturalTechnical.productionEfficiency.averageDailyGain" value="${data.productionEfficiency.averageDailyGain || 0}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="mortalityRate" class="form-label">Overall Mortality Rate (%)</label>
+                                <input type="number" class="form-control" id="mortalityRate" name="agriculturalTechnical.productionEfficiency.mortalityRate" value="${data.productionEfficiency.mortalityRate || 0}" min="0" max="100">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="feedConversionRatio" class="form-label">Feed Conversion Ratio</label>
+                                <input type="number" class="form-control" id="feedConversionRatio" name="agriculturalTechnical.productionEfficiency.feedConversionRatio" value="${data.productionEfficiency.feedConversionRatio || 0}">
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Technology Adoption</h4>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="precisionAgriculture" name="agriculturalTechnical.technologyAdoption.precisionAgriculture" ${data.technologyAdoption.precisionAgriculture ? 'checked' : ''}>
+                            <label class="form-check-label" for="precisionAgriculture">Uses Precision Agriculture?</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="automationLevel" class="form-label">Automation Level</label>
+                            <input type="text" class="form-control" id="automationLevel" name="agriculturalTechnical.technologyAdoption.automationLevel" value="${data.technologyAdoption.automationLevel || ''}" placeholder="e.g., High, Medium, Low">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRiskAnalysisModule() {
+            const data = farmAssessmentData.riskAssessment;
+
+            // Helper to render a risk category with score inputs
+            const renderRiskCategory = (categoryName, risks, pathPrefix) => `
+                <h5 class="mt-4 mb-3">${categoryName}</h5>
+                <ul class="list-group mb-3">
+                    ${Object.keys(risks).map(key => `
+                        <li class="list-group-item list-group-item-score">
+                            ${key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                            <div>
+                                <label class="me-2">Likelihood (1-5):</label>
+                                <input type="number" class="form-control score-input" name="riskAssessment.${pathPrefix}.${key}.likelihood" value="${risks[key].likelihood || 0}" min="1" max="5">
+                                <label class="ms-3 me-2">Impact (1-5):</label>
+                                <input type="number" class="form-control score-input" name="riskAssessment.${pathPrefix}.${key}.impact" value="${risks[key].impact || 0}" min="1" max="5">
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+
+            return `
+                <div class="card">
+                    <div class="card-header">Comprehensive Risk Analysis</div>
+                    <div class="card-body">
+                        <p>Assess each risk based on its Likelihood (1=Rare, 5=Almost Certain) and Impact (1=Insignificant, 5=Catastrophic).</p>
+
+                        ${renderRiskCategory('Production', data.productionRisks, 'productionRisks')}
+                        ${renderRiskCategory('Market', data.marketRisks, 'marketRisks')}
+                        ${renderRiskCategory('Financial', data.financialRisks, 'financialRisks')}
+                        ${renderRiskCategory('Operational', data.operationalRisks, 'operationalRisks')}
+                        ${renderRiskCategory('Environmental', data.environmentalRisks, 'environmentalRisks')}
+                        ${renderRiskCategory('Regulatory Compliance', data.regulatoryComplianceRisks, 'regulatoryComplianceRisks')}
+                        ${renderRiskCategory('Management Strategic', data.managementStrategicRisks, 'managementStrategicRisks')}
+
+                        <h4 class="mt-4 mb-3">Mitigation & Contingency Planning</h4>
+                        <div class="mb-3">
+                            <label for="mitigationStrategies" class="form-label">Mitigation Strategies</label>
+                            <textarea class="form-control" id="mitigationStrategies" name="riskAssessment.mitigationStrategies" rows="4">${data.mitigationStrategies || ''}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contingencyPlanning" class="form-label">Contingency Planning</label>
+                            <textarea class="form-control" id="contingencyPlanning" name="riskAssessment.contingencyPlanning" rows="4">${data.contingencyPlanning || ''}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="monitoringFramework" class="form-label">Monitoring Framework</label>
+                            <textarea class="form-control" id="monitoringFramework" name="riskAssessment.monitoringFramework" rows="3">${data.monitoringFramework || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderScoringClassificationModule() {
+            const scores = farmAssessmentData.scoring.componentScores;
+            const weightedScore = farmAssessmentData.scoring.weightedScore;
+            const classification = farmAssessmentData.scoring.classification;
+
+            return `
+                <div class="card">
+                    <div class="card-header">Integrated Scoring and Classification Engine</div>
+                    <div class="card-body">
+                        <p>This module calculates a weighted score based on all assessment areas and classifies the farm's viability.</p>
+                        <button class="btn btn-primary mb-4" id="calculateOverallScoreBtn">Calculate Overall Score</button>
+
+                        <h4 class="mt-4 mb-3">Component Scores (Weighted)</h4>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Financial Health (25%): <span>${scores.financial.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Operational Excellence (20%): <span>${scores.operational.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Market Position (20%): <span>${scores.market.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Management Quality (15%): <span>${scores.management.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Compliance and Risk Management (10%): <span>${scores.compliance.toFixed(2)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Agricultural and Technical Excellence (10%): <span>${scores.agricultural.toFixed(2)}</span>
+                            </li>
+                        </ul>
+
+                        <h4 class="mt-4 mb-3">Overall Weighted Score: <span class="badge bg-info fs-5">${weightedScore.toFixed(2)}</span></h4>
+                        <h4 class="mb-3">Viability Classification: <span class="badge bg-primary fs-5">${classification || 'N/A'}</span></h4>
+                        <canvas id="viabilityScoreChart" width="400" height="200"></canvas>
+
+                        <h4 class="mt-4 mb-3">Benchmarking and Analysis (Conceptual)</h4>
+                        <p>This section would display comparisons to industry benchmarks and peer rankings, and trend analysis over time.</p>
+                        <textarea class="form-control" rows="3" placeholder="Enter notes on benchmark comparison or trend analysis..." name="scoring.benchmarkComparison.notes">${getNestedValue(farmAssessmentData, 'scoring.benchmarkComparison.notes')}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderViabilityConclusionModule() {
+            const data = farmAssessmentData.recommendations;
+            return `
+                <div class="card">
+                    <div class="card-header">Viability Conclusion and Recommendation</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">SWOT Analysis Generator (Auto-populated from Executive Summary)</h4>
+                        <p><strong>Strengths:</strong> ${(data.swotAnalysis.strengths || []).join(', ')}</p>
+                        <p><strong>Weaknesses:</strong> ${(data.swotAnalysis.weaknesses || []).join(', ')}</p>
+                        <p><strong>Opportunities:</strong> ${(data.swotAnalysis.opportunities || []).join(', ')}</p>
+                        <p><strong>Threats:</strong> ${(data.swotAnalysis.threats || []).join(', ')}</p>
+
+                        <h4 class="mt-4 mb-3">Viability Classification Framework</h4>
+                        <div class="mb-3">
+                            <label for="viabilityConclusionText" class="form-label">Viability Conclusion</label>
+                            <textarea class="form-control" id="viabilityConclusionText" name="recommendations.viabilityConclusion" rows="3">${data.viabilityConclusion || ''}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="criticalSuccessFactors" class="form-label">Critical Success Factors (comma-separated)</label>
+                            <textarea class="form-control" id="criticalSuccessFactors" name="recommendations.criticalSuccessFactors" data-array-type="string" rows="3">${(data.criticalSuccessFactors || []).join(', ')}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="conditionsForViability" class="form-label">Conditions for Viability (comma-separated)</label>
+                            <textarea class="form-control" id="conditionsForViability" name="recommendations.conditions" data-array-type="string" rows="3">${(data.conditions || []).join(', ')}</textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Intervention Recommendation Engine</h4>
+                        <div class="mb-3">
+                            <label for="interventionPlan" class="form-label">Prioritized Intervention Plan (comma-separated)</label>
+                            <textarea class="form-control" id="interventionPlan" name="recommendations.interventionPlan" data-array-type="string" rows="5">${(data.interventionPlan || []).join(', ')}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resourceRequirements" class="form-label">Resource Requirements</label>
+                            <textarea class="form-control" id="resourceRequirements" name="recommendations.resourceRequirements" rows="3">${data.resourceRequirements || ''}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="implementationTimeline" class="form-label">Implementation Timeline</label>
+                            <input type="text" class="form-control" id="implementationTimeline" name="recommendations.implementationTimeline" value="${data.implementationTimeline || ''}" placeholder="e.g., 6-12 months">
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Monitoring and Review Framework</h4>
+                        <div class="mb-3">
+                            <label for="monitoringFrameworkDetails" class="form-label">Monitoring Framework Details</label>
+                            <textarea class="form-control" id="monitoringFrameworkDetails" name="recommendations.monitoringFramework.details" rows="3">${getNestedValue(data, 'monitoringFramework.details') || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderReportingSystemModule() {
+            return `
+                <div class="card">
+                    <div class="card-header">Professional Reporting System</div>
+                    <div class="card-body">
+                        <p>Generate various professional reports for the current farm.</p>
+                        <button class="btn btn-primary me-2" id="generateExecutiveReportBtn"><i class="fas fa-file-pdf"></i> Generate Executive Summary Report</button>
+                        <button class="btn btn-secondary" id="generateDetailedReportBtn"><i class="fas fa-file-pdf"></i> Generate Detailed Assessment Report</button>
+
+                        <h4 class="mt-4 mb-3">Generated Report Preview</h4>
+                        <div id="reportPreview" class="border p-3 rounded bg-light" style="min-height: 400px; overflow-y: auto;">
+                            <p>Select a report to generate a preview here. For actual PDF download, use your browser's print to PDF function.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Financial Calculation Logic ---
+        function calculateFinancialRatios() {
+            const histData = farmAssessmentData.financialAssessment.historicalData;
+            const y1 = histData.year1;
+            const y2 = histData.year2;
+            const y3 = histData.year3;
+
+            // Calculate current livestock value and add to total assets
+            const totalHead = farmAssessmentData.farmProfile.herdDetails.totalHead || 0;
+            const averageValuePerHead = farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0;
+            const currentLivestockValue = totalHead * averageValuePerHead;
+
+            // Calculate averages for 3 years, including livestock value in total assets
+            const avgRevenue = ((y1.revenue || 0) + (y2.revenue || 0) + (y3.revenue || 0)) / 3;
+            const avgOperatingCosts = ((y1.operatingCosts || 0) + (y2.operatingCosts || 0) + (y3.operatingCosts || 0)) / 3;
+            // totalAssets from input + calculated livestock value
+            const avgTotalAssets = (((y1.totalAssets || 0) + (y2.totalAssets || 0) + (y3.totalAssets || 0)) / 3) + currentLivestockValue;
+            const avgTotalLiabilities = ((y1.totalLiabilities || 0) + (y2.totalLiabilities || 0) + (y3.totalLiabilities || 0)) / 3;
+            const avgNetIncome = ((y1.netIncome || 0) + (y2.netIncome || 0) + (y3.netIncome || 0)) / 3;
+            const avgEBIT = ((y1.ebit || 0) + (y2.ebit || 0) + (y3.ebit || 0)) / 3;
+            const avgInterestExpense = ((y1.interestExpense || 0) + (y2.interestExpense || 0) + (y3.interestExpense || 0)) / 3;
+            const avgCurrentAssets = ((y1.currentAssets || 0) + (y2.currentAssets || 0) + (y3.currentAssets || 0)) / 3;
+            const avgCurrentLiabilities = ((y1.currentLiabilities || 0) + (y2.currentLiabilities || 0) + (y3.currentLiabilities || 0)) / 3;
+            const avgInventory = ((y1.inventory || 0) + (y2.inventory || 0) + (y3.inventory || 0)) / 3;
+            const avgTotalEquity = avgTotalAssets - avgTotalLiabilities; // Derived
+
+            // Derived values for ratios
+            const netOperatingIncome = avgRevenue - avgOperatingCosts;
+            const totalDebtService = avgInterestExpense + (avgTotalLiabilities * 0.1); // Simplified: interest + 10% of principal per year
+
+            // Mandatory Financial Calculations:
+            farmAssessmentData.financialAssessment.financialRatios.debtServiceCoverage = totalDebtService > 0 ? (netOperatingIncome / totalDebtService) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.returnOnAssets = avgTotalAssets > 0 ? (avgNetIncome / avgTotalAssets) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.currentRatio = avgCurrentLiabilities > 0 ? (avgCurrentAssets / avgCurrentLiabilities) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.operatingMargin = avgRevenue > 0 ? (netOperatingIncome / avgRevenue) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.assetTurnover = avgTotalAssets > 0 ? (avgRevenue / avgTotalAssets) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.equityRatio = avgTotalAssets > 0 ? (avgTotalEquity / avgTotalAssets) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.quickRatio = avgCurrentLiabilities > 0 ? ((avgCurrentAssets - avgInventory) / avgCurrentLiabilities) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.interestCoverage = avgInterestExpense > 0 ? (avgEBIT / avgInterestExpense) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.workingCapitalRatio = avgTotalAssets > 0 ? ((avgCurrentAssets - avgCurrentLiabilities) / avgTotalAssets) : 0;
+
+            // Update UI
+            document.getElementById('dsr').textContent = farmAssessmentData.financialAssessment.financialRatios.debtServiceCoverage.toFixed(2);
+            document.getElementById('roa').textContent = (farmAssessmentData.financialAssessment.financialRatios.returnOnAssets * 100).toFixed(2) + '%';
+            document.getElementById('cr').textContent = farmAssessmentData.financialAssessment.financialRatios.currentRatio.toFixed(2);
+            document.getElementById('om').textContent = (farmAssessmentData.financialAssessment.financialRatios.operatingMargin * 100).toFixed(2) + '%';
+            document.getElementById('at').textContent = farmAssessmentData.financialAssessment.financialRatios.assetTurnover.toFixed(2);
+            document.getElementById('er').textContent = (farmAssessmentData.financialAssessment.financialRatios.equityRatio * 100).toFixed(2) + '%';
+            document.getElementById('qr').textContent = farmAssessmentData.financialAssessment.financialRatios.quickRatio.toFixed(2);
+            document.getElementById('ic').textContent = farmAssessmentData.financialAssessment.financialRatios.interestCoverage.toFixed(2);
+            document.getElementById('wcr').textContent = (farmAssessmentData.financialAssessment.financialRatios.workingCapitalRatio * 100).toFixed(2) + '%';
+
+            saveCurrentFarmData();
+            updateFinancialRatiosChart();
+            showStatus('Financial ratios calculated and saved.');
+        }
+
+        let financialChartInstance = null;
+        function updateFinancialRatiosChart() {
+            const ctx = document.getElementById('financialRatiosChart');
+            if (!ctx) return; // Exit if canvas not found (module not rendered)
+            const ratios = farmAssessmentData.financialAssessment.financialRatios;
+
+            const labels = ['DSCR', 'ROA', 'Current Ratio', 'Operating Margin', 'Asset Turnover', 'Equity Ratio', 'Quick Ratio', 'Interest Coverage', 'Working Capital Ratio'];
+            const data = [
+                ratios.debtServiceCoverage,
+                ratios.returnOnAssets,
+                ratios.currentRatio,
+                ratios.operatingMargin,
+                ratios.assetTurnover,
+                ratios.equityRatio,
+                ratios.quickRatio,
+                ratios.interestCoverage,
+                ratios.workingCapitalRatio
+            ];
+
+            if (financialChartInstance) {
+                financialChartInstance.destroy();
+            }
+
+            financialChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Financial Ratios',
+                        data: data,
+                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Scoring and Classification Logic ---
+        function calculateOverallScore() {
+            const scores = farmAssessmentData.scoring.componentScores;
+            let totalWeightedScore = 0;
+
+            // --- Financial Health (25%) ---
+            let financialScore = 0;
+            const fr = farmAssessmentData.financialAssessment.financialRatios;
+            // Simple scoring based on ratios (0-100 scale, higher is better)
+            financialScore += (fr.returnOnAssets * 100 > 0 ? Math.min(fr.returnOnAssets * 100 * 2, 100) : 0) * 0.25; // ROA, max 100
+            financialScore += (fr.currentRatio > 1.5 ? Math.min(fr.currentRatio * 20, 100) : 0) * 0.25; // Current Ratio
+            financialScore += (fr.debtServiceCoverage > 1.25 ? Math.min(fr.debtServiceCoverage * 40, 100) : 0) * 0.25; // DSCR
+            financialScore += (fr.operatingMargin * 100 > 10 ? Math.min(fr.operatingMargin * 100 * 2, 100) : 0) * 0.25; // Operating Margin
+            scores.financial = financialScore;
+
+            // --- Operational Excellence (20%) ---
+            let operationalScore = 0;
+            const infra = farmAssessmentData.farmProfile.infrastructure;
+            operationalScore += (infra.totalInfrastructureValue > 0 ? 50 : 0) * 0.5; // Basic check
+            operationalScore += ((infra.buildings[0] && infra.buildings[0].condition === 'Good') ? 50 : 0) * 0.5; // Example
+            scores.operational = operationalScore;
+
+            // --- Market Position (20%) ---
+            let marketScore = 0;
+            const commercial = farmAssessmentData.commercialAssessment;
+            marketScore += (commercial.customerAnalysis.customerConcentration < 50 ? 50 : 0) * 0.5; // Lower concentration is better
+            marketScore += (commercial.customerAnalysis.retentionRate > 70 ? 50 : 0) * 0.5;
+            scores.market = marketScore;
+
+            // --- Management Quality (15%) ---
+            let managementScore = 0;
+            const hr = farmAssessmentData.hrManagement;
+            managementScore += (hr.organizationStructure.totalEmployees > 0 ? 30 : 0) * 0.3;
+            managementScore += ((hr.organizationStructure.keyPersonnel[0] && hr.organizationStructure.keyPersonnel[0].competencyScore) || 0) * 20 * 0.4; // Score 1-5 to 0-100
+            managementScore += (getNestedValue(hr, 'managementCompetency.successionPlanning') === 'In Place' ? 30 : 0) * 0.3;
+            scores.management = managementScore;
+
+            // --- Compliance and Risk Management (10%) ---
+            let complianceScore = 0;
+            const legal = farmAssessmentData.legalCompliance;
+            complianceScore += (legal.corporateCompliance.directorCompliance ? 25 : 0) * 0.25;
+            complianceScore += (legal.complianceCertification.regulatoryStandardsCompliance ? 25 : 0) * 0.25;
+            complianceScore += (legal.taxCompliance.incomeTax && legal.taxCompliance.vat ? 25 : 0) * 0.25;
+            complianceScore += (legal.insurancePortfolio.coverageAdequacy === 'Adequate' ? 25 : 0) * 0.25;
+            scores.compliance = complianceScore;
+
+            // --- Agricultural and Technical Excellence (10%) ---
+            let agriculturalScore = 0;
+            const agTech = farmAssessmentData.agriculturalTechnical;
+            const herd = farmAssessmentData.farmProfile.herdDetails;
+
+            agriculturalScore += (agTech.landUtilization.soilQualityScore || 0) * 0.2; // Direct score
+            agriculturalScore += (agTech.waterResources.irrigationEfficiency || 0) * 0.2; // Direct score
+            agriculturalScore += (herd.totalHead > 0 ? 20 : 0) * 0.1; // Basic herd presence
+            agriculturalScore += (agTech.livestockManagement.breedingPrograms.successRate || 0) * 0.2; // Breeding success
+            agriculturalScore += (agTech.productionEfficiency.calvingRate > 70 ? 20 : 0) * 0.1; // Calving rate
+            agriculturalScore += (agTech.technologyAdoption.precisionAgriculture ? 10 : 0) * 0.1; // Tech adoption
+            scores.agricultural = agriculturalScore;
+
+            // Calculate total weighted score
+            totalWeightedScore =
+                (scores.financial / 100) * COMPONENT_WEIGHTS.financial * 100 +
+                (scores.operational / 100) * COMPONENT_WEIGHTS.operational * 100 +
+                (scores.market / 100) * COMPONENT_WEIGHTS.market * 100 +
+                (scores.management / 100) * COMPONENT_WEIGHTS.management * 100 +
+                (scores.compliance / 100) * COMPONENT_WEIGHTS.compliance * 100 +
+                (scores.agricultural / 100) * COMPONENT_WEIGHTS.agricultural * 100;
+
+            farmAssessmentData.scoring.weightedScore = totalWeightedScore;
+
+            // Classification Algorithm
+            let classification = '';
+            if (totalWeightedScore >= 80) {
+                classification = 'Highly Viable';
+            } else if (totalWeightedScore >= 60) {
+                classification = 'Viable with Conditions';
+            } else if (totalWeightedScore >= 40) {
+                classification = 'Marginal Viability';
+            } else {
+                classification = 'Non-Viable';
+            }
+            farmAssessmentData.scoring.classification = classification;
+            farmAssessmentData.recommendations.viabilityConclusion = classification; // Update conclusion based on score
+
+            // Update UI
+            document.querySelector('#scoring-classification .list-group-item:nth-child(1) span').textContent = scores.financial.toFixed(2);
+            document.querySelector('#scoring-classification .list-group-item:nth-child(2) span').textContent = scores.operational.toFixed(2);
+            document.querySelector('#scoring-classification .list-group-item:nth-child(3) span').textContent = scores.market.toFixed(2);
+            document.querySelector('#scoring-classification .list-group-item:nth-child(4) span').textContent = scores.management.toFixed(2);
+            document.querySelector('#scoring-classification .list-group-item:nth-child(5) span').textContent = scores.compliance.toFixed(2);
+            document.querySelector('#scoring-classification .list-group-item:nth-child(6) span').textContent = scores.agricultural.toFixed(2);
+            document.querySelector('#scoring-classification .badge.bg-info').textContent = totalWeightedScore.toFixed(2);
+            document.querySelector('#scoring-classification .badge.bg-primary').textContent = classification;
+
+            saveCurrentFarmData();
+            updateViabilityScoreChart();
+            showStatus('Overall score calculated and saved.');
+        }
+
+        let viabilityChartInstance = null;
+        function updateViabilityScoreChart() {
+            const ctx = document.getElementById('viabilityScoreChart');
+            if (!ctx) return; // Exit if canvas not found (module not rendered)
+            const scores = farmAssessmentData.scoring.componentScores;
+
+            const labels = ['Financial', 'Operational', 'Market', 'Management', 'Compliance', 'Agricultural'];
+            const data = [
+                scores.financial,
+                scores.operational,
+                scores.market,
+                scores.management,
+                scores.compliance,
+                scores.agricultural
+            ];
+
+            if (viabilityChartInstance) {
+                viabilityChartInstance.destroy();
+            }
+
+            viabilityChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Component Scores',
+                        data: data,
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1,
+                        pointBackgroundColor: 'rgba(0, 123, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(0, 123, 255, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            pointLabels: { font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Report Generation Logic ---
+        function generateReport(type) {
+            const reportPreview = document.getElementById('reportPreview');
+            let reportHtml = '';
+
+            const farmName = farmAssessmentData.farmProfile.basicInfo.farmName || 'Unnamed Farm';
+            const farmId = farmAssessmentData.farmProfile.basicInfo.farmId || 'N/A';
+            const viability = farmAssessmentData.recommendations.viabilityConclusion || 'Not Assessed';
+            const weightedScore = farmAssessmentData.scoring.weightedScore.toFixed(2);
+
+            if (type === 'executive') {
+                const swot = farmAssessmentData.recommendations.swotAnalysis;
+                const financialRatios = farmAssessmentData.financialAssessment.financialRatios;
+                const keyRecommendations = (farmAssessmentData.recommendations.interventionPlan || []).join('; ');
+
+                reportHtml = `
+                    <h3 class="text-center mb-4">Executive Summary Report for ${farmName}</h3>
+                    <p class="text-muted text-center">Farm ID: ${farmId}</p>
+                    <hr>
+                    <h5 class="mt-4">Overall Viability Recommendation: <span class="badge bg-primary">${viability} (Score: ${weightedScore})</span></h5>
+
+                    <h5 class="mt-4">Business Overview</h5>
+                    <p><strong>Farm Name:</strong> ${farmName}</p>
+                    <p><strong>Farm Type:</strong> ${farmAssessmentData.farmProfile.basicInfo.farmType || 'N/A'}</p>
+                    <p><strong>Physical Address:</strong> ${farmAssessmentData.farmProfile.location.physicalAddress || 'N/A'}</p>
+                    <p><strong>Total Hectares:</strong> ${farmAssessmentData.farmProfile.basicInfo.totalHectares || 'N/A'}</p>
+                    <p><strong>Total Cattle Head:</strong> ${farmAssessmentData.farmProfile.herdDetails.totalHead || 'N/A'}</p>
+                    <p><strong>Estimated Cattle Value:</strong> ZAR ${((farmAssessmentData.farmProfile.herdDetails.totalHead || 0) * (farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0)).toLocaleString('en-ZA')}</p>
+
+
+                    <h5 class="mt-4">Key Findings (SWOT Analysis)</h5>
+                    <h6>Strengths:</h6><ul>${(swot.strengths || []).map(s => `<li>${s}</li>`).join('')}</ul>
+                    <h6>Weaknesses:</h6><ul>${(swot.weaknesses || []).map(w => `<li>${w}</li>`).join('')}</ul>
+                    <h6>Opportunities:</h6><ul>${(swot.opportunities || []).map(o => `<li>${o}</li>`).join('')}</ul>
+                    <h6>Threats:</h6><ul>${(swot.threats || []).map(t => `<li>${t}</li>`).join('')}</ul>
+
+                    <h5 class="mt-4">Financial Summary</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr><th>Ratio</th><th>Value</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Debt Service Coverage Ratio</td><td>${financialRatios.debtServiceCoverage.toFixed(2)}</td></tr>
+                            <tr><td>Return on Assets</td><td>${(financialRatios.returnOnAssets * 100).toFixed(2)}%</td></tr>
+                            <tr><td>Current Ratio</td><td>${financialRatios.currentRatio.toFixed(2)}</td></tr>
+                            <tr><td>Operating Margin</td><td>${(financialRatios.operatingMargin * 100).toFixed(2)}%</td></tr>
+                            <tr><td>Asset Turnover</td><td>${financialRatios.assetTurnover.toFixed(2)}</td></tr>
+                            <tr><td>Equity Ratio</td><td>${(financialRatios.equityRatio * 100).toFixed(2)}%</td></tr>
+                            <tr><td>Quick Ratio</td><td>${financialRatios.quickRatio.toFixed(2)}</td></tr>
+                            <tr><td>Interest Coverage</td><td>${financialRatios.interestCoverage.toFixed(2)}</td></tr>
+                            <tr><td>Working Capital Ratio</td><td>${(financialRatios.workingCapitalRatio * 100).toFixed(2)}%</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h5 class="mt-4">Key Recommendations</h5>
+                    <p>${keyRecommendations || 'No specific recommendations provided yet.'}</p>
+                    <p class="mt-5 text-end text-muted">Report Generated: ${new Date().toLocaleDateString()}</p>
+                `;
+            } else if (type === 'detailed') {
+                // For a truly detailed report, you'd iterate through all data points.
+                // For this demo, I'll provide a high-level summary of each module.
+                reportHtml = `
+                    <h3 class="text-center mb-4">Detailed Assessment Report for ${farmName}</h3>
+                    <p class="text-muted text-center">Farm ID: ${farmId}</p>
+                    <hr>
+                    <h5 class="mt-4">Overall Viability: <span class="badge bg-primary">${viability} (Score: ${weightedScore})</span></h5>
+
+                    <h5 class="mt-4">1. Executive Summary</h5>
+                    <p><strong>Business Overview:</strong> ${farmAssessmentData.farmProfile.basicInfo.operationalHistory || 'N/A'}</p>
+                    <p><strong>Key Findings:</strong> Strengths: ${(farmAssessmentData.recommendations.swotAnalysis.strengths || []).join('; ')}. Weaknesses: ${(farmAssessmentData.recommendations.swotAnalysis.weaknesses || []).join('; ')}.</p>
+
+                    <h5 class="mt-4">2. Business Description and Structure</h5>
+                    <p><strong>Legal Structure:</strong> ${farmAssessmentData.farmProfile.legalStructure || 'N/A'}</p>
+                    <p><strong>Total Hectares:</strong> ${farmAssessmentData.farmProfile.basicInfo.totalHectares || 'N/A'}</p>
+                    <p><strong>Herd Details:</strong> Total Head: ${farmAssessmentData.farmProfile.herdDetails.totalHead || 'N/A'}, Main Breeds: ${(farmAssessmentData.farmProfile.herdDetails.mainBreeds || []).join(', ')}.</p>
+                    <p><strong>Estimated Cattle Value:</strong> ZAR ${((farmAssessmentData.farmProfile.herdDetails.totalHead || 0) * (farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0)).toLocaleString('en-ZA')}</p>
+
+                    <h5 class="mt-4">3. Comprehensive Financial Assessment</h5>
+                    <p><strong>Historical Revenue (Year 3):</strong> ${farmAssessmentData.financialAssessment.historicalData.year3.revenue || 'N/A'}</p>
+                    <p><strong>Current Ratio:</strong> ${farmAssessmentData.financialAssessment.financialRatios.currentRatio.toFixed(2)}</p>
+
+                    <h5 class="mt-4">4. Commercial and Marketing Assessment</h5>
+                    <p><strong>Customer Concentration:</strong> ${farmAssessmentData.commercialAssessment.customerAnalysis.customerConcentration || 'N/A'}%</p>
+                    <p><strong>Marketing Plan Evaluation:</strong> ${farmAssessmentData.commercialAssessment.salesStrategy.marketingPlanEvaluation || 'N/A'}</p>
+
+                    <h5 class="mt-4">5. Human Resources and Management Assessment</h5>
+                    <p><strong>Total Employees:</strong> ${farmAssessmentData.hrManagement.organizationStructure.totalEmployees || 'N/A'}</p>
+                    <p><strong>Succession Planning:</strong> ${getNestedValue(farmAssessmentData.hrManagement, 'managementCompetency.successionPlanning') || 'N/A'}</p>
+
+                    <h5 class="mt-4">6. Environmental Assessment</h5>
+                    <p><strong>Environmental Audits:</strong> ${farmAssessmentData.environmentalAssessment.regulatoryCompliance.environmentalAudits || 'N/A'}</p>
+                    <p><strong>Water Usage Monitoring:</strong> ${farmAssessmentData.environmentalAssessment.resourceManagement.waterUsage || 'N/A'}</p>
+
+                    <h5 class="mt-4">7. Legal and Regulatory Compliance</h5>
+                    <p><strong>Director Compliance:</strong> ${farmAssessmentData.legalCompliance.corporateCompliance.directorCompliance ? 'Yes' : 'No'}</p>
+                    <p><strong>Income Tax Compliant:</strong> ${farmAssessmentData.legalCompliance.taxCompliance.incomeTax ? 'Yes' : 'No'}</p>
+
+                    <h5 class="mt-4">8. Agricultural and Technical Assessment</h5>
+                    <p><strong>Soil Potential:</strong> ${farmAssessmentData.agriculturalTechnical.landUtilization.soilPotential || 'N/A'}</p>
+                    <p><strong>Calving Rate:</strong> ${farmAssessmentData.agriculturalTechnical.productionEfficiency.calvingRate || 'N/A'}%</p>
+                    <p><strong>Breeding Program Type:</strong> ${farmAssessmentData.agriculturalTechnical.livestockManagement.breedingPrograms.type || 'N/A'}</p>
+
+                    <h5 class="mt-4">9. Comprehensive Risk Analysis</h5>
+                    <p><strong>Key Production Risk:</strong> ${farmAssessmentData.riskAssessment.productionRisks.weatherPatterns.details || 'N/A'}</p>
+                    <p><strong>Mitigation Strategies:</strong> ${farmAssessmentData.riskAssessment.mitigationStrategies || 'N/A'}</p>
+
+                    <h5 class="mt-4">10. Integrated Scoring and Classification Engine</h5>
+                    <p><strong>Overall Weighted Score:</strong> ${farmAssessmentData.scoring.weightedScore.toFixed(2)}</p>
+                    <p><strong>Classification:</strong> ${farmAssessmentData.scoring.classification || 'N/A'}</p>
+
+                    <h5 class="mt-4">11. Viability Conclusion and Recommendation</h5>
+                    <p><strong>Viability Conclusion:</strong> ${farmAssessmentData.recommendations.viabilityConclusion || 'N/A'}</p>
+                    <p><strong>Intervention Plan:</strong> ${(farmAssessmentData.recommendations.interventionPlan || []).join('; ')}</p>
+
+                    <p class="mt-5 text-end text-muted">Report Generated: ${new Date().toLocaleDateString()}</p>
+                `;
+            }
+
+            reportPreview.innerHTML = reportHtml;
+            showStatus(`Generated ${type} report preview.`);
+
+            // For actual PDF generation, you would use a library like jsPDF or html2pdf.js
+            // This would require including another CDN. For now, users can use browser's Print to PDF.
+        }
+
+        // --- Module Progress Tracking ---
+        function updateModuleProgress(moduleName) {
+            let progress = 0;
+            const data = farmAssessmentData;
+
+            // Simple heuristic for progress: check if a few key fields are filled
+            switch (moduleName) {
+                case 'executive-summary':
+                    if (data.farmProfile.basicInfo.farmName && data.recommendations.viabilityConclusion && (data.recommendations.swotAnalysis.strengths || []).length > 0) progress = 100;
+                    else if (data.farmProfile.basicInfo.farmName || data.recommendations.viabilityConclusion) progress = 50;
+                    break;
+                case 'business-description':
+                    if (data.farmProfile.basicInfo.totalHectares > 0 && data.farmProfile.herdDetails.totalHead > 0 && data.farmProfile.legalStructure && data.farmProfile.herdDetails.averageValuePerHead > 0) progress = 100;
+                    else if (data.farmProfile.basicInfo.totalHectares > 0 || data.farmProfile.herdDetails.totalHead > 0 || data.farmProfile.herdDetails.averageValuePerHead > 0) progress = 50;
+                    break;
+                case 'financial-assessment':
+                    if (data.financialAssessment.historicalData.year3.revenue > 0 && data.financialAssessment.financialRatios.currentRatio > 0) progress = 100;
+                    else if (data.financialAssessment.historicalData.year3.revenue > 0) progress = 50;
+                    break;
+                case 'commercial-marketing':
+                    if (data.commercialAssessment.customerAnalysis.customerConcentration > 0 && data.commercialAssessment.salesStrategy.marketingPlanEvaluation) progress = 100;
+                    else if (data.commercialAssessment.customerAnalysis.customerConcentration > 0) progress = 50;
+                    break;
+                case 'hr-management':
+                    if (data.hrManagement.organizationStructure.totalEmployees > 0 && getNestedValue(data.hrManagement, 'managementCompetency.successionPlanning')) progress = 100;
+                    else if (data.hrManagement.organizationStructure.totalEmployees > 0) progress = 50;
+                    break;
+                case 'environmental-assessment':
+                    if (data.environmentalAssessment.regulatoryCompliance.environmentalAudits && data.environmentalAssessment.sustainabilityPractices.renewableEnergy) progress = 100;
+                    else if (data.environmentalAssessment.regulatoryCompliance.environmentalAudits) progress = 50;
+                    break;
+                case 'legal-regulatory':
+                    if (data.legalCompliance.corporateCompliance.directorCompliance && data.legalCompliance.taxCompliance.incomeTax) progress = 100;
+                    else if (data.legalCompliance.corporateCompliance.directorCompliance) progress = 50;
+                    break;
+                case 'agricultural-technical':
+                    if (data.agriculturalTechnical.landUtilization.soilPotential && data.agriculturalTechnical.productionEfficiency.calvingRate > 0) progress = 100;
+                    else if (data.agriculturalTechnical.landUtilization.soilPotential) progress = 50;
+                    break;
+                case 'risk-analysis':
+                    // Check if at least one risk has likelihood/impact filled and mitigation strategies are present
+                    const hasRiskData = Object.values(data.riskAssessment.productionRisks).some(r => r.likelihood > 0 || r.impact > 0) ||
+                                        Object.values(data.riskAssessment.marketRisks).some(r => r.likelihood > 0 || r.impact > 0);
+                    if (hasRiskData && data.riskAssessment.mitigationStrategies) progress = 100;
+                    else if (hasRiskData || data.riskAssessment.mitigationStrategies) progress = 50;
+                    break;
+                case 'scoring-classification':
+                    if (data.scoring.weightedScore > 0 && data.scoring.classification !== '') progress = 100;
+                    else if (data.scoring.weightedScore > 0) progress = 50;
+                    break;
+                case 'viability-conclusion':
+                    if (data.recommendations.viabilityConclusion && (data.recommendations.interventionPlan || []).length > 0) progress = 100;
+                    else if (data.recommendations.viabilityConclusion) progress = 50;
+                    break;
+                case 'reporting-system':
+                    if (data.farmProfile.basicInfo.farmName) progress = 100;
+                    break;
+            }
+            const progressElement = document.getElementById(`progress-${moduleName}`);
+            if (progressElement) {
+                progressElement.textContent = `${progress}%`;
+                if (progress === 100) {
+                    progressElement.classList.remove('bg-secondary', 'bg-warning');
+                    progressElement.classList.add('bg-success');
+                } else if (progress > 0) {
+                    progressElement.classList.remove('bg-success', 'bg-secondary');
+                    progressElement.classList.add('bg-warning');
+                } else {
+                    progressElement.classList.remove('bg-success', 'bg-warning');
+                    progressElement.classList.add('bg-secondary');
+                }
+            }
+        }
+
+        function updateAllModuleProgress() {
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                const moduleName = link.dataset.module;
+                updateModuleProgress(moduleName);
+            });
+        }
+
+        // --- Custom Confirmation Dialog (replaces alert/confirm) ---
+        function showCustomConfirm(message) {
+            return new Promise((resolve) => {
+                const modalHtml = `
+                    <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content rounded-lg shadow-lg">
+                                <div class="modal-header bg-warning text-white rounded-top-lg">
+                                    <h5 class="modal-title" id="customConfirmModalLabel">Confirmation</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <p>${message}</p>
+                                </div>
+                                <div class="modal-footer border-top-0 p-3">
+                                    <button type="button" class="btn btn-secondary rounded-lg" data-bs-dismiss="modal" id="confirmCancelBtn">Cancel</button>
+                                    <button type="button" class="btn btn-danger rounded-lg" id="confirmOkBtn">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                const modalElement = document.getElementById('customConfirmModal');
+                const confirmModal = new bootstrap.Modal(modalElement);
+
+                const confirmOkBtn = document.getElementById('confirmOkBtn');
+                const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+                confirmOkBtn.onclick = () => {
+                    confirmModal.hide();
+                    resolve(true);
+                };
+
+                confirmCancelBtn.onclick = () => {
+                    confirmModal.hide();
+                    resolve(false);
+                };
+
+                modalElement.addEventListener('hidden.bs.modal', () => {
+                    modalElement.remove(); // Clean up the modal from DOM
+                });
+
+                confirmModal.show();
+            });
+        }
+
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoading();
+            await openIndexedDB();
+            allFarmIds = await getAllFarmIdsIndexedDB();
+
+            // Merge with Supabase IDs if configured
+            if (supabase) {
+                const supabaseFarmIds = await getAllFarmIdsSupabase();
+                // Simple merge: add any Supabase IDs not already in IndexedDB
+                supabaseFarmIds.forEach(id => {
+                    if (!allFarmIds.includes(id)) {
+                        allFarmIds.push(id);
+                    }
+                });
+            }
+
+            if (allFarmIds.length === 0) {
+                await createNewFarm(); // Create a default farm if none exist
+            } else {
+                await loadFarm(allFarmIds[0]); // Load the first farm by default
+            }
+            updateAllModuleProgress(); // Initial progress update
+            hideLoading();
+        });
+
+        // Sidebar navigation clicks
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                document.querySelectorAll('.sidebar .nav-link').forEach(nav => nav.classList.remove('active'));
+                link.classList.add('active');
+                renderModule(link.dataset.module);
+            });
+        });
+
+        // Farm selector change
+        farmSelector.addEventListener('change', async (event) => {
+            await loadFarm(event.target.value);
+            updateAllModuleProgress();
+        });
+
+        // New Farm button
+        newFarmBtn.addEventListener('click', createNewFarm);
+
+        // Delete Farm button
+        deleteFarmBtn.addEventListener('click', deleteCurrentFarm);
+
+    </script>
+</body>
+</html>
