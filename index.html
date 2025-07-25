@@ -416,7 +416,7 @@
                     <button class="btn btn-primary d-md-none me-3 hamburger-menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <img src="https://placehold.co/150x40/007bff/ffffff?text=Nyika" alt="Nyika Logo" class="logo">
+                    <img src="https://placehold.co/150x40/007bff/ffffff?text=Land+Bank" alt="Land Bank Logo" class="logo">
                     <h3 class="mb-0">Cattle Farm Viability Assessment</h3>
                 </div>
                 <div class="farm-selector-section d-flex align-items-center flex-wrap justify-content-center justify-content-md-end">
@@ -1182,17 +1182,14 @@
             if (data) {
                 farmAssessmentData = data;
                 farmAssessmentData.farmProfile.basicInfo.farmId = farmId; // Ensure farmId is consistent
-                // Ensure farm name is set for display if it was loaded as empty
-                if (!farmAssessmentData.farmProfile.basicInfo.farmName) {
-                    farmAssessmentData.farmProfile.basicInfo.farmName = `Farm ${allFarmIds.indexOf(farmId) + 1}`;
-                }
-                showStatus(`Loaded data for farm: ${farmAssessmentData.farmProfile.basicInfo.farmName}`);
+                // Do NOT set a default farm name here. It should remain empty if not provided by user.
+                showStatus(`Loaded data for farm: ${farmAssessmentData.farmProfile.basicInfo.farmName || 'Unnamed Farm'}`);
             } else {
                 // If no data found, initialize with default structure
                 farmAssessmentData = JSON.parse(JSON.stringify(defaultFarmAssessmentData));
                 farmAssessmentData.farmProfile.basicInfo.farmId = farmId;
-                farmAssessmentData.farmProfile.basicInfo.farmName = `New Farm ${allFarmIds.length + 1}`; // Set display name for new farm
-                showStatus('Initialized new farm data.');
+                // Leave farmName empty here as well, so progress starts at 0%
+                showStatus('Initialized new farm data. Please name this farm.');
             }
             updateFarmSelector();
             // Get the currently active module from the sidebar, or default to executive-summary
@@ -1213,16 +1210,15 @@
 
         async function createNewFarm() {
             const newId = generateUniqueId();
-            const newFarmName = `New Farm ${allFarmIds.length + 1}`;
             const newFarmData = JSON.parse(JSON.stringify(defaultFarmAssessmentData));
             newFarmData.farmProfile.basicInfo.farmId = newId;
-            newFarmData.farmProfile.basicInfo.farmName = newFarmName; // Set name for the new farm
+            // IMPORTANT: Do NOT set farmName here. It should remain empty for 0% progress.
 
             allFarmIds.push(newId);
             await saveFarmDataIndexedDB(newId, newFarmData);
             await syncToSupabase(newId, newFarmData); // Sync new farm immediately
             await loadFarm(newId);
-            showStatus(`Created new farm: ${newFarmName}`);
+            showStatus(`Created new farm. Please name it.`);
         }
 
         async function deleteCurrentFarm() {
@@ -1231,7 +1227,7 @@
                 return;
             }
 
-            const confirmDelete = await showCustomConfirm(`Are you sure you want to delete "${farmAssessmentData.farmProfile.basicInfo.farmName}"? This action cannot be undone.`);
+            const confirmDelete = await showCustomConfirm(`Are you sure you want to delete "${farmAssessmentData.farmProfile.basicInfo.farmName || 'this unnamed farm'}"? This action cannot be undone.`);
             if (!confirmDelete) {
                 return;
             }
@@ -1264,17 +1260,13 @@
                 allFarmIds.forEach(id => {
                     const option = document.createElement('option');
                     option.value = id;
-                    // Attempt to get farm name from in-memory data if available, otherwise use ID
-                    // This is a simplified approach; in a real app, you might store farm names separately
-                    // or fetch them when populating the selector.
-                    let farmNameFromData = '';
+                    let displayName = `Farm ${allFarmIds.indexOf(id) + 1}`; // Default generic name
+
+                    // If it's the currently loaded farm, try to use its actual name
                     if (id === currentFarmId && farmAssessmentData.farmProfile && farmAssessmentData.farmProfile.basicInfo) {
-                        farmNameFromData = farmAssessmentData.farmProfile.basicInfo.farmName;
-                    } else {
-                        // For simplicity, we'll just use the ID if not the current farm.
-                        farmNameFromData = id; // Fallback to ID if name not readily available
+                        displayName = farmAssessmentData.farmProfile.basicInfo.farmName || `Unnamed Farm ${allFarmIds.indexOf(id) + 1}`;
                     }
-                    option.textContent = farmNameFromData;
+                    option.textContent = displayName;
                     option.selected = (id === currentFarmId); // Set selected option
                     farmSelector.appendChild(option);
                 });
