@@ -713,6 +713,7 @@
         const OPTIONS = {
             farmType: { 'Beef': 100, 'Dairy': 90, 'Mixed': 80, 'Other': 50 },
             landTenure: { 'Owned': 100, 'Leased': 70, 'Mixed': 85 },
+            legalStructure: { 'Pty Ltd': 100, 'Co-op': 90, 'Sole Prop': 70, 'Trust': 80 }, // Added content for Legal Structure
             condition: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 }, // Reusable for buildings, equipment, animal housing
             identificationSystem: { 'RFID': 100, 'Ear Tags': 70, 'Branding': 40, 'None': 10 },
             herdHealthStatus: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 },
@@ -741,7 +742,59 @@
             veterinaryPrograms: { 'Comprehensive': 100, 'Basic Preventive': 70, 'Reactive': 30, 'None': 0 },
             automationLevel: { 'High': 100, 'Medium': 70, 'Low': 40, 'None': 10 },
             precisionAgriculture: { 'Yes': 100, 'No': 0 },
-            renewableEnergy: { 'Yes': 100, 'Partial': 50, 'No': 0 }
+            renewableEnergy: { 'Yes': 100, 'Partial': 50, 'No': 0 },
+            // New SWOT options with weights
+            swotStrengths: {
+                'Strong Management Team': 10,
+                'High-Quality Livestock': 10,
+                'Modern Infrastructure & Equipment': 8,
+                'Established Market Access': 8,
+                'Diversified Revenue Streams': 7,
+                'Efficient Production Practices': 7,
+                'Healthy Financial Position': 9,
+                'Experienced Labor Force': 6,
+                'Strong Brand Reputation': 5,
+                'Robust Disease Prevention': 9,
+                'Sustainable Water Management': 8
+            },
+            swotWeaknesses: {
+                'Aging Infrastructure': -8,
+                'High Operating Costs': -9,
+                'Lack of Succession Planning': -10,
+                'Limited Market Access': -7,
+                'Dependence on Single Commodity': -8,
+                'Poor Herd Health Management': -10,
+                'High Debt Burden': -10,
+                'Inexperienced Labor Force': -7,
+                'Weak Financial Controls': -9,
+                'Inefficient Waste Management': -7,
+                'Limited Access to Capital': -9
+            },
+            swotOpportunities: {
+                'Expanding Local Market Demand': 9,
+                'Access to New Technologies': 8,
+                'Government Support Programs': 7,
+                'Value-Added Product Development': 10,
+                'Export Market Expansion': 9,
+                'Strategic Partnerships': 8,
+                'Improved Climate Resilience': 6,
+                'Sustainable Farming Practices Adoption': 7,
+                'Growing Organic/Ethical Meat Market': 8,
+                'Improved Genetics & Breeding': 7
+            },
+            swotThreats: {
+                'Adverse Weather Conditions': -10,
+                'Fluctuating Commodity Prices': -9,
+                'Increased Competition': -7,
+                'Disease Outbreaks': -10,
+                'Rising Input Costs': -8,
+                'Regulatory Changes': -7,
+                'Land Reform Uncertainty': -9,
+                'Labor Shortages': -8,
+                'Water Scarcity': -9,
+                'Consumer Preference Shifts': -6,
+                'Trade Barriers': -7
+            }
         };
 
         // Weights for the main components (sum to 1.0)
@@ -813,6 +866,29 @@
             }
             return html;
         }
+
+        // Helper for rendering SWOT checkboxes
+        function generateSwotCheckboxes(categoryName, optionsMap, currentValuesArray, path) {
+            let html = `<h6>${categoryName}:</h6><div class="row">`;
+            for (const key in optionsMap) {
+                const score = optionsMap[key];
+                // Ensure currentValuesArray is an array before using .includes()
+                const isChecked = Array.isArray(currentValuesArray) && currentValuesArray.includes(key);
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${key}" id="${path.replace(/\./g, '-')}-${key.replace(/\s/g, '-')}" name="${path}" ${isChecked ? 'checked' : ''} data-swot-score="${score}">
+                            <label class="form-check-label" for="${path.replace(/\./g, '-')}-${key.replace(/\s/g, '-')}" title="Score: ${score}">
+                                ${key}
+                            </label>
+                        </div>
+                    </div>
+                `;
+            }
+            html += `</div>`;
+            return html;
+        }
+
 
         // --- IndexedDB Functions ---
         function openIndexedDB() {
@@ -1033,7 +1109,7 @@
             showLoading();
             try {
                 let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
-                if (authError) throw authData; // Fixed: should throw authError
+                if (authError) throw authError;
                 const userId = authData.user.id;
 
                 const { error } = await supabase
@@ -1187,7 +1263,6 @@
                         farmNameFromData = farmAssessmentData.farmProfile.basicInfo.farmName;
                     } else {
                         // If not the current farm, try to load its name from IndexedDB if possible
-                        // This would require an async call here, which might slow down UI.
                         // For simplicity, we'll just use the ID if not the current farm.
                         farmNameFromData = id;
                     }
@@ -1253,10 +1328,30 @@
                 element.addEventListener('change', (event) => {
                     const path = event.target.name;
                     let value;
+
                     if (event.target.type === 'number') {
                         value = parseFloat(event.target.value) || 0;
                     } else if (event.target.type === 'checkbox') {
-                        value = event.target.checked;
+                        // Handle checkboxes for SWOT analysis (multiple selections into an array)
+                        if (path.startsWith('recommendations.swotAnalysis.')) {
+                            const swotCategory = path.split('.').pop(); // 'strengths', 'weaknesses', etc.
+                            let currentArray = farmAssessmentData.recommendations.swotAnalysis[swotCategory] || [];
+                            if (event.target.checked) {
+                                if (!currentArray.includes(event.target.value)) {
+                                    currentArray.push(event.target.value);
+                                }
+                            } else {
+                                currentArray = currentArray.filter(item => item !== event.target.value);
+                            }
+                            value = currentArray;
+                            // Directly set the value for SWOT arrays
+                            setNestedValue(farmAssessmentData, path, value);
+                            saveCurrentFarmData();
+                            updateModuleProgress(moduleName);
+                            return; // Exit to avoid double-processing
+                        } else {
+                            value = event.target.checked;
+                        }
                     } else if (event.target.dataset.arrayType === 'string') { // For comma-separated string arrays
                         value = event.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
                     } else {
@@ -1329,22 +1424,10 @@
                         </div>
 
                         <h4 class="mt-4 mb-3">Key Findings (SWOT Analysis)</h4>
-                        <div class="mb-3">
-                            <label for="strengths" class="form-label">Strengths (comma-separated)</label>
-                            <textarea class="form-control" id="strengths" name="recommendations.swotAnalysis.strengths" data-array-type="string" rows="3">${(swot.strengths || []).join(', ')}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="weaknesses" class="form-label">Weaknesses (comma-separated)</label>
-                            <textarea class="form-control" id="weaknesses" name="recommendations.swotAnalysis.weaknesses" data-array-type="string" rows="3">${(swot.weaknesses || []).join(', ')}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="opportunities" class="form-label">Opportunities (comma-separated)</label>
-                            <textarea class="form-control" id="opportunities" name="recommendations.swotAnalysis.opportunities" data-array-type="string" rows="3">${(swot.opportunities || []).join(', ')}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="threats" class="form-label">Threats (comma-separated)</label>
-                            <textarea class="form-control" id="threats" name="recommendations.swotAnalysis.threats" data-array-type="string" rows="3">${(swot.threats || []).join(', ')}</textarea>
-                        </div>
+                        ${generateSwotCheckboxes('Strengths', OPTIONS.swotStrengths, swot.strengths || [], 'recommendations.swotAnalysis.strengths')}
+                        ${generateSwotCheckboxes('Weaknesses', OPTIONS.swotWeaknesses, swot.weaknesses || [], 'recommendations.swotAnalysis.weaknesses')}
+                        ${generateSwotCheckboxes('Opportunities', OPTIONS.swotOpportunities, swot.opportunities || [], 'recommendations.swotAnalysis.opportunities')}
+                        ${generateSwotCheckboxes('Threats', OPTIONS.swotThreats, swot.threats || [], 'recommendations.swotAnalysis.threats')}
 
                         <h4 class="mt-4 mb-3">Financial Viability Snapshot</h4>
                         <p>Calculated ratios from Financial Assessment module:</p>
@@ -2296,7 +2379,7 @@
             const infra = farmAssessmentData.farmProfile.infrastructure;
             const businessDesc = farmAssessmentData.farmProfile;
 
-            // Max possible score for operational: (100 (land tenure) + 100 (legal structure) + 100 (building condition) + 100 (equipment condition) + 100 (identification system) + 100 (herd health)) / 6 = 100
+            // Max possible score for operational: (100 (land tenure) + 100 (legal structure) + 100 (building condition) + 100 (equipment condition) + 100 (identification system) + 100 (herd health))
             const maxOperationalScore = 600; // Sum of max scores for each field below
 
             operationalScore += OPTIONS.landTenure[businessDesc.basicInfo.landTenure] || 0;
@@ -2312,7 +2395,7 @@
             // --- Market Position (20%) ---
             let marketScore = 0;
             const commercial = farmAssessmentData.commercialAssessment;
-            const maxMarketScore = 400; // Sum of max scores for each field below
+            const maxMarketScore = 500; // Sum of max scores for each field below (100+100+100+100+100)
 
             marketScore += (commercial.customerAnalysis.customerConcentration < 50 ? 100 : 0); // Lower concentration is better
             marketScore += (commercial.customerAnalysis.retentionRate > 70 ? 100 : 0);
@@ -2325,7 +2408,7 @@
             // --- Management Quality (15%) ---
             let managementScore = 0;
             const hr = farmAssessmentData.hrManagement;
-            const maxManagementScore = 400; // Sum of max scores for each field below
+            const maxManagementBaseScore = 500; // Sum of max scores for each field below (100+100+100+100+100)
 
             managementScore += OPTIONS.organizationalChart[hr.organizationStructure.organizationalChart] || 0;
             managementScore += OPTIONS.roleClarity[hr.organizationStructure.roleClarity] || 0;
@@ -2333,14 +2416,56 @@
             managementScore += OPTIONS.successionPlanning[getNestedValue(hr, 'managementCompetency.successionPlanning')] || 0;
             managementScore += OPTIONS.unionRelationships[hr.laborRelations.unionRelationships] || 0;
 
-            scores.management = (managementScore / maxManagementScore) * 100;
+            // SWOT Integration into Management Score
+            let swotScoreContribution = 0;
+            let maxSwotPositiveScore = 0;
+            let maxSwotNegativeScore = 0;
+
+            // Calculate max possible positive and negative SWOT scores
+            for (const key in OPTIONS.swotStrengths) maxSwotPositiveScore += OPTIONS.swotStrengths[key];
+            for (const key in OPTIONS.swotOpportunities) maxSwotPositiveScore += OPTIONS.swotOpportunities[key];
+            for (const key in OPTIONS.swotWeaknesses) maxSwotNegativeScore += Math.abs(OPTIONS.swotWeaknesses[key]);
+            for (const key in OPTIONS.swotThreats) maxSwotNegativeScore += Math.abs(OPTIONS.swotThreats[key]);
+
+            const totalPossibleSwotRange = maxSwotPositiveScore + maxSwotNegativeScore;
+
+            // Calculate score from selected strengths
+            (farmAssessmentData.recommendations.swotAnalysis.strengths || []).forEach(item => {
+                swotScoreContribution += OPTIONS.swotStrengths[item] || 0;
+            });
+            // Calculate score from selected weaknesses (negative contribution)
+            (farmAssessmentData.recommendations.swotAnalysis.weaknesses || []).forEach(item => {
+                swotScoreContribution += OPTIONS.swotWeaknesses[item] || 0;
+            });
+            // Calculate score from selected opportunities
+            (farmAssessmentData.recommendations.swotAnalysis.opportunities || []).forEach(item => {
+                swotScoreContribution += OPTIONS.swotOpportunities[item] || 0;
+            });
+            // Calculate score from selected threats (negative contribution)
+            (farmAssessmentData.recommendations.swotAnalysis.threats || []).forEach(item => {
+                swotScoreContribution += OPTIONS.swotThreats[item] || 0;
+            });
+
+            // Normalize SWOT score to a 0-100 scale
+            let normalizedSwotScore = 0;
+            if (totalPossibleSwotRange > 0) {
+                // Shift the score so that the lowest possible (sum of all negative) maps to 0, and highest possible (sum of all positive) maps to 100
+                normalizedSwotScore = ((swotScoreContribution + maxSwotNegativeScore) / totalPossibleSwotRange) * 100;
+            }
+
+            // Add normalized SWOT score to the management score, weighted (e.g., 20% of management score comes from SWOT)
+            const swotWeightInManagement = 0.2; // SWOT contributes 20% to the management score
+            managementScore += normalizedSwotScore * swotWeightInManagement;
+            const maxManagementScoreAdjusted = maxManagementBaseScore + (100 * swotWeightInManagement); // Adjust max score for management
+
+            scores.management = (managementScore / maxManagementScoreAdjusted) * 100;
 
 
             // --- Compliance and Risk Management (10%) ---
             let complianceScore = 0;
             const legal = farmAssessmentData.legalCompliance;
             const env = farmAssessmentData.environmentalAssessment;
-            const maxComplianceScore = 1200; // Sum of max scores for each field below (6 legal + 6 env)
+            const maxComplianceBaseScore = 1200; // Sum of max scores for each field below (9 legal + 6 env)
 
             // Legal Compliance
             complianceScore += OPTIONS.registrationStatus[legal.corporateCompliance.registrationStatus] || 0;
@@ -2380,7 +2505,7 @@
                     if (risk.likelihood && risk.impact) {
                         totalRiskImpact += (risk.likelihood * risk.impact);
                     }
-                    maxPossibleRiskImpact += (5 * 5); // Max likelihood * Max impact
+                    maxPossibleRiskImpact += (5 * 5); // Max likelihood * Max impact (25 per risk item)
                 }
             });
 
@@ -2389,17 +2514,18 @@
             if (maxPossibleRiskImpact > 0) {
                 riskScore = 100 - ((totalRiskImpact / maxPossibleRiskImpact) * 100); // 0-100, 100 is no risk
             }
-            complianceScore += riskScore; // Add risk score to compliance
-            const maxTotalComplianceScore = maxComplianceScore + 100; // Add 100 for the risk score
+            const riskWeightInCompliance = 0.2; // Risk contributes 20% to the compliance score
+            complianceScore += riskScore * riskWeightInCompliance;
+            const maxComplianceScoreAdjusted = maxComplianceBaseScore + (100 * riskWeightInCompliance); // Adjust max score for compliance
 
-            scores.compliance = (complianceScore / maxTotalComplianceScore) * 100;
+            scores.compliance = (complianceScore / maxComplianceScoreAdjusted) * 100;
 
 
             // --- Agricultural and Technical Excellence (10%) ---
             let agriculturalScore = 0;
             const agTech = farmAssessmentData.agriculturalTechnical;
             const herd = farmAssessmentData.farmProfile.herdDetails;
-            const maxAgriculturalScore = 1000; // Sum of max scores for each field below
+            const maxAgriculturalScore = 1100; // Sum of max scores for each field below (100*11)
 
             agriculturalScore += OPTIONS.soilPotential[agTech.landUtilization.soilPotential] || 0;
             agriculturalScore += (agTech.waterResources.irrigationEfficiency || 0); // Already 0-100
@@ -2520,7 +2646,7 @@
 
             const farmName = farmAssessmentData.farmProfile.basicInfo.farmName || 'Unnamed Farm';
             const farmId = farmAssessmentData.farmProfile.basicInfo.farmId || 'N/A';
-            const viability = farmAssessmentData.recommendations.viabilityConclusion || 'Not Assessed';
+            const viability = farmAssessmentData.scoring.classification || 'Not Assessed'; // Use classification from scoring
             const weightedScore = farmAssessmentData.scoring.weightedScore.toFixed(2);
 
             if (type === 'executive') {
@@ -2651,8 +2777,16 @@
             // Simple heuristic for progress: check if a few key fields are filled
             switch (moduleName) {
                 case 'executive-summary':
-                    if (data.farmProfile.basicInfo.farmName && data.recommendations.viabilityConclusion && (data.recommendations.swotAnalysis.strengths || []).length > 0) progress = 100;
-                    else if (data.farmProfile.basicInfo.farmName || data.recommendations.viabilityConclusion) progress = 50;
+                    let esFilledCount = 0;
+                    let esTotalFields = 5; // Farm Name + 4 SWOT categories (at least one selected)
+
+                    if (data.farmProfile.basicInfo.farmName) esFilledCount++;
+                    if ((data.recommendations.swotAnalysis.strengths || []).length > 0) esFilledCount++;
+                    if ((data.recommendations.swotAnalysis.weaknesses || []).length > 0) esFilledCount++;
+                    if ((data.recommendations.swotAnalysis.opportunities || []).length > 0) esFilledCount++;
+                    if ((data.recommendations.swotAnalysis.threats || []).length > 0) esFilledCount++;
+
+                    progress = (esFilledCount / esTotalFields) * 100;
                     break;
                 case 'business-description':
                     let bdFilledCount = 0;
