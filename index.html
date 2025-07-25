@@ -264,7 +264,7 @@
                         <i class="fas fa-dollar-sign"></i> Financial Assessment
                         <span class="float-end badge bg-secondary" id="progress-financial-assessment">0%</span>
                     </a>
-                </li>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-module="commercial-marketing">
                         <i class="fas fa-store"></i> Commercial & Marketing
@@ -487,8 +487,8 @@
                     farmName: 'New Farm',
                     establishedDate: '',
                     totalHectares: 0,
-                    landTenure: '', // Owned/Leased
-                    farmType: '', // e.g., Beef, Dairy, Mixed
+                    landTenure: '', // Options: 'Owned', 'Leased', 'Mixed'
+                    farmType: '', // Options: 'Beef', 'Dairy', 'Mixed'
                     operationalHistory: ''
                 },
                 location: {
@@ -498,7 +498,7 @@
                     region: '',
                     climateZone: ''
                 },
-                legalStructure: '', // Pty Ltd, Co-op, Sole Prop, Trust
+                legalStructure: '', // Options: 'Pty Ltd', 'Co-op', 'Sole Prop', 'Trust'
                 ownership: {
                     ownerDetails: [{ name: '', role: '', share: 0 }],
                     shareholdingStructure: {},
@@ -506,31 +506,31 @@
                     landRights: { titleDeedDetails: '', leaseAgreements: [], landReformStatus: '' }
                 },
                 infrastructure: {
-                    buildings: [{ type: '', condition: '', adequacy: '' }], // e.g., 'Barn', 'Good', 'Adequate'
-                    equipment: [{ type: '', condition: '', lastMaintenance: '' }], // e.g., 'Tractor', 'Fair', '2023-01-15'
-                    irrigationSystems: [{ type: '', coverage: '', efficiency: 0 }], // e.g., 'Pivot', 'Full', 0.85
-                    processingFacilities: [{ type: '', capacity: 0, compliance: '' }], // e.g., 'Abattoir', 100, 'Compliant'
+                    buildings: [{ type: '', condition: '' }], // Condition: 'Excellent', 'Good', 'Fair', 'Poor'
+                    equipment: [{ type: '', condition: '', lastMaintenance: '' }], // Condition: 'Excellent', 'Good', 'Fair', 'Poor'
+                    irrigationSystems: [{ type: '', coverage: '', efficiency: 0 }],
+                    processingFacilities: [{ type: '', capacity: 0, compliance: '' }],
                     totalInfrastructureValue: 0
                 },
                 coreActivities: {
-                    primaryCommodities: [], // e.g., ['Beef', 'Milk']
-                    livestockTypes: [], // e.g., ['Cattle']
-                    productionCycles: { beef: '', dairy: '' }, // e.g., 'Year-round', 'Seasonal'
-                    valueChainPosition: '', // e.g., 'Producer', 'Processor'
-                    keyPartnerships: [{ name: '', type: '', relationshipStrength: '' }] // e.g., 'Feed Supplier', 'Supplier', 'Strong'
+                    primaryCommodities: [],
+                    livestockTypes: [],
+                    productionCycles: { beef: '', dairy: '' },
+                    valueChainPosition: '',
+                    keyPartnerships: [{ name: '', type: '', relationshipStrength: '' }]
                 },
-                herdDetails: { // NEW: Specific to Cattle
+                herdDetails: {
                     totalHead: 0,
                     breedingCows: 0,
                     bulls: 0,
                     calves: 0,
                     heifers: 0,
                     steers: 0,
-                    mainBreeds: [], // e.g., ['Brahman', 'Angus']
-                    averageAge: 0, // in months
-                    identificationSystem: '', // e.g., 'Ear Tags', 'RFID'
-                    herdHealthStatus: '', // e.g., 'Good', 'Fair', 'Poor'
-                    averageValuePerHead: 0 // NEW: For cattle valuation
+                    mainBreeds: [],
+                    averageAge: 0,
+                    identificationSystem: '', // Options: 'RFID', 'Ear Tags', 'Branding', 'None'
+                    herdHealthStatus: '', // Options: 'Excellent', 'Good', 'Fair', 'Poor'
+                    averageValuePerHead: 0
                 }
             },
             financialAssessment: {
@@ -563,82 +563,82 @@
                     customerConcentration: 0,
                     retentionRate: 0,
                     satisfactionScores: {},
-                    relationshipStrength: ''
+                    relationshipStrength: '' // Options: 'Strong', 'Moderate', 'Weak'
                 },
                 customerBaseDynamics: { growthTrends: '', pipelineAnalysis: '', leadGeneration: '' },
                 salesPerformance: { pipelineEffectiveness: '', conversionRates: '', seasonalPatterns: '' },
                 warrantyService: { obligationsAssessment: '', serviceQuality: '', returnExchangePolicies: '' },
                 salesCompensation: { structureAnalysis: '', motivationSystems: '', financialIncentiveImpact: '' },
                 distributionChannels: { representatives: [], distributors: [], agencies: [], franchiseArrangements: '' },
-                salesStrategy: { marketingPlanEvaluation: '', pricingStrategy: '', promotionalEffectiveness: '' },
+                salesStrategy: { marketingPlanEvaluation: '', pricingStrategy: '', promotionalEffectiveness: '' }, // Marketing Plan: 'Effective', 'Needs Improvement'; Pricing: 'Competitive', 'Premium'
                 salesDocumentation: { standardForms: '', literature: '', priceLists: '', catalogs: '', purchaseOrders: '' }
             },
             hrManagement: {
                 organizationStructure: {
-                    organizationalChart: '',
+                    organizationalChart: '', // Options: 'Available', 'Not Available'
                     reportingRelationships: '',
-                    roleClarity: '',
+                    roleClarity: '', // Options: 'Very Clear', 'Clear', 'Somewhat Clear', 'Unclear'
                     managementLevels: 0,
                     totalEmployees: 0,
                     keyPersonnel: [{ name: '', role: '', competencyScore: 0, experience: '' }],
                 },
                 hrPolicies: { employmentContracts: false, procedures: '', policyAdequacy: '' },
-                laborRelations: { historicalStoppages: '', slowdowns: '', disputes: '', unionRelationships: '' },
+                laborRelations: { historicalStoppages: '', slowdowns: '', disputes: '', unionRelationships: '' }, // Union Relations: 'Harmonious', 'Stable', 'Occasional Disputes', 'Frequent Disputes'
                 compensationAnalysis: { officerCompensation: 0, employeeCompensation: 0, nonCashBenefits: '', marketBenchmarking: '' },
                 legalCompliance: { criminalProceedings: '', civilLitigationInvolvement: '', regulatoryIssues: '' },
                 employmentLaw: { minimumWageCompliance: false, overtimeCompliance: false, immigrationCompliance: false, equityLegislationCompliance: false },
-                retentionStrategies: { keyEmployeeAgreements: '', incentiveArrangements: '', successionPlanning: '' },
+                retentionStrategies: { keyEmployeeAgreements: '', incentiveArrangements: '', successionPlanning: '' }, // Succession Planning: 'In Place', 'Developing', 'None'
                 severanceObligations: { layoffCosts: 0, terminationLiabilities: 0, restructuringImpact: '' },
                 turnoverAnalysis: { employeeTurnoverRate: 0, consultantTurnoverRate: 0, retentionEffectiveness: '' },
                 payrollCompliance: { uifPayments: false, statutoryDeductions: false, taxCompliance: false },
-                managementCompetency: { successionPlanning: '' } // Ensured this path exists
+                managementCompetency: { successionPlanning: '' }
             },
             environmentalAssessment: {
-                regulatoryCompliance: { environmentalAudits: '', records: '', complianceReports: '' },
-                hazardousSubstances: { inventory: '', handlingProcedures: '', safetyProtocols: '' },
-                permitsLicenses: { environmentalPermits: [], complianceStatus: '', renewalRequirements: '' },
+                regulatoryCompliance: { environmentalAudits: '', records: '', complianceReports: '' }, // Env Audits: 'Annually', 'Biennially', 'Irregularly', 'Never'
+                hazardousSubstances: { inventory: '', handlingProcedures: '', safetyProtocols: '' }, // Safety Protocols: 'Documented & Implemented', 'Documented', 'Lacking', 'None'
+                permitsLicenses: { environmentalPermits: [], complianceStatus: '', renewalRequirements: '' }, // Compliance Status: 'Fully Compliant', 'Minor Issues', 'Non-Compliant'
                 regulatoryCommunications: { eiaCorrespondence: '', agencyInteractions: '', complianceNotices: '' },
                 environmentalLitigation: { claims: [], investigations: [], regulatoryProceedings: '' },
                 contingentLiabilities: { environmentalCleanupObligations: 0, futureComplianceCosts: 0 },
-                resourceManagement: { waterUsage: '', soilHealth: '', conservationPractices: '' },
-                sustainabilityPractices: { renewableEnergy: false, wasteReduction: false, carbonFootprint: '' },
+                resourceManagement: { waterUsage: '', soilHealth: '', conservationPractices: '' }, // Water Usage: 'Monitored & Optimized', 'Monitored', 'Not Monitored'
+                sustainabilityPractices: { renewableEnergy: false, wasteReduction: false, carbonFootprint: '' }, // Carbon Footprint: 'Assessed & Reduced', 'Assessed', 'Not Assessed'
                 climateAdaptation: { resiliencePlanning: '', riskMitigation: '', adaptationStrategies: '' }
             },
             legalCompliance: {
-                corporateCompliance: { incorporationDocuments: '', validity: '', directorCompliance: false, governanceScore: 0, registrationStatus: '' },
+                corporateCompliance: { incorporationDocuments: '', validity: '', directorCompliance: false, governanceScore: 0, registrationStatus: '' }, // Registration Status: 'Active', 'Dormant', 'Lapsed'; Director Compliance: true/false
                 legalProceedings: { pendingThreatenedInvestigations: [], governmentalProceedings: [] },
                 regulatoryCommunications: { governmentCorrespondence: '', municipalInteractions: '' },
-                complianceCertification: { regulatoryStandardsCompliance: false, deficiencyAnalysis: '' },
+                complianceCertification: { regulatoryStandardsCompliance: false, deficiencyAnalysis: '' }, // Regulatory Standards: true/false
                 permitsLicenses: { requiredPermits: [], canceledTerminatedLicenses: [], exemptions: [] },
-                taxCompliance: { incomeTax: false, vat: false, paye: false, municipalTaxes: false, clearanceCertificates: [] },
+                taxCompliance: { incomeTax: false, vat: false, paye: false, municipalTaxes: false, clearanceCertificates: [] }, // All tax compliance: true/false
                 taxLitigation: { pendingDisputes: [], auditFindings: [], settlementAgreements: [] },
                 legalSettlements: { arbitrationMatters: [], disputeResolutions: [], ongoingLitigation: [] },
-                insurancePortfolio: { coverageAdequacy: '', claimsHistory: '', riskExposureGaps: '' },
+                insurancePortfolio: { coverageAdequacy: '', claimsHistory: '', riskExposureGaps: '' }, // Coverage Adequacy: 'Adequate', 'Gaps Identified', 'Inadequate'
                 contractCompliance: { materialAgreements: [], performanceObligations: '', breachRisks: '' }
             },
             agriculturalTechnical: {
                 industryContext: { agriculturalSectorAnalysis: '', marketDynamics: '', regulatoryEnvironment: '' },
-                landUtilization: { soilPotential: '', carryingCapacity: 0, sustainableCultivationAssessment: '', soilQualityScore: 0, landUseEfficiency: 0 },
+                landUtilization: { soilPotential: '', carryingCapacity: 0, sustainableCultivationAssessment: '', soilQualityScore: 0, landUseEfficiency: 0 }, // Soil Potential: 'High', 'Medium', 'Low'
                 soilAnalysis: { physicalChemicalProperties: '', enhancementCapability: '', preparationNeeds: '' },
-                waterResources: { availability: '', suitability: '', licensingStatus: '', irrigationEfficiency: 0 },
-                livestockManagement: { // Expanded Cattle Specifics
-                    breedSelection: '',
-                    breedingPrograms: { type: '', successRate: 0, geneticsOptimization: '' }, // e.g., 'AI', 0.85
-                    nutritionPrograms: { feedEfficiency: 0, integratedNutritionSystems: '', costOptimization: '' },
-                    grazingManagement: { rotationalSystems: false, landUseOptimization: '', carryingCapacityPerHa: 0 },
-                    animalHealth: { veterinaryPrograms: '', diseaseManagement: '', preventiveCare: '' },
-                    animalHousing: { type: '', condition: '', adequacy: '' } // e.g., 'Kraals', 'Good', 'Adequate'
+                waterResources: { availability: '', suitability: '', licensingStatus: '', irrigationEfficiency: 0 }, // Water Availability: 'Abundant', 'Sufficient', 'Limited', 'Scarce'
+                livestockManagement: {
+                    breedSelection: '', // Options: 'Optimized', 'Standard', 'Suboptimal'
+                    breedingPrograms: { type: '', successRate: 0, geneticsOptimization: '' },
+                    nutritionPrograms: { feedEfficiency: 0, integratedNutritionSystems: '', costOptimization: '' }, // Integrated Nutrition: 'Optimized', 'Standard', 'Basic'
+                    grazingManagement: { rotationalSystems: false, landUseOptimization: '', carryingCapacityPerHa: 0 }, // Land Use Opt: 'Rotational', 'Semi-Rotational', 'Continuous'
+                    animalHealth: { veterinaryPrograms: '', diseaseManagement: '', preventiveCare: '' }, // Vet Programs: 'Comprehensive', 'Basic Preventive', 'Reactive', 'None'
+                    animalHousing: { condition: '' } // Condition: 'Excellent', 'Good', 'Fair', 'Poor'
                 },
                 productionEfficiency: {
                     yieldPerHectare: 0,
                     feedConversionRatio: 0,
-                    mortalityRate: 0, // overall
-                    calvingRate: 0, // cattle specific
-                    weaningWeight: 0, // cattle specific
-                    averageDailyGain: 0 // cattle specific
+                    mortalityRate: 0,
+                    calvingRate: 0,
+                    weaningWeight: 0,
+                    averageDailyGain: 0
                 },
                 qualityStandards: { productQualityMetrics: '', certificationStatus: '', premiumPositioning: '' },
-                technologyAdoption: { precisionAgriculture: false, automationLevel: '', modernFarmingTechniques: '', innovationScore: 0 },
+                technologyAdoption: { precisionAgriculture: false, automationLevel: '', modernFarmingTechniques: '', innovationScore: 0 }, // Precision Ag: true/false; Automation: 'High', 'Medium', 'Low', 'None'
                 exportPotential: { internationalMarketAccess: false, certificationRequirements: '', competitiveAdvantage: '' }
             },
             riskAssessment: {
@@ -709,6 +709,41 @@
             }
         };
 
+        // --- Hardcoded Options and Weights ---
+        const OPTIONS = {
+            farmType: { 'Beef': 100, 'Dairy': 90, 'Mixed': 80, 'Other': 50 },
+            landTenure: { 'Owned': 100, 'Leased': 70, 'Mixed': 85 },
+            condition: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 }, // Reusable for buildings, equipment, animal housing
+            identificationSystem: { 'RFID': 100, 'Ear Tags': 70, 'Branding': 40, 'None': 10 },
+            herdHealthStatus: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 },
+            relationshipStrength: { 'Strong': 100, 'Moderate': 70, 'Weak': 30 },
+            marketingPlanEvaluation: { 'Effective': 100, 'Needs Improvement': 50, 'Lacking': 20 },
+            pricingStrategy: { 'Competitive': 100, 'Premium': 90, 'Cost-Plus': 70, 'Undifferentiated': 40 },
+            organizationalChart: { 'Available': 100, 'Not Available': 0 },
+            roleClarity: { 'Very Clear': 100, 'Clear': 75, 'Somewhat Clear': 50, 'Unclear': 25 },
+            successionPlanning: { 'In Place': 100, 'Developing': 60, 'None': 20 },
+            unionRelationships: { 'Harmonious': 100, 'Stable': 70, 'Occasional Disputes': 40, 'Frequent Disputes': 10 },
+            environmentalAudits: { 'Annually': 100, 'Biennially': 70, 'Irregularly': 30, 'Never': 0 },
+            complianceStatus: { 'Fully Compliant': 100, 'Minor Issues': 60, 'Non-Compliant': 20 },
+            safetyProtocols: { 'Documented & Implemented': 100, 'Documented': 60, 'Lacking': 20, 'None': 0 },
+            waterUsageMonitoring: { 'Monitored & Optimized': 100, 'Monitored': 70, 'Not Monitored': 30 },
+            carbonFootprint: { 'Assessed & Reduced': 100, 'Assessed': 60, 'Not Assessed': 0 },
+            registrationStatus: { 'Active': 100, 'Dormant': 50, 'Lapsed': 0 },
+            directorCompliance: { 'Yes': 100, 'No': 0 },
+            regulatoryStandardsCompliance: { 'Yes': 100, 'Partial': 50, 'No': 0 },
+            taxCompliance: { 'Yes': 100, 'No': 0 }, // For individual tax types
+            coverageAdequacy: { 'Adequate': 100, 'Gaps Identified': 50, 'Inadequate': 0 },
+            soilPotential: { 'High': 100, 'Medium': 70, 'Low': 30 },
+            waterAvailability: { 'Abundant': 100, 'Sufficient': 70, 'Limited': 30, 'Scarce': 0 },
+            breedSelection: { 'Optimized': 100, 'Standard': 70, 'Suboptimal': 30 },
+            integratedNutritionSystems: { 'Optimized': 100, 'Standard': 70, 'Basic': 30 },
+            grazingManagement: { 'Rotational': 100, 'Semi-Rotational': 70, 'Continuous': 30 },
+            veterinaryPrograms: { 'Comprehensive': 100, 'Basic Preventive': 70, 'Reactive': 30, 'None': 0 },
+            automationLevel: { 'High': 100, 'Medium': 70, 'Low': 40, 'None': 10 },
+            precisionAgriculture: { 'Yes': 100, 'No': 0 },
+            renewableEnergy: { 'Yes': 100, 'Partial': 50, 'No': 0 }
+        };
+
         // Weights for the main components (sum to 1.0)
         const COMPONENT_WEIGHTS = {
             financial: 0.25,
@@ -766,6 +801,17 @@
                 current = current[parts[i]];
             }
             current[parts[parts.length - 1]] = value;
+        }
+
+        // Helper to generate select options
+        function generateSelectOptions(optionsMap, currentValue) {
+            let html = '<option value="">Select...</option>';
+            for (const key in optionsMap) {
+                const value = optionsMap[key]; // The numerical value
+                const text = key; // The display text
+                html += `<option value="${text}" data-score="${value}" ${currentValue === text ? 'selected' : ''}>${text}</option>`;
+            }
+            return html;
         }
 
         // --- IndexedDB Functions ---
@@ -987,7 +1033,7 @@
             showLoading();
             try {
                 let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
-                if (authError) throw authError;
+                if (authError) throw authData; // Fixed: should throw authError
                 const userId = authData.user.id;
 
                 const { error } = await supabase
@@ -1273,7 +1319,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="farmType" class="form-label">Farm Type</label>
-                            <input type="text" class="form-control" id="farmType" name="farmProfile.basicInfo.farmType" value="${data.farmType || ''}" placeholder="e.g., Beef, Dairy, Mixed">
+                            <select class="form-select" id="farmType" name="farmProfile.basicInfo.farmType">
+                                ${generateSelectOptions(OPTIONS.farmType, data.farmType)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="operationalHistory" class="form-label">Operational History</label>
@@ -1347,7 +1395,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="landTenure" class="form-label">Land Tenure</label>
-                            <input type="text" class="form-control" id="landTenure" name="farmProfile.basicInfo.landTenure" value="${data.basicInfo.landTenure || ''}" placeholder="e.g., Owned, Leased">
+                            <select class="form-select" id="landTenure" name="farmProfile.basicInfo.landTenure">
+                                ${generateSelectOptions(OPTIONS.landTenure, data.basicInfo.landTenure)}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Location Analysis</h4>
@@ -1367,7 +1417,9 @@
                         <h4 class="mt-4 mb-3">Legal Structure & Ownership</h4>
                         <div class="mb-3">
                             <label for="legalStructure" class="form-label">Legal Structure</label>
-                            <input type="text" class="form-control" id="legalStructure" name="farmProfile.legalStructure" value="${data.legalStructure || ''}" placeholder="e.g., Pty Ltd, Co-op, Sole Prop, Trust">
+                            <select class="form-select" id="legalStructure" name="farmProfile.legalStructure">
+                                ${generateSelectOptions(OPTIONS.legalStructure, data.legalStructure)}
+                            </select>
                         </div>
                         <!-- Simplified owner details input for demo -->
                         <div class="mb-3">
@@ -1381,12 +1433,16 @@
 
                         <h4 class="mt-4 mb-3">Infrastructure Assessment</h4>
                         <div class="mb-3">
-                            <label for="buildingType" class="form-label">Main Building Type</label>
-                            <input type="text" class="form-control" id="buildingType" name="farmProfile.infrastructure.buildings.0.type" value="${(data.infrastructure.buildings[0] && data.infrastructure.buildings[0].type) || ''}" placeholder="e.g., Barn, Milking Parlor">
+                            <label for="buildingCondition" class="form-label">Main Building Condition</label>
+                            <select class="form-select" id="buildingCondition" name="farmProfile.infrastructure.buildings.0.condition">
+                                ${generateSelectOptions(OPTIONS.condition, getNestedValue(data, 'infrastructure.buildings.0.condition'))}
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="equipmentType" class="form-label">Key Equipment Type</label>
-                            <input type="text" class="form-control" id="equipmentType" name="farmProfile.infrastructure.equipment.0.type" value="${(data.infrastructure.equipment[0] && data.infrastructure.equipment[0].type) || ''}" placeholder="e.g., Tractor, Loader">
+                            <label for="equipmentCondition" class="form-label">Key Equipment Condition</label>
+                            <select class="form-select" id="equipmentCondition" name="farmProfile.infrastructure.equipment.0.condition">
+                                ${generateSelectOptions(OPTIONS.condition, getNestedValue(data, 'infrastructure.equipment.0.condition'))}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="totalInfrastructureValue" class="form-label">Total Infrastructure Value (ZAR)</label>
@@ -1435,11 +1491,15 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="herdHealthStatus" class="form-label">Herd Health Status</label>
-                                <input type="text" class="form-control" id="herdHealthStatus" name="farmProfile.herdDetails.herdHealthStatus" value="${data.herdDetails.herdHealthStatus || ''}" placeholder="e.g., Good, Fair, Poor">
+                                <select class="form-select" id="herdHealthStatus" name="farmProfile.herdDetails.herdHealthStatus">
+                                    ${generateSelectOptions(OPTIONS.herdHealthStatus, data.herdDetails.herdHealthStatus)}
+                                </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="identificationSystem" class="form-label">Identification System</label>
-                                <input type="text" class="form-control" id="identificationSystem" name="farmProfile.herdDetails.identificationSystem" value="${data.herdDetails.identificationSystem || ''}" placeholder="e.g., Ear Tags, RFID">
+                                <select class="form-select" id="identificationSystem" name="farmProfile.herdDetails.identificationSystem">
+                                    ${generateSelectOptions(OPTIONS.identificationSystem, data.herdDetails.identificationSystem)}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -1589,7 +1649,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="relationshipStrength" class="form-label">Customer Relationship Strength</label>
-                            <input type="text" class="form-control" id="relationshipStrength" name="commercialAssessment.customerAnalysis.relationshipStrength" value="${data.customerAnalysis.relationshipStrength || ''}" placeholder="e.g., Strong, Moderate, Weak">
+                            <select class="form-select" id="relationshipStrength" name="commercialAssessment.customerAnalysis.relationshipStrength">
+                                ${generateSelectOptions(OPTIONS.relationshipStrength, data.customerAnalysis.relationshipStrength)}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Sales Performance</h4>
@@ -1611,11 +1673,15 @@
                         <h4 class="mt-4 mb-3">Sales Strategy</h4>
                         <div class="mb-3">
                             <label for="marketingPlanEvaluation" class="form-label">Marketing Plan Evaluation</label>
-                            <input type="text" class="form-control" id="marketingPlanEvaluation" name="commercialAssessment.salesStrategy.marketingPlanEvaluation" value="${data.salesStrategy.marketingPlanEvaluation || ''}" placeholder="e.g., Effective, Needs Improvement">
+                            <select class="form-select" id="marketingPlanEvaluation" name="commercialAssessment.salesStrategy.marketingPlanEvaluation">
+                                ${generateSelectOptions(OPTIONS.marketingPlanEvaluation, data.salesStrategy.marketingPlanEvaluation)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="pricingStrategy" class="form-label">Pricing Strategy</label>
-                            <input type="text" class="form-control" id="pricingStrategy" name="commercialAssessment.salesStrategy.pricingStrategy" value="${data.salesStrategy.pricingStrategy || ''}" placeholder="e.g., Competitive, Premium">
+                            <select class="form-select" id="pricingStrategy" name="commercialAssessment.salesStrategy.pricingStrategy">
+                                ${generateSelectOptions(OPTIONS.pricingStrategy, data.salesStrategy.pricingStrategy)}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1635,11 +1701,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="organizationalChart" class="form-label">Organizational Chart Availability</label>
-                            <input type="text" class="form-control" id="organizationalChart" name="hrManagement.organizationStructure.organizationalChart" value="${data.organizationStructure.organizationalChart || ''}" placeholder="e.g., Available, Not Available">
+                            <select class="form-select" id="organizationalChart" name="hrManagement.organizationStructure.organizationalChart">
+                                ${generateSelectOptions(OPTIONS.organizationalChart, data.organizationStructure.organizationalChart)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="roleClarity" class="form-label">Role Clarity</label>
-                            <input type="text" class="form-control" id="roleClarity" name="hrManagement.organizationStructure.roleClarity" value="${data.organizationStructure.roleClarity || ''}" placeholder="e.g., Clear, Ambiguous">
+                            <select class="form-select" id="roleClarity" name="hrManagement.organizationStructure.roleClarity">
+                                ${generateSelectOptions(OPTIONS.roleClarity, data.organizationStructure.roleClarity)}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Key Personnel & Competency</h4>
@@ -1653,7 +1723,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="successionPlanning" class="form-label">Succession Planning Status</label>
-                            <input type="text" class="form-control" id="successionPlanning" name="hrManagement.managementCompetency.successionPlanning" value="${getNestedValue(data, 'managementCompetency.successionPlanning')}" placeholder="e.g., In Place, Developing, None">
+                            <select class="form-select" id="successionPlanning" name="hrManagement.managementCompetency.successionPlanning">
+                                ${generateSelectOptions(OPTIONS.successionPlanning, getNestedValue(data, 'managementCompetency.successionPlanning'))}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">HR Policies & Labor Relations</h4>
@@ -1662,8 +1734,10 @@
                             <label class="form-check-label" for="employmentContracts">Employment Contracts in Place?</label>
                         </div>
                         <div class="mb-3">
-                            <label for="laborRelations" class="form-label">Labor Relations History</label>
-                            <input type="text" class="form-control" id="laborRelations" name="hrManagement.laborRelations.unionRelationships" value="${data.laborRelations.unionRelationships || ''}" placeholder="e.g., Good, History of Disputes">
+                            <label for="laborRelations" class="form-label">Union Relationships</label>
+                            <select class="form-select" id="laborRelations" name="hrManagement.laborRelations.unionRelationships">
+                                ${generateSelectOptions(OPTIONS.unionRelationships, data.laborRelations.unionRelationships)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="employeeTurnoverRate" class="form-label">Employee Turnover Rate (%)</label>
@@ -1683,11 +1757,15 @@
                         <h4 class="mb-3">Regulatory Compliance</h4>
                         <div class="mb-3">
                             <label for="environmentalAudits" class="form-label">Environmental Audits Conducted?</label>
-                            <input type="text" class="form-control" id="environmentalAudits" name="environmentalAssessment.regulatoryCompliance.environmentalAudits" value="${data.regulatoryCompliance.environmentalAudits || ''}" placeholder="e.g., Annually, Never">
+                            <select class="form-select" id="environmentalAudits" name="environmentalAssessment.regulatoryCompliance.environmentalAudits">
+                                ${generateSelectOptions(OPTIONS.environmentalAudits, data.regulatoryCompliance.environmentalAudits)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="complianceStatus" class="form-label">Permits Compliance Status</label>
-                            <input type="text" class="form-control" id="complianceStatus" name="environmentalAssessment.permitsLicenses.complianceStatus" value="${data.permitsLicenses.complianceStatus || ''}" placeholder="e.g., Fully Compliant, Minor Issues">
+                            <select class="form-select" id="complianceStatus" name="environmentalAssessment.permitsLicenses.complianceStatus">
+                                ${generateSelectOptions(OPTIONS.complianceStatus, data.permitsLicenses.complianceStatus)}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Hazardous Substances</h4>
@@ -1697,13 +1775,17 @@
                         </div>
                         <div class="mb-3">
                             <label for="safetyProtocols" class="form-label">Safety Protocols for Hazardous Substances</label>
-                            <input type="text" class="form-control" id="safetyProtocols" name="environmentalAssessment.hazardousSubstances.safetyProtocols" value="${data.hazardousSubstances.safetyProtocols || ''}" placeholder="e.g., Documented, Lacking">
+                            <select class="form-select" id="safetyProtocols" name="environmentalAssessment.hazardousSubstances.safetyProtocols">
+                                ${generateSelectOptions(OPTIONS.safetyProtocols, data.hazardousSubstances.safetyProtocols)}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Resource Management & Sustainability</h4>
                         <div class="mb-3">
                             <label for="waterUsage" class="form-label">Water Usage Monitoring</label>
-                            <input type="text" class="form-control" id="waterUsage" name="environmentalAssessment.resourceManagement.waterUsage" value="${data.resourceManagement.waterUsage || ''}" placeholder="e.g., Monitored, Not Monitored">
+                            <select class="form-select" id="waterUsage" name="environmentalAssessment.resourceManagement.waterUsage">
+                                ${generateSelectOptions(OPTIONS.waterUsageMonitoring, data.resourceManagement.waterUsage)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="soilHealth" class="form-label">Soil Health Management Practices</label>
@@ -1715,7 +1797,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="carbonFootprint" class="form-label">Carbon Footprint Assessment</label>
-                            <input type="text" class="form-control" id="carbonFootprint" name="environmentalAssessment.sustainabilityPractices.carbonFootprint" value="${data.sustainabilityPractices.carbonFootprint || ''}" placeholder="e.g., Assessed, Not Assessed">
+                            <select class="form-select" id="carbonFootprint" name="environmentalAssessment.sustainabilityPractices.carbonFootprint">
+                                ${generateSelectOptions(OPTIONS.carbonFootprint, data.sustainabilityPractices.carbonFootprint)}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Environmental Risks & Liabilities</h4>
@@ -1741,7 +1825,9 @@
                         <h4 class="mb-3">Corporate Compliance</h4>
                         <div class="mb-3">
                             <label for="registrationStatus" class="form-label">Registration Status</label>
-                            <input type="text" class="form-control" id="registrationStatus" name="legalCompliance.corporateCompliance.registrationStatus" value="${data.corporateCompliance.registrationStatus || ''}" placeholder="e.g., Active, Dormant">
+                            <select class="form-select" id="registrationStatus" name="legalCompliance.corporateCompliance.registrationStatus">
+                                ${generateSelectOptions(OPTIONS.registrationStatus, data.corporateCompliance.registrationStatus)}
+                            </select>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="directorCompliance" name="legalCompliance.corporateCompliance.directorCompliance" ${data.corporateCompliance.directorCompliance ? 'checked' : ''}>
@@ -1793,7 +1879,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="coverageAdequacy" class="form-label">Insurance Coverage Adequacy</label>
-                            <input type="text" class="form-control" id="coverageAdequacy" name="legalCompliance.insurancePortfolio.coverageAdequacy" value="${data.insurancePortfolio.coverageAdequacy || ''}" placeholder="e.g., Adequate, Gaps Identified">
+                            <select class="form-select" id="coverageAdequacy" name="legalCompliance.insurancePortfolio.coverageAdequacy">
+                                ${generateSelectOptions(OPTIONS.coverageAdequacy, data.insurancePortfolio.coverageAdequacy)}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1816,7 +1904,9 @@
                         <h4 class="mt-4 mb-3">Land Utilization & Soil/Water Resources</h4>
                         <div class="mb-3">
                             <label for="soilPotential" class="form-label">Soil Potential</label>
-                            <input type="text" class="form-control" id="soilPotential" name="agriculturalTechnical.landUtilization.soilPotential" value="${data.landUtilization.soilPotential || ''}" placeholder="e.g., High, Medium, Low">
+                            <select class="form-select" id="soilPotential" name="agriculturalTechnical.landUtilization.soilPotential">
+                                ${generateSelectOptions(OPTIONS.soilPotential, data.landUtilization.soilPotential)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="carryingCapacity" class="form-label">Carrying Capacity (LSU/ha)</label>
@@ -1824,7 +1914,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="waterAvailability" class="form-label">Water Availability</label>
-                            <input type="text" class="form-control" id="waterAvailability" name="agriculturalTechnical.waterResources.availability" value="${data.waterResources.availability || ''}" placeholder="e.g., Abundant, Limited">
+                            <select class="form-select" id="waterAvailability" name="agriculturalTechnical.waterResources.availability">
+                                ${generateSelectOptions(OPTIONS.waterAvailability, data.waterResources.availability)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="irrigationEfficiency" class="form-label">Irrigation Efficiency (%)</label>
@@ -1834,7 +1926,9 @@
                         <h4 class="mt-4 mb-3">Livestock Management (Cattle Specific)</h4>
                         <div class="mb-3">
                             <label for="breedSelection" class="form-label">Breed Selection Strategy</label>
-                            <input type="text" class="form-control" id="breedSelection" name="agriculturalTechnical.livestockManagement.breedSelection" value="${data.livestockManagement.breedSelection || ''}" placeholder="e.g., Adapted, High-Yield">
+                            <select class="form-select" id="breedSelection" name="agriculturalTechnical.livestockManagement.breedSelection">
+                                ${generateSelectOptions(OPTIONS.breedSelection, data.livestockManagement.breedSelection)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="breedingProgramsType" class="form-label">Breeding Program Type</label>
@@ -1845,20 +1939,28 @@
                             <input type="number" class="form-control" id="breedingSuccessRate" name="agriculturalTechnical.livestockManagement.breedingPrograms.successRate" value="${data.livestockManagement.breedingPrograms.successRate || 0}" min="0" max="100">
                         </div>
                         <div class="mb-3">
-                            <label for="nutritionPrograms" class="form-label">Nutrition Programs</label>
-                            <input type="text" class="form-control" id="nutritionPrograms" name="agriculturalTechnical.livestockManagement.nutritionPrograms.integratedNutritionSystems" value="${data.livestockManagement.nutritionPrograms.integratedNutritionSystems || ''}" placeholder="e.g., Pasture-based, Feedlot, Supplemented">
+                            <label for="nutritionPrograms" class="form-label">Integrated Nutrition Systems</label>
+                            <select class="form-select" id="nutritionPrograms" name="agriculturalTechnical.livestockManagement.nutritionPrograms.integratedNutritionSystems">
+                                ${generateSelectOptions(OPTIONS.integratedNutritionSystems, data.livestockManagement.nutritionPrograms.integratedNutritionSystems)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="grazingManagement" class="form-label">Grazing Management</label>
-                            <input type="text" class="form-control" id="grazingManagement" name="agriculturalTechnical.livestockManagement.grazingManagement.landUseOptimization" value="${data.livestockManagement.grazingManagement.landUseOptimization || ''}" placeholder="e.g., Rotational, Continuous">
+                            <select class="form-select" id="grazingManagement" name="agriculturalTechnical.livestockManagement.grazingManagement.landUseOptimization">
+                                ${generateSelectOptions(OPTIONS.grazingManagement, data.livestockManagement.grazingManagement.landUseOptimization)}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="veterinaryPrograms" class="form-label">Veterinary Programs</label>
-                            <input type="text" class="form-control" id="veterinaryPrograms" name="agriculturalTechnical.livestockManagement.animalHealth.veterinaryPrograms" value="${data.livestockManagement.animalHealth.veterinaryPrograms || ''}" placeholder="e.g., Comprehensive, Reactive">
+                            <select class="form-select" id="veterinaryPrograms" name="agriculturalTechnical.livestockManagement.animalHealth.veterinaryPrograms">
+                                ${generateSelectOptions(OPTIONS.veterinaryPrograms, data.livestockManagement.animalHealth.veterinaryPrograms)}
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="animalHousing" class="form-label">Animal Housing Type</label>
-                            <input type="text" class="form-control" id="animalHousing" name="agriculturalTechnical.livestockManagement.animalHousing.type" value="${data.livestockManagement.animalHousing.type || ''}" placeholder="e.g., Kraals, Sheds, Open Pasture">
+                            <label for="animalHousingCondition" class="form-label">Animal Housing Condition</label>
+                            <select class="form-select" id="animalHousingCondition" name="agriculturalTechnical.livestockManagement.animalHousing.condition">
+                                ${generateSelectOptions(OPTIONS.condition, getNestedValue(data, 'livestockManagement.animalHousing.condition'))}
+                            </select>
                         </div>
 
                         <h4 class="mt-4 mb-3">Production Efficiency (Cattle Specific)</h4>
@@ -1892,7 +1994,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="automationLevel" class="form-label">Automation Level</label>
-                            <input type="text" class="form-control" id="automationLevel" name="agriculturalTechnical.technologyAdoption.automationLevel" value="${data.technologyAdoption.automationLevel || ''}" placeholder="e.g., High, Medium, Low">
+                            <select class="form-select" id="automationLevel" name="agriculturalTechnical.technologyAdoption.automationLevel">
+                                ${generateSelectOptions(OPTIONS.automationLevel, data.technologyAdoption.automationLevel)}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -2013,7 +2117,7 @@
                         <h4 class="mt-4 mb-3">Viability Classification Framework</h4>
                         <div class="mb-3">
                             <label for="viabilityConclusionText" class="form-label">Viability Conclusion</label>
-                            <textarea class="form-control" id="viabilityConclusionText" name="recommendations.viabilityConclusion" rows="3">${data.viabilityConclusion || ''}</textarea>
+                            <textarea class="form-control" id="viabilityConclusionText" name="recommendations.viabilityConclusion" rows="3" readonly>${data.viabilityConclusion || ''}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="criticalSuccessFactors" class="form-label">Critical Success Factors (comma-separated)</label>
@@ -2177,56 +2281,141 @@
             // --- Financial Health (25%) ---
             let financialScore = 0;
             const fr = farmAssessmentData.financialAssessment.financialRatios;
+            // Max possible score for financial ratios (sum of ideal values if all were 100%)
+            const maxFinancialRatioScore = 400; // 4 ratios * 100 max each
+
             // Simple scoring based on ratios (0-100 scale, higher is better)
             financialScore += (fr.returnOnAssets * 100 > 0 ? Math.min(fr.returnOnAssets * 100 * 2, 100) : 0) * 0.25; // ROA, max 100
             financialScore += (fr.currentRatio > 1.5 ? Math.min(fr.currentRatio * 20, 100) : 0) * 0.25; // Current Ratio
             financialScore += (fr.debtServiceCoverage > 1.25 ? Math.min(fr.debtServiceCoverage * 40, 100) : 0) * 0.25; // DSCR
             financialScore += (fr.operatingMargin * 100 > 10 ? Math.min(fr.operatingMargin * 100 * 2, 100) : 0) * 0.25; // Operating Margin
-            scores.financial = financialScore;
+            scores.financial = financialScore; // This is already normalized to 0-100 by the calculation logic
 
             // --- Operational Excellence (20%) ---
             let operationalScore = 0;
             const infra = farmAssessmentData.farmProfile.infrastructure;
-            operationalScore += (infra.totalInfrastructureValue > 0 ? 50 : 0) * 0.5; // Basic check
-            operationalScore += ((infra.buildings[0] && infra.buildings[0].condition === 'Good') ? 50 : 0) * 0.5; // Example
-            scores.operational = operationalScore;
+            const businessDesc = farmAssessmentData.farmProfile;
+
+            // Max possible score for operational: (100 (land tenure) + 100 (legal structure) + 100 (building condition) + 100 (equipment condition) + 100 (identification system) + 100 (herd health)) / 6 = 100
+            const maxOperationalScore = 600; // Sum of max scores for each field below
+
+            operationalScore += OPTIONS.landTenure[businessDesc.basicInfo.landTenure] || 0;
+            operationalScore += OPTIONS.legalStructure[businessDesc.legalStructure] || 0;
+            operationalScore += OPTIONS.condition[getNestedValue(infra, 'buildings.0.condition')] || 0;
+            operationalScore += OPTIONS.condition[getNestedValue(infra, 'equipment.0.condition')] || 0;
+            operationalScore += OPTIONS.identificationSystem[businessDesc.herdDetails.identificationSystem] || 0;
+            operationalScore += OPTIONS.herdHealthStatus[businessDesc.herdDetails.herdHealthStatus] || 0;
+
+            scores.operational = (operationalScore / maxOperationalScore) * 100;
+
 
             // --- Market Position (20%) ---
             let marketScore = 0;
             const commercial = farmAssessmentData.commercialAssessment;
-            marketScore += (commercial.customerAnalysis.customerConcentration < 50 ? 50 : 0) * 0.5; // Lower concentration is better
-            marketScore += (commercial.customerAnalysis.retentionRate > 70 ? 50 : 0) * 0.5;
-            scores.market = marketScore;
+            const maxMarketScore = 400; // Sum of max scores for each field below
+
+            marketScore += (commercial.customerAnalysis.customerConcentration < 50 ? 100 : 0); // Lower concentration is better
+            marketScore += (commercial.customerAnalysis.retentionRate > 70 ? 100 : 0);
+            marketScore += OPTIONS.relationshipStrength[commercial.customerAnalysis.relationshipStrength] || 0;
+            marketScore += OPTIONS.marketingPlanEvaluation[commercial.salesStrategy.marketingPlanEvaluation] || 0;
+            marketScore += OPTIONS.pricingStrategy[commercial.salesStrategy.pricingStrategy] || 0;
+
+            scores.market = (marketScore / maxMarketScore) * 100;
 
             // --- Management Quality (15%) ---
             let managementScore = 0;
             const hr = farmAssessmentData.hrManagement;
-            managementScore += (hr.organizationStructure.totalEmployees > 0 ? 30 : 0) * 0.3;
-            managementScore += ((hr.organizationStructure.keyPersonnel[0] && hr.organizationStructure.keyPersonnel[0].competencyScore) || 0) * 20 * 0.4; // Score 1-5 to 0-100
-            managementScore += (getNestedValue(hr, 'managementCompetency.successionPlanning') === 'In Place' ? 30 : 0) * 0.3;
-            scores.management = managementScore;
+            const maxManagementScore = 400; // Sum of max scores for each field below
+
+            managementScore += OPTIONS.organizationalChart[hr.organizationStructure.organizationalChart] || 0;
+            managementScore += OPTIONS.roleClarity[hr.organizationStructure.roleClarity] || 0;
+            managementScore += ((hr.organizationStructure.keyPersonnel[0] && hr.organizationStructure.keyPersonnel[0].competencyScore) || 0) * 20; // Score 1-5 to 0-100
+            managementScore += OPTIONS.successionPlanning[getNestedValue(hr, 'managementCompetency.successionPlanning')] || 0;
+            managementScore += OPTIONS.unionRelationships[hr.laborRelations.unionRelationships] || 0;
+
+            scores.management = (managementScore / maxManagementScore) * 100;
+
 
             // --- Compliance and Risk Management (10%) ---
             let complianceScore = 0;
             const legal = farmAssessmentData.legalCompliance;
-            complianceScore += (legal.corporateCompliance.directorCompliance ? 25 : 0) * 0.25;
-            complianceScore += (legal.complianceCertification.regulatoryStandardsCompliance ? 25 : 0) * 0.25;
-            complianceScore += (legal.taxCompliance.incomeTax && legal.taxCompliance.vat ? 25 : 0) * 0.25;
-            complianceScore += (legal.insurancePortfolio.coverageAdequacy === 'Adequate' ? 25 : 0) * 0.25;
-            scores.compliance = complianceScore;
+            const env = farmAssessmentData.environmentalAssessment;
+            const maxComplianceScore = 1200; // Sum of max scores for each field below (6 legal + 6 env)
+
+            // Legal Compliance
+            complianceScore += OPTIONS.registrationStatus[legal.corporateCompliance.registrationStatus] || 0;
+            complianceScore += (legal.corporateCompliance.directorCompliance ? 100 : 0);
+            complianceScore += (legal.corporateCompliance.governanceScore || 0) * 20; // 1-5 to 0-100
+            complianceScore += (legal.complianceCertification.regulatoryStandardsCompliance ? 100 : 0);
+            complianceScore += (legal.taxCompliance.incomeTax ? 100 : 0);
+            complianceScore += (legal.taxCompliance.vat ? 100 : 0);
+            complianceScore += (legal.taxCompliance.paye ? 100 : 0);
+            complianceScore += (legal.taxCompliance.municipalTaxes ? 100 : 0);
+            complianceScore += OPTIONS.coverageAdequacy[legal.insurancePortfolio.coverageAdequacy] || 0;
+
+            // Environmental Compliance
+            complianceScore += OPTIONS.environmentalAudits[env.regulatoryCompliance.environmentalAudits] || 0;
+            complianceScore += OPTIONS.complianceStatus[env.permitsLicenses.complianceStatus] || 0;
+            complianceScore += OPTIONS.safetyProtocols[env.hazardousSubstances.safetyProtocols] || 0;
+            complianceScore += OPTIONS.waterUsageMonitoring[env.resourceManagement.waterUsage] || 0;
+            complianceScore += (env.sustainabilityPractices.renewableEnergy ? 100 : 0);
+            complianceScore += OPTIONS.carbonFootprint[env.sustainabilityPractices.carbonFootprint] || 0;
+
+            // Risk Analysis (incorporate into compliance score)
+            let totalRiskImpact = 0;
+            let maxPossibleRiskImpact = 0;
+            const riskCategories = [
+                farmAssessmentData.riskAssessment.productionRisks,
+                farmAssessmentData.riskAssessment.marketRisks,
+                farmAssessmentData.riskAssessment.financialRisks,
+                farmAssessmentData.riskAssessment.operationalRisks,
+                farmAssessmentData.riskAssessment.environmentalRisks,
+                farmAssessmentData.riskAssessment.regulatoryComplianceRisks,
+                farmAssessmentData.riskAssessment.managementStrategicRisks
+            ];
+
+            riskCategories.forEach(category => {
+                for (const riskKey in category) {
+                    const risk = category[riskKey];
+                    if (risk.likelihood && risk.impact) {
+                        totalRiskImpact += (risk.likelihood * risk.impact);
+                    }
+                    maxPossibleRiskImpact += (5 * 5); // Max likelihood * Max impact
+                }
+            });
+
+            // Normalize risk to a score (higher score for lower risk)
+            let riskScore = 0;
+            if (maxPossibleRiskImpact > 0) {
+                riskScore = 100 - ((totalRiskImpact / maxPossibleRiskImpact) * 100); // 0-100, 100 is no risk
+            }
+            complianceScore += riskScore; // Add risk score to compliance
+            const maxTotalComplianceScore = maxComplianceScore + 100; // Add 100 for the risk score
+
+            scores.compliance = (complianceScore / maxTotalComplianceScore) * 100;
+
 
             // --- Agricultural and Technical Excellence (10%) ---
             let agriculturalScore = 0;
             const agTech = farmAssessmentData.agriculturalTechnical;
             const herd = farmAssessmentData.farmProfile.herdDetails;
+            const maxAgriculturalScore = 1000; // Sum of max scores for each field below
 
-            agriculturalScore += (agTech.landUtilization.soilQualityScore || 0) * 0.2; // Direct score
-            agriculturalScore += (agTech.waterResources.irrigationEfficiency || 0) * 0.2; // Direct score
-            agriculturalScore += (herd.totalHead > 0 ? 20 : 0) * 0.1; // Basic herd presence
-            agriculturalScore += (agTech.livestockManagement.breedingPrograms.successRate || 0) * 0.2; // Breeding success
-            agriculturalScore += (agTech.productionEfficiency.calvingRate > 70 ? 20 : 0) * 0.1; // Calving rate
-            agriculturalScore += (agTech.technologyAdoption.precisionAgriculture ? 10 : 0) * 0.1; // Tech adoption
-            scores.agricultural = agriculturalScore;
+            agriculturalScore += OPTIONS.soilPotential[agTech.landUtilization.soilPotential] || 0;
+            agriculturalScore += (agTech.waterResources.irrigationEfficiency || 0); // Already 0-100
+            agriculturalScore += OPTIONS.waterAvailability[agTech.waterResources.availability] || 0;
+            agriculturalScore += OPTIONS.breedSelection[agTech.livestockManagement.breedSelection] || 0;
+            agriculturalScore += (agTech.livestockManagement.breedingPrograms.successRate || 0); // Already 0-100
+            agriculturalScore += OPTIONS.integratedNutritionSystems[agTech.livestockManagement.nutritionPrograms.integratedNutritionSystems] || 0;
+            agriculturalScore += OPTIONS.grazingManagement[agTech.livestockManagement.grazingManagement.landUseOptimization] || 0;
+            agriculturalScore += OPTIONS.veterinaryPrograms[agTech.livestockManagement.animalHealth.veterinaryPrograms] || 0;
+            agriculturalScore += OPTIONS.condition[getNestedValue(agTech, 'livestockManagement.animalHousing.condition')] || 0;
+            agriculturalScore += (agTech.productionEfficiency.calvingRate || 0); // Already 0-100
+            agriculturalScore += (agTech.technologyAdoption.precisionAgriculture ? 100 : 0);
+            agriculturalScore += OPTIONS.automationLevel[agTech.technologyAdoption.automationLevel] || 0;
+
+            scores.agricultural = (agriculturalScore / maxAgriculturalScore) * 100;
+
 
             // Calculate total weighted score
             totalWeightedScore =
@@ -2454,6 +2643,11 @@
             let progress = 0;
             const data = farmAssessmentData;
 
+            // Helper to check if a select dropdown has a selected value (not the default "Select...")
+            function isSelectFilled(value) {
+                return value !== null && value !== undefined && value !== '';
+            }
+
             // Simple heuristic for progress: check if a few key fields are filled
             switch (moduleName) {
                 case 'executive-summary':
@@ -2461,32 +2655,98 @@
                     else if (data.farmProfile.basicInfo.farmName || data.recommendations.viabilityConclusion) progress = 50;
                     break;
                 case 'business-description':
-                    if (data.farmProfile.basicInfo.totalHectares > 0 && data.farmProfile.herdDetails.totalHead > 0 && data.farmProfile.legalStructure && data.farmProfile.herdDetails.averageValuePerHead > 0) progress = 100;
-                    else if (data.farmProfile.basicInfo.totalHectares > 0 || data.farmProfile.herdDetails.totalHead > 0 || data.farmProfile.herdDetails.averageValuePerHead > 0) progress = 50;
+                    let bdFilledCount = 0;
+                    let bdTotalFields = 9; // Approx number of key fields in this module
+
+                    if (data.farmProfile.basicInfo.totalHectares > 0) bdFilledCount++;
+                    if (isSelectFilled(data.farmProfile.basicInfo.landTenure)) bdFilledCount++;
+                    if (isSelectFilled(data.farmProfile.legalStructure)) bdFilledCount++;
+                    if (getNestedValue(data, 'farmProfile.infrastructure.buildings.0.condition')) bdFilledCount++;
+                    if (getNestedValue(data, 'farmProfile.infrastructure.equipment.0.condition')) bdFilledCount++;
+                    if (data.farmProfile.herdDetails.totalHead > 0) bdFilledCount++;
+                    if (data.farmProfile.herdDetails.averageValuePerHead > 0) bdFilledCount++;
+                    if (isSelectFilled(data.farmProfile.herdDetails.identificationSystem)) bdFilledCount++;
+                    if (isSelectFilled(data.farmProfile.herdDetails.herdHealthStatus)) bdFilledCount++;
+
+                    progress = (bdFilledCount / bdTotalFields) * 100;
                     break;
                 case 'financial-assessment':
                     if (data.financialAssessment.historicalData.year3.revenue > 0 && data.financialAssessment.financialRatios.currentRatio > 0) progress = 100;
                     else if (data.financialAssessment.historicalData.year3.revenue > 0) progress = 50;
                     break;
                 case 'commercial-marketing':
-                    if (data.commercialAssessment.customerAnalysis.customerConcentration > 0 && data.commercialAssessment.salesStrategy.marketingPlanEvaluation) progress = 100;
-                    else if (data.commercialAssessment.customerAnalysis.customerConcentration > 0) progress = 50;
+                    let cmFilledCount = 0;
+                    let cmTotalFields = 5;
+
+                    if (data.commercialAssessment.customerAnalysis.customerConcentration > 0) cmFilledCount++;
+                    if (data.commercialAssessment.customerAnalysis.retentionRate > 0) cmFilledCount++;
+                    if (isSelectFilled(data.commercialAssessment.customerAnalysis.relationshipStrength)) cmFilledCount++;
+                    if (isSelectFilled(data.commercialAssessment.salesStrategy.marketingPlanEvaluation)) cmFilledCount++;
+                    if (isSelectFilled(data.commercialAssessment.salesStrategy.pricingStrategy)) cmFilledCount++;
+
+                    progress = (cmFilledCount / cmTotalFields) * 100;
                     break;
                 case 'hr-management':
-                    if (data.hrManagement.organizationStructure.totalEmployees > 0 && getNestedValue(data.hrManagement, 'managementCompetency.successionPlanning')) progress = 100;
-                    else if (data.hrManagement.organizationStructure.totalEmployees > 0) progress = 50;
+                    let hrFilledCount = 0;
+                    let hrTotalFields = 6;
+
+                    if (data.hrManagement.organizationStructure.totalEmployees > 0) hrFilledCount++;
+                    if (isSelectFilled(data.hrManagement.organizationStructure.organizationalChart)) hrFilledCount++;
+                    if (isSelectFilled(data.hrManagement.organizationStructure.roleClarity)) hrFilledCount++;
+                    if (getNestedValue(data, 'hrManagement.organizationStructure.keyPersonnel.0.competencyScore') > 0) hrFilledCount++;
+                    if (isSelectFilled(getNestedValue(data, 'hrManagement.managementCompetency.successionPlanning'))) hrFilledCount++;
+                    if (isSelectFilled(data.hrManagement.laborRelations.unionRelationships)) hrFilledCount++;
+
+                    progress = (hrFilledCount / hrTotalFields) * 100;
                     break;
                 case 'environmental-assessment':
-                    if (data.environmentalAssessment.regulatoryCompliance.environmentalAudits && data.environmentalAssessment.sustainabilityPractices.renewableEnergy) progress = 100;
-                    else if (data.environmentalAssessment.regulatoryCompliance.environmentalAudits) progress = 50;
+                    let eaFilledCount = 0;
+                    let eaTotalFields = 7;
+
+                    if (isSelectFilled(data.environmentalAssessment.regulatoryCompliance.environmentalAudits)) eaFilledCount++;
+                    if (isSelectFilled(data.environmentalAssessment.permitsLicenses.complianceStatus)) eaFilledCount++;
+                    if (isSelectFilled(data.environmentalAssessment.hazardousSubstances.safetyProtocols)) eaFilledCount++;
+                    if (isSelectFilled(data.environmentalAssessment.resourceManagement.waterUsage)) eaFilledCount++;
+                    if (data.environmentalAssessment.sustainabilityPractices.renewableEnergy !== null) eaFilledCount++; // Checkbox
+                    if (isSelectFilled(data.environmentalAssessment.sustainabilityPractices.carbonFootprint)) eaFilledCount++;
+                    if (data.environmentalAssessment.contingentLiabilities.environmentalCleanupObligations > 0) eaFilledCount++;
+
+                    progress = (eaFilledCount / eaTotalFields) * 100;
                     break;
                 case 'legal-regulatory':
-                    if (data.legalCompliance.corporateCompliance.directorCompliance && data.legalCompliance.taxCompliance.incomeTax) progress = 100;
-                    else if (data.legalCompliance.corporateCompliance.directorCompliance) progress = 50;
+                    let lrFilledCount = 0;
+                    let lrTotalFields = 9; // Total key fields including checkboxes
+
+                    if (isSelectFilled(data.legalCompliance.corporateCompliance.registrationStatus)) lrFilledCount++;
+                    if (data.legalCompliance.corporateCompliance.directorCompliance !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.corporateCompliance.governanceScore > 0) lrFilledCount++;
+                    if (data.legalCompliance.complianceCertification.regulatoryStandardsCompliance !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.taxCompliance.incomeTax !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.taxCompliance.vat !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.taxCompliance.paye !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.taxCompliance.municipalTaxes !== null) lrFilledCount++; // Checkbox
+                    if (isSelectFilled(data.legalCompliance.insurancePortfolio.coverageAdequacy)) lrFilledCount++;
+
+                    progress = (lrFilledCount / lrTotalFields) * 100;
                     break;
                 case 'agricultural-technical':
-                    if (data.agriculturalTechnical.landUtilization.soilPotential && data.agriculturalTechnical.productionEfficiency.calvingRate > 0) progress = 100;
-                    else if (data.agriculturalTechnical.landUtilization.soilPotential) progress = 50;
+                    let atFilledCount = 0;
+                    let atTotalFields = 11;
+
+                    if (isSelectFilled(data.agriculturalTechnical.landUtilization.soilPotential)) atFilledCount++;
+                    if (data.agriculturalTechnical.landUtilization.carryingCapacity > 0) atFilledCount++;
+                    if (isSelectFilled(data.agriculturalTechnical.waterResources.availability)) atFilledCount++;
+                    if (data.agriculturalTechnical.waterResources.irrigationEfficiency > 0) atFilledCount++;
+                    if (isSelectFilled(data.agriculturalTechnical.livestockManagement.breedSelection)) atFilledCount++;
+                    if (data.agriculturalTechnical.livestockManagement.breedingPrograms.successRate > 0) atFilledCount++;
+                    if (isSelectFilled(data.agriculturalTechnical.livestockManagement.nutritionPrograms.integratedNutritionSystems)) atFilledCount++;
+                    if (isSelectFilled(data.agriculturalTechnical.livestockManagement.grazingManagement.landUseOptimization)) atFilledCount++;
+                    if (isSelectFilled(data.agriculturalTechnical.livestockManagement.animalHealth.veterinaryPrograms)) atFilledCount++;
+                    if (data.agriculturalTechnical.productionEfficiency.calvingRate > 0) atFilledCount++;
+                    if (data.agriculturalTechnical.technologyAdoption.precisionAgriculture !== null) atFilledCount++; // Checkbox
+                    if (isSelectFilled(data.agriculturalTechnical.technologyAdoption.automationLevel)) atFilledCount++;
+
+                    progress = (atFilledCount / atTotalFields) * 100;
                     break;
                 case 'risk-analysis':
                     // Check if at least one risk has likelihood/impact filled and mitigation strategies are present
@@ -2507,13 +2767,16 @@
                     if (data.farmProfile.basicInfo.farmName) progress = 100;
                     break;
             }
+            // Ensure progress is capped at 100 and not negative
+            progress = Math.max(0, Math.min(100, progress));
+
             // Update progress for both desktop and mobile sidebar elements
             const desktopProgressElement = document.getElementById(`progress-${moduleName}`);
             const mobileProgressElement = document.getElementById(`progress-${moduleName}-mobile`);
 
             [desktopProgressElement, mobileProgressElement].forEach(element => {
                 if (element) {
-                    element.textContent = `${progress}%`;
+                    element.textContent = `${Math.round(progress)}%`; // Round to nearest whole number
                     if (progress === 100) {
                         element.classList.remove('bg-secondary', 'bg-warning');
                         element.classList.add('bg-success');
