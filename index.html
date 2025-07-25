@@ -416,7 +416,7 @@
                     <button class="btn btn-primary d-md-none me-3 hamburger-menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <img src="https://placehold.co/150x40/007bff/ffffff?text=Nyika" alt="Land Bank Logo" class="logo">
+                    <img src="https://placehold.co/150x40/007bff/ffffff?text=Land+Bank" alt="Land Bank Logo" class="logo">
                     <h3 class="mb-0">Cattle Farm Viability Assessment</h3>
                 </div>
                 <div class="farm-selector-section d-flex align-items-center flex-wrap justify-content-center justify-content-md-end">
@@ -439,10 +439,10 @@
     <!-- Status Panel for messages -->
     <div id="statusPanel" class="status-panel"></div>
 
-    <!-- Copyright Information -->
-    <div style="font-size: 0.75em; text-align: center; margin-top: 40px; color: #6c757d;">
-        &copy; 2025 Mutenguna-Franklin-Mukakanga: Nalubamba (aka Franklin Mukakanga). All rights reserved.
-    </div>
+    <!-- Footer for copyright -->
+    <footer class="text-center py-3 bg-light mt-5">
+        <p id="copyright-footer" class="text-muted"></p>
+    </footer>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN6z+VdqzjrL2s" crossorigin="anonymous"></script>
@@ -450,7 +450,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
     <script>
         // --- Supabase Configuration (IMPORTANT: Replace with your actual Supabase project URL and Anon Key) ---
@@ -490,7 +489,7 @@
             farmProfile: {
                 basicInfo: {
                     farmId: '',
-                    farmName: 'New Farm',
+                    farmName: '', // Changed to empty string for 0% initial progress
                     establishedDate: '',
                     totalHectares: 0,
                     landTenure: '', // Options: 'Owned', 'Leased', 'Mixed'
@@ -513,7 +512,7 @@
                 },
                 infrastructure: {
                     buildings: [{ type: '', condition: '' }], // Condition: 'Excellent', 'Good', 'Fair', 'Poor'
-                    equipment: [{ type: '', condition: '', lastMaintenance: '' }], // Condition: 'Excellent', 'Good', 'Fair', 'Poor'
+                    equipment: [{ type: '', condition: '' }], // Condition: 'Excellent', 'Good', 'Fair', 'Poor'
                     irrigationSystems: [{ type: '', coverage: '', efficiency: 0 }],
                     processingFacilities: [{ type: '', capacity: 0, compliance: '' }],
                     totalInfrastructureValue: 0
@@ -719,7 +718,7 @@
         const OPTIONS = {
             farmType: { 'Beef': 100, 'Dairy': 90, 'Mixed': 80, 'Other': 50 },
             landTenure: { 'Owned': 100, 'Leased': 70, 'Mixed': 85 },
-            legalStructure: { 'Pty Ltd': 100, 'Co-op': 90, 'Sole Prop': 70, 'Trust': 80 }, // Added content for Legal Structure
+            legalStructure: { 'Pty Ltd': 100, 'Co-op': 90, 'Sole Prop': 70, 'Trust': 80, 'Partnership': 60, 'Individual': 50 }, // Added more options for Legal Structure
             condition: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 }, // Reusable for buildings, equipment, animal housing
             identificationSystem: { 'RFID': 100, 'Ear Tags': 70, 'Branding': 40, 'None': 10 },
             herdHealthStatus: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 },
@@ -1183,12 +1182,16 @@
             if (data) {
                 farmAssessmentData = data;
                 farmAssessmentData.farmProfile.basicInfo.farmId = farmId; // Ensure farmId is consistent
+                // Ensure farm name is set for display if it was loaded as empty
+                if (!farmAssessmentData.farmProfile.basicInfo.farmName) {
+                    farmAssessmentData.farmProfile.basicInfo.farmName = `Farm ${allFarmIds.indexOf(farmId) + 1}`;
+                }
                 showStatus(`Loaded data for farm: ${farmAssessmentData.farmProfile.basicInfo.farmName}`);
             } else {
                 // If no data found, initialize with default structure
                 farmAssessmentData = JSON.parse(JSON.stringify(defaultFarmAssessmentData));
                 farmAssessmentData.farmProfile.basicInfo.farmId = farmId;
-                farmAssessmentData.farmProfile.basicInfo.farmName = `New Farm ${allFarmIds.length + 1}`;
+                farmAssessmentData.farmProfile.basicInfo.farmName = `New Farm ${allFarmIds.length + 1}`; // Set display name for new farm
                 showStatus('Initialized new farm data.');
             }
             updateFarmSelector();
@@ -1213,7 +1216,7 @@
             const newFarmName = `New Farm ${allFarmIds.length + 1}`;
             const newFarmData = JSON.parse(JSON.stringify(defaultFarmAssessmentData));
             newFarmData.farmProfile.basicInfo.farmId = newId;
-            newFarmData.farmProfile.basicInfo.farmName = newFarmName;
+            newFarmData.farmProfile.basicInfo.farmName = newFarmName; // Set name for the new farm
 
             allFarmIds.push(newId);
             await saveFarmDataIndexedDB(newId, newFarmData);
@@ -1268,9 +1271,8 @@
                     if (id === currentFarmId && farmAssessmentData.farmProfile && farmAssessmentData.farmProfile.basicInfo) {
                         farmNameFromData = farmAssessmentData.farmProfile.basicInfo.farmName;
                     } else {
-                        // If not the current farm, try to load its name from IndexedDB if possible
                         // For simplicity, we'll just use the ID if not the current farm.
-                        farmNameFromData = id;
+                        farmNameFromData = id; // Fallback to ID if name not readily available
                     }
                     option.textContent = farmNameFromData;
                     option.selected = (id === currentFarmId); // Set selected option
@@ -2422,41 +2424,68 @@
             managementScore += OPTIONS.successionPlanning[getNestedValue(hr, 'managementCompetency.successionPlanning')] || 0;
             managementScore += OPTIONS.unionRelationships[hr.laborRelations.unionRelationships] || 0;
 
-            // SWOT Integration into Management Score
+            // SWOT Integration into Management Score (Enhanced with "Negative Space" Contribution)
             let swotScoreContribution = 0;
-            let maxSwotPositiveScore = 0;
-            let maxSwotNegativeScore = 0;
+            const negativeSpaceFactor = 0.2; // 20% contribution for non-selected items
 
-            // Calculate max possible positive and negative SWOT scores
-            for (const key in OPTIONS.swotStrengths) maxSwotPositiveScore += OPTIONS.swotStrengths[key];
-            for (const key in OPTIONS.swotOpportunities) maxSwotPositiveScore += OPTIONS.swotOpportunities[key];
-            for (const key in OPTIONS.swotWeaknesses) maxSwotNegativeScore += Math.abs(OPTIONS.swotWeaknesses[key]);
-            for (const key in OPTIONS.swotThreats) maxSwotNegativeScore += Math.abs(OPTIONS.swotThreats[key]);
+            // Strengths
+            for (const itemKey in OPTIONS.swotStrengths) {
+                if ((farmAssessmentData.recommendations.swotAnalysis.strengths || []).includes(itemKey)) {
+                    swotScoreContribution += OPTIONS.swotStrengths[itemKey];
+                } else {
+                    swotScoreContribution += (OPTIONS.swotStrengths[itemKey] * -negativeSpaceFactor); // Unselected strength is a fractional weakness
+                }
+            }
 
-            const totalPossibleSwotRange = maxSwotPositiveScore + maxSwotNegativeScore;
+            // Weaknesses
+            for (const itemKey in OPTIONS.swotWeaknesses) {
+                if ((farmAssessmentData.recommendations.swotAnalysis.weaknesses || []).includes(itemKey)) {
+                    swotScoreContribution += OPTIONS.swotWeaknesses[itemKey];
+                } else {
+                    swotScoreContribution += (Math.abs(OPTIONS.swotWeaknesses[itemKey]) * negativeSpaceFactor); // Unselected weakness is a fractional strength
+                }
+            }
 
-            // Calculate score from selected strengths
-            (farmAssessmentData.recommendations.swotAnalysis.strengths || []).forEach(item => {
-                swotScoreContribution += OPTIONS.swotStrengths[item] || 0;
-            });
-            // Calculate score from selected weaknesses (negative contribution)
-            (farmAssessmentData.recommendations.swotAnalysis.weaknesses || []).forEach(item => {
-                swotScoreContribution += OPTIONS.swotWeaknesses[item] || 0;
-            });
-            // Calculate score from selected opportunities
-            (farmAssessmentData.recommendations.swotAnalysis.opportunities || []).forEach(item => {
-                swotScoreContribution += OPTIONS.swotOpportunities[item] || 0;
-            });
-            // Calculate score from selected threats (negative contribution)
-            (farmAssessmentData.recommendations.swotAnalysis.threats || []).forEach(item => {
-                swotScoreContribution += OPTIONS.swotThreats[item] || 0;
-            });
+            // Opportunities
+            for (const itemKey in OPTIONS.swotOpportunities) {
+                if ((farmAssessmentData.recommendations.swotAnalysis.opportunities || []).includes(itemKey)) {
+                    swotScoreContribution += OPTIONS.swotOpportunities[itemKey];
+                } else {
+                    swotScoreContribution += (OPTIONS.swotOpportunities[itemKey] * -negativeSpaceFactor); // Unselected opportunity is a fractional threat
+                }
+            }
 
-            // Normalize SWOT score to a 0-100 scale
+            // Threats
+            for (const itemKey in OPTIONS.swotThreats) {
+                if ((farmAssessmentData.recommendations.swotAnalysis.threats || []).includes(itemKey)) {
+                    swotScoreContribution += OPTIONS.swotThreats[itemKey];
+                } else {
+                    swotScoreContribution += (Math.abs(OPTIONS.swotThreats[itemKey]) * negativeSpaceFactor); // Unselected threat is a fractional opportunity
+                }
+            }
+
+            // Determine min/max possible raw SWOT scores for normalization
+            let minPossibleSwotRawScore = 0; // If all negative aspects are selected, and all positive are unselected
+            let maxPossibleSwotRawScore = 0; // If all positive aspects are selected, and all negative are unselected
+
+            // Calculate max possible raw score (all positive selected, all negative unselected)
+            for (const itemKey in OPTIONS.swotStrengths) maxPossibleSwotRawScore += OPTIONS.swotStrengths[itemKey];
+            for (const itemKey in OPTIONS.swotOpportunities) maxPossibleSwotRawScore += OPTIONS.swotOpportunities[itemKey];
+            for (const itemKey in OPTIONS.swotWeaknesses) maxPossibleSwotRawScore += (Math.abs(OPTIONS.swotWeaknesses[itemKey]) * negativeSpaceFactor); // Non-selected weakness contributes positively
+            for (const itemKey in OPTIONS.swotThreats) maxPossibleSwotRawScore += (Math.abs(OPTIONS.swotThreats[itemKey]) * negativeSpaceFactor); // Non-selected threat contributes positively
+
+            // Calculate min possible raw score (all negative selected, all positive unselected)
+            for (const itemKey in OPTIONS.swotStrengths) minPossibleSwotRawScore += (OPTIONS.swotStrengths[itemKey] * -negativeSpaceFactor); // Non-selected strength contributes negatively
+            for (const itemKey in OPTIONS.swotOpportunities) minPossibleSwotRawScore += (OPTIONS.swotOpportunities[itemKey] * -negativeSpaceFactor); // Non-selected opportunity contributes negatively
+            for (const itemKey in OPTIONS.swotWeaknesses) minPossibleSwotRawScore += OPTIONS.swotWeaknesses[itemKey];
+            for (const itemKey in OPTIONS.swotThreats) minPossibleSwotRawScore += OPTIONS.swotThreats[itemKey];
+
+            const swotRange = maxPossibleSwotRawScore - minPossibleSwotRawScore;
             let normalizedSwotScore = 0;
-            if (totalPossibleSwotRange > 0) {
-                // Shift the score so that the lowest possible (sum of all negative) maps to 0, and highest possible (sum of all positive) maps to 100
-                normalizedSwotScore = ((swotScoreContribution + maxSwotNegativeScore) / totalPossibleSwotRange) * 100;
+            if (swotRange > 0) {
+                normalizedSwotScore = ((swotScoreContribution - minPossibleSwotRawScore) / swotRange) * 100;
+            } else {
+                normalizedSwotScore = 50; // Default to neutral if no range (e.g., no SWOT items defined)
             }
 
             // Add normalized SWOT score to the management score, weighted (e.g., 20% of management score comes from SWOT)
@@ -2786,7 +2815,7 @@
                     let esFilledCount = 0;
                     let esTotalFields = 5; // Farm Name + 4 SWOT categories (at least one selected)
 
-                    if (data.farmProfile.basicInfo.farmName) esFilledCount++;
+                    if (data.farmProfile.basicInfo.farmName !== '') esFilledCount++; // Check if farm name is not empty
                     if ((data.recommendations.swotAnalysis.strengths || []).length > 0) esFilledCount++;
                     if ((data.recommendations.swotAnalysis.weaknesses || []).length > 0) esFilledCount++;
                     if ((data.recommendations.swotAnalysis.opportunities || []).length > 0) esFilledCount++;
@@ -2847,7 +2876,7 @@
                     if (isSelectFilled(data.environmentalAssessment.permitsLicenses.complianceStatus)) eaFilledCount++;
                     if (isSelectFilled(data.environmentalAssessment.hazardousSubstances.safetyProtocols)) eaFilledCount++;
                     if (isSelectFilled(data.environmentalAssessment.resourceManagement.waterUsage)) eaFilledCount++;
-                    if (data.environmentalAssessment.sustainabilityPractices.renewableEnergy !== null) eaFilledCount++; // Checkbox
+                    if (data.environmentalAssessment.sustainabilityPractices.renewableEnergy === true) eaFilledCount++; // Changed condition
                     if (isSelectFilled(data.environmentalAssessment.sustainabilityPractices.carbonFootprint)) eaFilledCount++;
                     if (data.environmentalAssessment.contingentLiabilities.environmentalCleanupObligations > 0) eaFilledCount++;
 
@@ -2858,13 +2887,13 @@
                     let lrTotalFields = 9; // Total key fields including checkboxes
 
                     if (isSelectFilled(data.legalCompliance.corporateCompliance.registrationStatus)) lrFilledCount++;
-                    if (data.legalCompliance.corporateCompliance.directorCompliance !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.corporateCompliance.directorCompliance === true) lrFilledCount++; // Changed condition
                     if (data.legalCompliance.corporateCompliance.governanceScore > 0) lrFilledCount++;
-                    if (data.legalCompliance.complianceCertification.regulatoryStandardsCompliance !== null) lrFilledCount++; // Checkbox
-                    if (data.legalCompliance.taxCompliance.incomeTax !== null) lrFilledCount++; // Checkbox
-                    if (data.legalCompliance.taxCompliance.vat !== null) lrFilledCount++; // Checkbox
-                    if (data.legalCompliance.taxCompliance.paye !== null) lrFilledCount++; // Checkbox
-                    if (data.legalCompliance.taxCompliance.municipalTaxes !== null) lrFilledCount++; // Checkbox
+                    if (data.legalCompliance.complianceCertification.regulatoryStandardsCompliance === true) lrFilledCount++; // Changed condition
+                    if (data.legalCompliance.taxCompliance.incomeTax === true) lrFilledCount++; // Changed condition
+                    if (data.legalCompliance.taxCompliance.vat === true) lrFilledCount++; // Changed condition
+                    if (data.legalCompliance.taxCompliance.paye === true) lrFilledCount++; // Changed condition
+                    if (data.legalCompliance.taxCompliance.municipalTaxes === true) lrFilledCount++; // Changed condition
                     if (isSelectFilled(data.legalCompliance.insurancePortfolio.coverageAdequacy)) lrFilledCount++;
 
                     progress = (lrFilledCount / lrTotalFields) * 100;
@@ -2883,7 +2912,7 @@
                     if (isSelectFilled(data.agriculturalTechnical.livestockManagement.grazingManagement.landUseOptimization)) atFilledCount++;
                     if (isSelectFilled(data.agriculturalTechnical.livestockManagement.animalHealth.veterinaryPrograms)) atFilledCount++;
                     if (data.agriculturalTechnical.productionEfficiency.calvingRate > 0) atFilledCount++;
-                    if (data.agriculturalTechnical.technologyAdoption.precisionAgriculture !== null) atFilledCount++; // Checkbox
+                    if (data.agriculturalTechnical.technologyAdoption.precisionAgriculture === true) atFilledCount++; // Changed condition
                     if (isSelectFilled(data.agriculturalTechnical.technologyAdoption.automationLevel)) atFilledCount++;
 
                     progress = (atFilledCount / atTotalFields) * 100;
@@ -2904,7 +2933,7 @@
                     else if (data.recommendations.viabilityConclusion) progress = 50;
                     break;
                 case 'reporting-system':
-                    if (data.farmProfile.basicInfo.farmName) progress = 100;
+                    if (data.farmProfile.basicInfo.farmName !== '') progress = 100; // Requires farm name to be filled
                     break;
             }
             // Ensure progress is capped at 100 and not negative
@@ -2985,6 +3014,15 @@
             });
         }
 
+        // --- Dynamic Copyright Function ---
+        function setDynamicCopyright() {
+            const copyrightElement = document.getElementById('copyright-footer');
+            if (copyrightElement) {
+                const currentYear = new Date().getFullYear();
+                copyrightElement.textContent = `© ${currentYear} Mutenguna-Franklin-Mukakanga: Nalubamba (aka Franklin Mukakanga). All rights reserved.`;
+            }
+        }
+
 
         // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', async () => {
@@ -3009,6 +3047,7 @@
                 await loadFarm(allFarmIds[0]); // Load the first farm by default
             }
             updateAllModuleProgress(); // Initial progress update
+            setDynamicCopyright(); // Set the copyright year on load
             hideLoading();
         });
 
