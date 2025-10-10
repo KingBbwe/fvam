@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+<script data-token="477645-566960-206396" id="eternl-dom-script" src="chrome-extension://kmhcihpebfmpgmihbkipmjlmmioameka/app/dom.js?token=477645-566960-206396"></script><head>
+            <style>.lw { font-size: 60px; }</style>
+        </head>
+        <body>
+            
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cattle Farm Viability Assessment - Bank Grade</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjAjxN6j/gQremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -236,9 +242,9 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="loading-overlay" id="loadingOverlay">
+
+
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
 
@@ -250,7 +256,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#" data-module="executive-summary">
                         <i class="fas fa-chart-line"></i> Executive Summary
-                        <span class="float-end badge bg-success" id="progress-executive-summary">0%</span>
+                        <span class="float-end badge bg-secondary" id="progress-executive-summary">0%</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -267,13 +273,13 @@
                     </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-module="commercial-marketing">
-                        <i class="fas fa-store"></i> Commercial & Marketing
+                        <i class="fas fa-store"></i> Commercial &amp; Marketing
                         <span class="float-end badge bg-secondary" id="progress-commercial-marketing">0%</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-module="hr-management">
-                        <i class="fas fa-users"></i> HR & Management
+                        <i class="fas fa-users"></i> HR &amp; Management
                         <span class="float-end badge bg-secondary" id="progress-hr-management">0%</span>
                     </a>
                 </li>
@@ -285,13 +291,13 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-module="legal-regulatory">
-                        <i class="fas fa-balance-scale"></i> Legal & Regulatory
+                        <i class="fas fa-balance-scale"></i> Legal &amp; Regulatory
                         <span class="float-end badge bg-secondary" id="progress-legal-regulatory">0%</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-module="agricultural-technical">
-                        <i class="fas fa-tractor"></i> Agricultural & Technical
+                        <i class="fas fa-tractor"></i> Agricultural &amp; Technical
                         <span class="float-end badge bg-secondary" id="progress-agricultural-technical">0%</span>
                     </a>
                 </li>
@@ -303,7 +309,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-module="scoring-classification">
-                        <i class="fas fa-calculator"></i> Scoring & Classification
+                        <i class="fas fa-calculator"></i> Scoring &amp; Classification
                         <span class="float-end badge bg-secondary" id="progress-scoring-classification">0%</span>
                     </a>
                 </li>
@@ -333,7 +339,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="#" data-module="executive-summary" data-bs-dismiss="offcanvas">
                             <i class="fas fa-chart-line"></i> Executive Summary
-                            <span class="float-end badge bg-success" id="progress-executive-summary-mobile">0%</span>
+                            <span class="float-end badge bg-secondary" id="progress-executive-summary-mobile">0%</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -350,13 +356,13 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-module="commercial-marketing" data-bs-dismiss="offcanvas">
-                            <i class="fas fa-store"></i> Commercial & Marketing
+                            <i class="fas fa-store"></i> Commercial &amp; Marketing
                             <span class="float-end badge bg-secondary" id="progress-commercial-marketing-mobile">0%</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-module="hr-management" data-bs-dismiss="offcanvas">
-                            <i class="fas fa-users"></i> HR & Management
+                            <i class="fas fa-users"></i> HR &amp; Management
                             <span class="float-end badge bg-secondary" id="progress-hr-management-mobile">0%</span>
                         </a>
                     </li>
@@ -368,13 +374,13 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-module="legal-regulatory" data-bs-dismiss="offcanvas">
-                            <i class="fas fa-balance-scale"></i> Legal & Regulatory
+                            <i class="fas fa-balance-scale"></i> Legal &amp; Regulatory
                             <span class="float-end badge bg-secondary" id="progress-legal-regulatory-mobile">0%</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-module="agricultural-technical" data-bs-dismiss="offcanvas">
-                            <i class="fas fa-tractor"></i> Agricultural & Technical
+                            <i class="fas fa-tractor"></i> Agricultural &amp; Technical
                             <span class="float-end badge bg-secondary" id="progress-agricultural-technical-mobile">0%</span>
                         </a>
                     </li>
@@ -386,7 +392,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-module="scoring-classification" data-bs-dismiss="offcanvas">
-                            <i class="fas fa-calculator"></i> Scoring & Classification
+                            <i class="fas fa-calculator"></i> Scoring &amp; Classification
                             <span class="float-end badge bg-secondary" id="progress-scoring-classification-mobile">0%</span>
                         </a>
                     </li>
@@ -421,9 +427,7 @@
                 </div>
                 <div class="farm-selector-section d-flex align-items-center flex-wrap justify-content-center justify-content-md-end">
                     <label for="farmSelector" class="form-label mb-0 me-2">Select Farm:</label>
-                    <select class="form-select me-3 flex-grow-1" id="farmSelector" style="max-width: 200px;">
-                        <!-- Options will be populated by JS -->
-                    </select>
+                    <select class="form-select me-3 flex-grow-1" id="farmSelector" style="max-width: 200px;"><option value="farm-1760112596964-e71y0xl">Unnamed Farm 1</option></select>
                     <button class="btn btn-primary me-2 mt-2 mt-md-0" id="newFarmBtn"><i class="fas fa-plus"></i> New Farm</button>
                     <button class="btn btn-secondary mt-2 mt-md-0" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete Farm</button>
                 </div>
@@ -431,17 +435,461 @@
 
             <!-- Main Content Area for Modules -->
             <div id="moduleContent">
-                <!-- Module content will be loaded here by JS -->
+                <div class="card">
+                    <div class="card-header">Executive Summary</div>
+                    <div class="card-body">
+                        <h4 class="mb-3">Business Overview</h4>
+                        <div class="mb-3">
+                            <label for="farmName" class="form-label">Farm Name</label>
+                            <input type="text" class="form-control" id="farmName" name="farmProfile.basicInfo.farmName" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="farmId" class="form-label">Farm ID</label>
+                            <input type="text" class="form-control" id="farmId" value="farm-1760112596964-e71y0xl" readonly="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="farmType" class="form-label">Farm Type</label>
+                            <select class="form-select" id="farmType" name="farmProfile.basicInfo.farmType">
+                                <option value="">Select...</option><option value="Beef" data-score="100">Beef</option><option value="Dairy" data-score="90">Dairy</option><option value="Mixed" data-score="80">Mixed</option><option value="Other" data-score="50">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="operationalHistory" class="form-label">Operational History</label>
+                            <textarea class="form-control" id="operationalHistory" name="farmProfile.basicInfo.operationalHistory" rows="3"></textarea>
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Key Findings (SWOT Analysis)</h4>
+                        <h6>Strengths:</h6><div class="row">
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Strong Management Team" id="recommendations-swotAnalysis-strengths-Strong-Management-Team" name="recommendations.swotAnalysis.strengths" data-swot-score="10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Strong-Management-Team" title="Score: 10">
+                                Strong Management Team
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="High-Quality Livestock" id="recommendations-swotAnalysis-strengths-High-Quality-Livestock" name="recommendations.swotAnalysis.strengths" data-swot-score="10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-High-Quality-Livestock" title="Score: 10">
+                                High-Quality Livestock
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Modern Infrastructure &amp; Equipment" id="recommendations-swotAnalysis-strengths-Modern-Infrastructure-&amp;-Equipment" name="recommendations.swotAnalysis.strengths" data-swot-score="8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Modern-Infrastructure-&amp;-Equipment" title="Score: 8">
+                                Modern Infrastructure &amp; Equipment
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Established Market Access" id="recommendations-swotAnalysis-strengths-Established-Market-Access" name="recommendations.swotAnalysis.strengths" data-swot-score="8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Established-Market-Access" title="Score: 8">
+                                Established Market Access
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Diversified Revenue Streams" id="recommendations-swotAnalysis-strengths-Diversified-Revenue-Streams" name="recommendations.swotAnalysis.strengths" data-swot-score="7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Diversified-Revenue-Streams" title="Score: 7">
+                                Diversified Revenue Streams
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Efficient Production Practices" id="recommendations-swotAnalysis-strengths-Efficient-Production-Practices" name="recommendations.swotAnalysis.strengths" data-swot-score="7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Efficient-Production-Practices" title="Score: 7">
+                                Efficient Production Practices
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Healthy Financial Position" id="recommendations-swotAnalysis-strengths-Healthy-Financial-Position" name="recommendations.swotAnalysis.strengths" data-swot-score="9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Healthy-Financial-Position" title="Score: 9">
+                                Healthy Financial Position
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Experienced Labor Force" id="recommendations-swotAnalysis-strengths-Experienced-Labor-Force" name="recommendations.swotAnalysis.strengths" data-swot-score="6">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Experienced-Labor-Force" title="Score: 6">
+                                Experienced Labor Force
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Strong Brand Reputation" id="recommendations-swotAnalysis-strengths-Strong-Brand-Reputation" name="recommendations.swotAnalysis.strengths" data-swot-score="5">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Strong-Brand-Reputation" title="Score: 5">
+                                Strong Brand Reputation
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Robust Disease Prevention" id="recommendations-swotAnalysis-strengths-Robust-Disease-Prevention" name="recommendations.swotAnalysis.strengths" data-swot-score="9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Robust-Disease-Prevention" title="Score: 9">
+                                Robust Disease Prevention
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Sustainable Water Management" id="recommendations-swotAnalysis-strengths-Sustainable-Water-Management" name="recommendations.swotAnalysis.strengths" data-swot-score="8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-strengths-Sustainable-Water-Management" title="Score: 8">
+                                Sustainable Water Management
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                        <h6>Weaknesses:</h6><div class="row">
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Aging Infrastructure" id="recommendations-swotAnalysis-weaknesses-Aging-Infrastructure" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Aging-Infrastructure" title="Score: -8">
+                                Aging Infrastructure
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="High Operating Costs" id="recommendations-swotAnalysis-weaknesses-High-Operating-Costs" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-High-Operating-Costs" title="Score: -9">
+                                High Operating Costs
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Lack of Succession Planning" id="recommendations-swotAnalysis-weaknesses-Lack-of-Succession-Planning" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Lack-of-Succession-Planning" title="Score: -10">
+                                Lack of Succession Planning
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Limited Market Access" id="recommendations-swotAnalysis-weaknesses-Limited-Market-Access" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Limited-Market-Access" title="Score: -7">
+                                Limited Market Access
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Dependence on Single Commodity" id="recommendations-swotAnalysis-weaknesses-Dependence-on-Single-Commodity" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Dependence-on-Single-Commodity" title="Score: -8">
+                                Dependence on Single Commodity
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Poor Herd Health Management" id="recommendations-swotAnalysis-weaknesses-Poor-Herd-Health-Management" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Poor-Herd-Health-Management" title="Score: -10">
+                                Poor Herd Health Management
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="High Debt Burden" id="recommendations-swotAnalysis-weaknesses-High-Debt-Burden" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-High-Debt-Burden" title="Score: -10">
+                                High Debt Burden
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Inexperienced Labor Force" id="recommendations-swotAnalysis-weaknesses-Inexperienced-Labor-Force" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Inexperienced-Labor-Force" title="Score: -7">
+                                Inexperienced Labor Force
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Weak Financial Controls" id="recommendations-swotAnalysis-weaknesses-Weak-Financial-Controls" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Weak-Financial-Controls" title="Score: -9">
+                                Weak Financial Controls
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Inefficient Waste Management" id="recommendations-swotAnalysis-weaknesses-Inefficient-Waste-Management" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Inefficient-Waste-Management" title="Score: -7">
+                                Inefficient Waste Management
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Limited Access to Capital" id="recommendations-swotAnalysis-weaknesses-Limited-Access-to-Capital" name="recommendations.swotAnalysis.weaknesses" data-swot-score="-9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-weaknesses-Limited-Access-to-Capital" title="Score: -9">
+                                Limited Access to Capital
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                        <h6>Opportunities:</h6><div class="row">
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Expanding Local Market Demand" id="recommendations-swotAnalysis-opportunities-Expanding-Local-Market-Demand" name="recommendations.swotAnalysis.opportunities" data-swot-score="9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Expanding-Local-Market-Demand" title="Score: 9">
+                                Expanding Local Market Demand
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Access to New Technologies" id="recommendations-swotAnalysis-opportunities-Access-to-New-Technologies" name="recommendations.swotAnalysis.opportunities" data-swot-score="8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Access-to-New-Technologies" title="Score: 8">
+                                Access to New Technologies
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Government Support Programs" id="recommendations-swotAnalysis-opportunities-Government-Support-Programs" name="recommendations.swotAnalysis.opportunities" data-swot-score="7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Government-Support-Programs" title="Score: 7">
+                                Government Support Programs
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Value-Added Product Development" id="recommendations-swotAnalysis-opportunities-Value-Added-Product-Development" name="recommendations.swotAnalysis.opportunities" data-swot-score="10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Value-Added-Product-Development" title="Score: 10">
+                                Value-Added Product Development
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Export Market Expansion" id="recommendations-swotAnalysis-opportunities-Export-Market-Expansion" name="recommendations.swotAnalysis.opportunities" data-swot-score="9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Export-Market-Expansion" title="Score: 9">
+                                Export Market Expansion
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Strategic Partnerships" id="recommendations-swotAnalysis-opportunities-Strategic-Partnerships" name="recommendations.swotAnalysis.opportunities" data-swot-score="8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Strategic-Partnerships" title="Score: 8">
+                                Strategic Partnerships
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Improved Climate Resilience" id="recommendations-swotAnalysis-opportunities-Improved-Climate-Resilience" name="recommendations.swotAnalysis.opportunities" data-swot-score="6">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Improved-Climate-Resilience" title="Score: 6">
+                                Improved Climate Resilience
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Sustainable Farming Practices Adoption" id="recommendations-swotAnalysis-opportunities-Sustainable-Farming-Practices-Adoption" name="recommendations.swotAnalysis.opportunities" data-swot-score="7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Sustainable-Farming-Practices-Adoption" title="Score: 7">
+                                Sustainable Farming Practices Adoption
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Growing Organic/Ethical Meat Market" id="recommendations-swotAnalysis-opportunities-Growing-Organic/Ethical-Meat-Market" name="recommendations.swotAnalysis.opportunities" data-swot-score="8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Growing-Organic/Ethical-Meat-Market" title="Score: 8">
+                                Growing Organic/Ethical Meat Market
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Improved Genetics &amp; Breeding" id="recommendations-swotAnalysis-opportunities-Improved-Genetics-&amp;-Breeding" name="recommendations.swotAnalysis.opportunities" data-swot-score="7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-opportunities-Improved-Genetics-&amp;-Breeding" title="Score: 7">
+                                Improved Genetics &amp; Breeding
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                        <h6>Threats:</h6><div class="row">
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Adverse Weather Conditions" id="recommendations-swotAnalysis-threats-Adverse-Weather-Conditions" name="recommendations.swotAnalysis.threats" data-swot-score="-10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Adverse-Weather-Conditions" title="Score: -10">
+                                Adverse Weather Conditions
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Fluctuating Commodity Prices" id="recommendations-swotAnalysis-threats-Fluctuating-Commodity-Prices" name="recommendations.swotAnalysis.threats" data-swot-score="-9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Fluctuating-Commodity-Prices" title="Score: -9">
+                                Fluctuating Commodity Prices
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Increased Competition" id="recommendations-swotAnalysis-threats-Increased-Competition" name="recommendations.swotAnalysis.threats" data-swot-score="-7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Increased-Competition" title="Score: -7">
+                                Increased Competition
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Disease Outbreaks" id="recommendations-swotAnalysis-threats-Disease-Outbreaks" name="recommendations.swotAnalysis.threats" data-swot-score="-10">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Disease-Outbreaks" title="Score: -10">
+                                Disease Outbreaks
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Rising Input Costs" id="recommendations-swotAnalysis-threats-Rising-Input-Costs" name="recommendations.swotAnalysis.threats" data-swot-score="-8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Rising-Input-Costs" title="Score: -8">
+                                Rising Input Costs
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Regulatory Changes" id="recommendations-swotAnalysis-threats-Regulatory-Changes" name="recommendations.swotAnalysis.threats" data-swot-score="-7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Regulatory-Changes" title="Score: -7">
+                                Regulatory Changes
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Land Reform Uncertainty" id="recommendations-swotAnalysis-threats-Land-Reform-Uncertainty" name="recommendations.swotAnalysis.threats" data-swot-score="-9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Land-Reform-Uncertainty" title="Score: -9">
+                                Land Reform Uncertainty
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Labor Shortages" id="recommendations-swotAnalysis-threats-Labor-Shortages" name="recommendations.swotAnalysis.threats" data-swot-score="-8">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Labor-Shortages" title="Score: -8">
+                                Labor Shortages
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Water Scarcity" id="recommendations-swotAnalysis-threats-Water-Scarcity" name="recommendations.swotAnalysis.threats" data-swot-score="-9">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Water-Scarcity" title="Score: -9">
+                                Water Scarcity
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Consumer Preference Shifts" id="recommendations-swotAnalysis-threats-Consumer-Preference-Shifts" name="recommendations.swotAnalysis.threats" data-swot-score="-6">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Consumer-Preference-Shifts" title="Score: -6">
+                                Consumer Preference Shifts
+                            </label>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Trade Barriers" id="recommendations-swotAnalysis-threats-Trade-Barriers" name="recommendations.swotAnalysis.threats" data-swot-score="-7">
+                            <label class="form-check-label" for="recommendations-swotAnalysis-threats-Trade-Barriers" title="Score: -7">
+                                Trade Barriers
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                        <h4 class="mt-4 mb-3">Financial Viability Snapshot</h4>
+                        <p>Calculated ratios from Financial Assessment module:</p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Debt Service Coverage Ratio: <span>0.00</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Return on Assets: <span>0.00%</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Current Ratio: <span>0.00</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Operating Margin: <span>0.00%</span>
+                            </li>
+                        </ul>
+
+                        <h4 class="mt-4 mb-3">Overall Viability Recommendation (App-Derived)</h4>
+                        <div class="mb-3">
+                            <label for="overallViability" class="form-label">Recommendation</label>
+                            <input type="text" class="form-control" id="overallViability" value="Not Assessed" readonly="" disabled="">
+                            <small class="form-text text-muted">This recommendation is automatically generated by the app based on your inputs and scoring. Use the 'Key Recommendations' below for manual notes and mitigations.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keyRecommendations" class="form-label">Key Recommendations &amp; Mitigations (manual notes, comma-separated)</label>
+                            <textarea class="form-control" id="keyRecommendations" name="recommendations.interventionPlan" data-array-type="string" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Status Panel for messages -->
-    <div id="statusPanel" class="status-panel"></div>
+    <div id="statusPanel" class="status-panel" style="display: block;">Loaded data for farm: Unnamed Farm</div>
 
     <!-- Footer for copyright -->
     <footer class="text-center py-3 bg-light mt-5">
-        <p id="copyright-footer" class="text-muted"></p>
+        <p id="copyright-footer" class="text-muted">© 2025 Mutenguna-Franklin-Mukakanga: Nalubamba (aka Franklin Mukakanga). All rights reserved.</p>
     </footer>
 
     <!-- Bootstrap 5 JS -->
@@ -450,6 +898,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- html2pdf.js for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" xintegrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         // --- Supabase Configuration (IMPORTANT: Replace with your actual Supabase project URL and Anon Key) ---
@@ -1669,7 +2119,7 @@
                                 Current Ratio: <span id="cr">${ratios.currentRatio.toFixed(2)}</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                Operating Margin: <span>${(ratios.operatingMargin * 100).toFixed(2)}%</span>
+                                Operating Margin: <span id="om">${(ratios.operatingMargin * 100).toFixed(2)}%</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Asset Turnover: <span id="at">${ratios.assetTurnover.toFixed(2)}</span>
@@ -2240,13 +2690,16 @@
                 <div class="card">
                     <div class="card-header">Professional Reporting System</div>
                     <div class="card-body">
-                        <p>Generate various professional reports for the current farm.</p>
+                        <p>Generate various professional reports for the current farm. The report will be generated as a downloadable PDF.</p>
                         <button class="btn btn-primary me-2" id="generateExecutiveReportBtn"><i class="fas fa-file-pdf"></i> Generate Executive Summary Report</button>
                         <button class="btn btn-secondary" id="generateDetailedReportBtn"><i class="fas fa-file-pdf"></i> Generate Detailed Assessment Report</button>
 
                         <h4 class="mt-4 mb-3">Generated Report Preview</h4>
-                        <div id="reportPreview" class="border p-3 rounded bg-light" style="min-height: 400px; overflow-y: auto;">
-                            <p>Select a report to generate a preview here. For actual PDF download, use your browser's print to PDF function.</p>
+                        <!-- Container to give the white "page" a background -->
+                        <div id="reportContainer" style="padding: 20px; background-color: #e9ecef;">
+                            <div id="reportPreview" class="border p-4 rounded bg-white shadow-sm" style="min-height: 400px; overflow-y: auto; font-family: 'Times New Roman', Times, serif; font-size: 12pt; color: #000;">
+                                <p class="text-center text-muted" style="font-family: 'Inter', sans-serif;">Select a report to generate a preview here.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2667,130 +3120,344 @@
         }
 
         // --- Report Generation Logic ---
-        function generateReport(type) {
-            const reportPreview = document.getElementById('reportPreview');
-            let reportHtml = '';
+        // --- Enhanced Report Generation Logic ---
+function generateReport(type) {
+    const reportPreview = document.getElementById('reportPreview');
+    let reportHtml = '';
 
-            const farmName = farmAssessmentData.farmProfile.basicInfo.farmName || 'Unnamed Farm';
-            const farmId = farmAssessmentData.farmProfile.basicInfo.farmId || 'N/A';
-            const viability = farmAssessmentData.scoring.classification || 'Not Assessed'; // Use classification from scoring
-            const weightedScore = farmAssessmentData.scoring.weightedScore.toFixed(2);
+    const farmName = farmAssessmentData.farmProfile.basicInfo.farmName || 'Unnamed Farm';
+    const farmId = farmAssessmentData.farmProfile.basicInfo.farmId || 'N/A';
+    const viability = farmAssessmentData.scoring.classification || 'Not Assessed';
+    const weightedScore = farmAssessmentData.scoring.weightedScore.toFixed(2);
 
-            if (type === 'executive') {
-                const swot = farmAssessmentData.recommendations.swotAnalysis;
-                const financialRatios = farmAssessmentData.financialAssessment.financialRatios;
-                const keyRecommendations = (farmAssessmentData.recommendations.interventionPlan || []).join('; ');
+    // Enhanced CSS for better PDF styling
+    const pdfStyles = `
+        <style>
+            .pdf-page {
+                page-break-after: always;
+                padding: 1in;
+                font-family: 'Times New Roman', Times, serif;
+                font-size: 12pt;
+                line-height: 1.4;
+                color: #000;
+            }
+            .pdf-page:last-child {
+                page-break-after: auto;
+            }
+            .report-header {
+                text-align: center;
+                margin-bottom: 2rem;
+                border-bottom: 2px solid #333;
+                padding-bottom: 1rem;
+            }
+            .report-title {
+                font-size: 18pt;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+            }
+            .report-subtitle {
+                font-size: 14pt;
+                color: #666;
+                margin-bottom: 1rem;
+            }
+            .section {
+                margin-bottom: 1.5rem;
+                page-break-inside: avoid;
+            }
+            .section-title {
+                font-size: 14pt;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 0.25rem;
+            }
+            .subsection-title {
+                font-size: 12pt;
+                font-weight: bold;
+                margin: 0.75rem 0 0.25rem 0;
+            }
+            .table-container {
+                margin: 1rem 0;
+                page-break-inside: avoid;
+            }
+            .data-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 11pt;
+            }
+            .data-table th, .data-table td {
+                border: 1px solid #ddd;
+                padding: 0.5rem;
+                text-align: left;
+            }
+            .data-table th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+            }
+            .list-items {
+                margin: 0.5rem 0;
+                padding-left: 1.5rem;
+            }
+            .list-items li {
+                margin-bottom: 0.25rem;
+                page-break-inside: avoid;
+            }
+            .viability-badge {
+                display: inline-block;
+                background-color: #0d6efd;
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                font-weight: bold;
+                margin: 0.5rem 0;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .text-muted {
+                color: #6c757d;
+            }
+            .mt-2 { margin-top: 1rem; }
+            .mt-3 { margin-top: 1.5rem; }
+            .mb-1 { margin-bottom: 0.5rem; }
+            .mb-2 { margin-bottom: 1rem; }
+        </style>
+    `;
 
-                reportHtml = `
-                    <h3 class="text-center mb-4">Executive Summary Report for ${farmName}</h3>
-                    <p class="text-muted text-center">Farm ID: ${farmId}</p>
-                    <hr>
-                    <h5 class="mt-4">Overall Viability Recommendation: <span class="badge bg-primary">${viability} (Score: ${weightedScore})</span></h5>
+    if (type === 'executive') {
+        const swot = farmAssessmentData.recommendations.swotAnalysis;
+        const financialRatios = farmAssessmentData.financialAssessment.financialRatios;
+        const keyRecommendations = (farmAssessmentData.recommendations.interventionPlan || []).join('; ');
 
-                    <h5 class="mt-4">Business Overview</h5>
-                    <p><strong>Farm Name:</strong> ${farmName}</p>
-                    <p><strong>Farm Type:</strong> ${farmAssessmentData.farmProfile.basicInfo.farmType || 'N/A'}</p>
-                    <p><strong>Physical Address:</strong> ${farmAssessmentData.farmProfile.location.physicalAddress || 'N/A'}</p>
-                    <p><strong>Total Hectares:</strong> ${farmAssessmentData.farmProfile.basicInfo.totalHectares || 'N/A'}</p>
-                    <p><strong>Total Cattle Head:</strong> ${farmAssessmentData.farmProfile.herdDetails.totalHead || 'N/A'}</p>
-                    <p><strong>Estimated Cattle Value:</strong> ZAR ${((farmAssessmentData.farmProfile.herdDetails.totalHead || 0) * (farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0)).toLocaleString('en-ZA')}</p>
+        reportHtml = `
+            ${pdfStyles}
+            <div class="pdf-page">
+                <div class="report-header">
+                    <div class="report-title">Executive Summary Report</div>
+                    <div class="report-subtitle">${farmName}</div>
+                    <div class="text-muted">Farm ID: ${farmId}</div>
+                </div>
 
+                <div class="section">
+                    <div class="section-title">Overall Viability Assessment</div>
+                    <div class="viability-badge">${viability} (Score: ${weightedScore})</div>
+                </div>
 
-                    <h5 class="mt-4">Key Findings (SWOT Analysis)</h5>
-                    <h6>Strengths:</h6><ul>${(swot.strengths || []).map(s => `<li>${s}</li>`).join('')}</ul>
-                    <h6>Weaknesses:</h6><ul>${(swot.weaknesses || []).map(w => `<li>${w}</li>`).join('')}</ul>
-                    <h6>Opportunities:</h6><ul>${(swot.opportunities || []).map(o => `<li>${o}</li>`).join('')}</ul>
-                    <h6>Threats:</h6><ul>${(swot.threats || []).map(t => `<li>${t}</li>`).join('')}</ul>
-
-                    <h5 class="mt-4">Financial Summary</h5>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr><th>Ratio</th><th>Value</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Debt Service Coverage Ratio</td><td>${financialRatios.debtServiceCoverage.toFixed(2)}</td></tr>
-                            <tr><td>Return on Assets</td><td>${(financialRatios.returnOnAssets * 100).toFixed(2)}%</td></tr>
-                            <tr><td>Current Ratio</td><td>${financialRatios.currentRatio.toFixed(2)}</td></tr>
-                            <tr><td>Operating Margin</td><td>${(financialRatios.operatingMargin * 100).toFixed(2)}%</td></tr>
-                            <tr><td>Asset Turnover</td><td>${financialRatios.assetTurnover.toFixed(2)}</td></tr>
-                            <tr><td>Equity Ratio</td><td>${(financialRatios.equityRatio * 100).toFixed(2)}%</td></tr>
-                            <tr><td>Quick Ratio</td><td>${financialRatios.quickRatio.toFixed(2)}</td></tr>
-                            <tr><td>Interest Coverage</td><td>${financialRatios.interestCoverage.toFixed(2)}</td></tr>
-                            <tr><td>Working Capital Ratio</td><td>${(financialRatios.workingCapitalRatio * 100).toFixed(2)}%</td></tr>
-                        </tbody>
+                <div class="section">
+                    <div class="section-title">Business Overview</div>
+                    <table class="data-table">
+                        <tr><td style="width: 30%;"><strong>Farm Name:</strong></td><td>${farmName}</td></tr>
+                        <tr><td><strong>Farm Type:</strong></td><td>${farmAssessmentData.farmProfile.basicInfo.farmType || 'N/A'}</td></tr>
+                        <tr><td><strong>Physical Address:</strong></td><td>${farmAssessmentData.farmProfile.location.physicalAddress || 'N/A'}</td></tr>
+                        <tr><td><strong>Total Hectares:</strong></td><td>${farmAssessmentData.farmProfile.basicInfo.totalHectares || 'N/A'}</td></tr>
+                        <tr><td><strong>Total Cattle Head:</strong></td><td>${farmAssessmentData.farmProfile.herdDetails.totalHead || 'N/A'}</td></tr>
+                        <tr><td><strong>Estimated Cattle Value:</strong></td><td>ZAR ${((farmAssessmentData.farmProfile.herdDetails.totalHead || 0) * (farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0)).toLocaleString('en-ZA')}</td></tr>
                     </table>
+                </div>
 
-                    <h5 class="mt-4">Key Recommendations</h5>
+                <div class="section">
+                    <div class="section-title">Key Findings (SWOT Analysis)</div>
+                    
+                    <div class="subsection-title">Strengths</div>
+                    <ul class="list-items">
+                        ${(swot.strengths || []).map(s => `<li>${s}</li>`).join('') || '<li>None identified</li>'}
+                    </ul>
+
+                    <div class="subsection-title">Weaknesses</div>
+                    <ul class="list-items">
+                        ${(swot.weaknesses || []).map(w => `<li>${w}</li>`).join('') || '<li>None identified</li>'}
+                    </ul>
+
+                    <div class="subsection-title">Opportunities</div>
+                    <ul class="list-items">
+                        ${(swot.opportunities || []).map(o => `<li>${o}</li>`).join('') || '<li>None identified</li>'}
+                    </ul>
+
+                    <div class="subsection-title">Threats</div>
+                    <ul class="list-items">
+                        ${(swot.threats || []).map(t => `<li>${t}</li>`).join('') || '<li>None identified</li>'}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pdf-page">
+                <div class="section">
+                    <div class="section-title">Financial Summary</div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Financial Ratio</th><th>Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Debt Service Coverage Ratio</td><td>${financialRatios.debtServiceCoverage.toFixed(2)}</td></tr>
+                                <tr><td>Return on Assets</td><td>${(financialRatios.returnOnAssets * 100).toFixed(2)}%</td></tr>
+                                <tr><td>Current Ratio</td><td>${financialRatios.currentRatio.toFixed(2)}</td></tr>
+                                <tr><td>Operating Margin</td><td>${(financialRatios.operatingMargin * 100).toFixed(2)}%</td></tr>
+                                <tr><td>Asset Turnover</td><td>${financialRatios.assetTurnover.toFixed(2)}</td></tr>
+                                <tr><td>Equity Ratio</td><td>${(financialRatios.equityRatio * 100).toFixed(2)}%</td></tr>
+                                <tr><td>Quick Ratio</td><td>${financialRatios.quickRatio.toFixed(2)}</td></tr>
+                                <tr><td>Interest Coverage</td><td>${financialRatios.interestCoverage.toFixed(2)}</td></tr>
+                                <tr><td>Working Capital Ratio</td><td>${(financialRatios.workingCapitalRatio * 100).toFixed(2)}%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Key Recommendations</div>
                     <p>${keyRecommendations || 'No specific recommendations provided yet.'}</p>
-                    <p class="mt-5 text-end text-muted">Report Generated: ${new Date().toLocaleDateString()}</p>
-                `;
-            } else if (type === 'detailed') {
-                // For a truly detailed report, you'd iterate through all data points.
-                // For this demo, I'll provide a high-level summary of each module.
-                reportHtml = `
-                    <h3 class="text-center mb-4">Detailed Assessment Report for ${farmName}</h3>
-                    <p class="text-muted text-center">Farm ID: ${farmId}</p>
-                    <hr>
-                    <h5 class="mt-4">Overall Viability: <span class="badge bg-primary">${viability} (Score: ${weightedScore})</span></h5>
+                </div>
 
-                    <h5 class="mt-4">1. Executive Summary</h5>
-                    <p><strong>Business Overview:</strong> ${farmAssessmentData.farmProfile.basicInfo.operationalHistory || 'N/A'}</p>
-                    <p><strong>Key Findings:</strong> Strengths: ${(farmAssessmentData.recommendations.swotAnalysis.strengths || []).join('; ')}. Weaknesses: ${(farmAssessmentData.recommendations.swotAnalysis.weaknesses || []).join('; ')}.</p>
+                <div class="section mt-3">
+                    <div class="text-muted" style="text-align: right;">
+                        Report Generated: ${new Date().toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                    </div>
+                </div>
+            </div>
+        `;
+    } else if (type === 'detailed') {
+        // Detailed report with better structure
+        reportHtml = `
+            ${pdfStyles}
+            <div class="pdf-page">
+                <div class="report-header">
+                    <div class="report-title">Detailed Assessment Report</div>
+                    <div class="report-subtitle">${farmName}</div>
+                    <div class="text-muted">Farm ID: ${farmId}</div>
+                </div>
 
-                    <h5 class="mt-4">2. Business Description and Structure</h5>
-                    <p><strong>Legal Structure:</strong> ${farmAssessmentData.farmProfile.legalStructure || 'N/A'}</p>
-                    <p><strong>Total Hectares:</strong> ${farmAssessmentData.farmProfile.basicInfo.totalHectares || 'N/A'}</p>
-                    <p><strong>Herd Details:</strong> Total Head: ${farmAssessmentData.farmProfile.herdDetails.totalHead || 'N/A'}, Main Breeds: ${(farmAssessmentData.farmProfile.herdDetails.mainBreeds || []).join(', ')}.</p>
-                    <p><strong>Estimated Cattle Value:</strong> ZAR ${((farmAssessmentData.farmProfile.herdDetails.totalHead || 0) * (farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0)).toLocaleString('en-ZA')}</p>
+                <div class="section">
+                    <div class="section-title">Executive Summary</div>
+                    <div class="viability-badge mb-2">${viability} (Overall Score: ${weightedScore})</div>
+                    <p><strong>Business Overview:</strong> ${farmAssessmentData.farmProfile.basicInfo.operationalHistory || 'No operational history provided.'}</p>
+                    
+                    <div class="subsection-title">Key Findings</div>
+                    <p><strong>Strengths:</strong> ${(farmAssessmentData.recommendations.swotAnalysis.strengths || []).join('; ') || 'None identified'}</p>
+                    <p><strong>Weaknesses:</strong> ${(farmAssessmentData.recommendations.swotAnalysis.weaknesses || []).join('; ') || 'None identified'}</p>
+                </div>
 
-                    <h5 class="mt-4">3. Comprehensive Financial Assessment</h5>
-                    <p><strong>Historical Revenue (Year 3):</strong> ${farmAssessmentData.financialAssessment.historicalData.year3.revenue || 'N/A'}</p>
+                <div class="section">
+                    <div class="section-title">Business Description</div>
+                    <table class="data-table">
+                        <tr><td style="width: 40%;"><strong>Legal Structure:</strong></td><td>${farmAssessmentData.farmProfile.legalStructure || 'N/A'}</td></tr>
+                        <tr><td><strong>Total Hectares:</strong></td><td>${farmAssessmentData.farmProfile.basicInfo.totalHectares || 'N/A'}</td></tr>
+                        <tr><td><strong>Land Tenure:</strong></td><td>${farmAssessmentData.farmProfile.basicInfo.landTenure || 'N/A'}</td></tr>
+                        <tr><td><strong>Total Cattle Head:</strong></td><td>${farmAssessmentData.farmProfile.herdDetails.totalHead || 'N/A'}</td></tr>
+                        <tr><td><strong>Main Breeds:</strong></td><td>${(farmAssessmentData.farmProfile.herdDetails.mainBreeds || []).join(', ') || 'N/A'}</td></tr>
+                        <tr><td><strong>Estimated Cattle Value:</strong></td><td>ZAR ${((farmAssessmentData.farmProfile.herdDetails.totalHead || 0) * (farmAssessmentData.farmProfile.herdDetails.averageValuePerHead || 0)).toLocaleString('en-ZA')}</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Financial Assessment</div>
+                    <p><strong>Historical Revenue (Year 3):</strong> ZAR ${(farmAssessmentData.financialAssessment.historicalData.year3.revenue || 0).toLocaleString('en-ZA')}</p>
                     <p><strong>Current Ratio:</strong> ${farmAssessmentData.financialAssessment.financialRatios.currentRatio.toFixed(2)}</p>
+                    <p><strong>Debt Service Coverage:</strong> ${farmAssessmentData.financialAssessment.financialRatios.debtServiceCoverage.toFixed(2)}</p>
+                </div>
+            </div>
 
-                    <h5 class="mt-4">4. Commercial and Marketing Assessment</h5>
+            <div class="pdf-page">
+                <div class="section">
+                    <div class="section-title">Commercial & Marketing</div>
                     <p><strong>Customer Concentration:</strong> ${farmAssessmentData.commercialAssessment.customerAnalysis.customerConcentration || 'N/A'}%</p>
-                    <p><strong>Marketing Plan Evaluation:</strong> ${farmAssessmentData.commercialAssessment.salesStrategy.marketingPlanEvaluation || 'N/A'}</p>
+                    <p><strong>Marketing Plan:</strong> ${farmAssessmentData.commercialAssessment.salesStrategy.marketingPlanEvaluation || 'N/A'}</p>
+                    <p><strong>Pricing Strategy:</strong> ${farmAssessmentData.commercialAssessment.salesStrategy.pricingStrategy || 'N/A'}</p>
+                </div>
 
-                    <h5 class="mt-4">5. Human Resources and Management Assessment</h5>
+                <div class="section">
+                    <div class="section-title">Human Resources</div>
                     <p><strong>Total Employees:</strong> ${farmAssessmentData.hrManagement.organizationStructure.totalEmployees || 'N/A'}</p>
                     <p><strong>Succession Planning:</strong> ${getNestedValue(farmAssessmentData.hrManagement, 'managementCompetency.successionPlanning') || 'N/A'}</p>
+                </div>
 
-                    <h5 class="mt-4">6. Environmental Assessment</h5>
+                <div class="section">
+                    <div class="section-title">Environmental Compliance</div>
                     <p><strong>Environmental Audits:</strong> ${farmAssessmentData.environmentalAssessment.regulatoryCompliance.environmentalAudits || 'N/A'}</p>
                     <p><strong>Water Usage Monitoring:</strong> ${farmAssessmentData.environmentalAssessment.resourceManagement.waterUsage || 'N/A'}</p>
+                </div>
 
-                    <h5 class="mt-4">7. Legal and Regulatory Compliance</h5>
+                <div class="section">
+                    <div class="section-title">Legal Compliance</div>
+                    <p><strong>Registration Status:</strong> ${farmAssessmentData.legalCompliance.corporateCompliance.registrationStatus || 'N/A'}</p>
                     <p><strong>Director Compliance:</strong> ${farmAssessmentData.legalCompliance.corporateCompliance.directorCompliance ? 'Yes' : 'No'}</p>
-                    <p><strong>Income Tax Compliant:</strong> ${farmAssessmentData.legalCompliance.taxCompliance.incomeTax ? 'Yes' : 'No'}</p>
+                    <p><strong>Tax Compliance:</strong> ${farmAssessmentData.legalCompliance.taxCompliance.incomeTax ? 'Compliant' : 'Non-compliant'}</p>
+                </div>
+            </div>
 
-                    <h5 class="mt-4">8. Agricultural and Technical Assessment</h5>
+            <div class="pdf-page">
+                <div class="section">
+                    <div class="section-title">Agricultural & Technical</div>
                     <p><strong>Soil Potential:</strong> ${farmAssessmentData.agriculturalTechnical.landUtilization.soilPotential || 'N/A'}</p>
                     <p><strong>Calving Rate:</strong> ${farmAssessmentData.agriculturalTechnical.productionEfficiency.calvingRate || 'N/A'}%</p>
-                    <p><strong>Breeding Program Type:</strong> ${farmAssessmentData.agriculturalTechnical.livestockManagement.breedingPrograms.type || 'N/A'}</p>
+                    <p><strong>Breeding Program:</strong> ${farmAssessmentData.agriculturalTechnical.livestockManagement.breedingPrograms.type || 'N/A'}</p>
+                    <p><strong>Precision Agriculture:</strong> ${farmAssessmentData.agriculturalTechnical.technologyAdoption.precisionAgriculture ? 'Yes' : 'No'}</p>
+                </div>
 
-                    <h5 class="mt-4">9. Comprehensive Risk Analysis</h5>
+                <div class="section">
+                    <div class="section-title">Risk Analysis</div>
                     <p><strong>Key Production Risk:</strong> ${farmAssessmentData.riskAssessment.productionRisks.weatherPatterns.details || 'N/A'}</p>
-                    <p><strong>Mitigation Strategies:</strong> ${farmAssessmentData.riskAssessment.mitigationStrategies || 'N/A'}</p>
+                    <p><strong>Mitigation Strategies:</strong> ${farmAssessmentData.riskAssessment.mitigationStrategies || 'No specific strategies documented.'}</p>
+                </div>
 
-                    <h5 class="mt-4">10. Integrated Scoring and Classification Engine</h5>
-                    <p><strong>Overall Weighted Score:</strong> ${farmAssessmentData.scoring.weightedScore.toFixed(2)}</p>
-                    <p><strong>Classification:</strong> ${farmAssessmentData.scoring.classification || 'N/A'}</p>
+                <div class="section">
+                    <div class="section-title">Viability Conclusion</div>
+                    <p><strong>Final Assessment:</strong> ${farmAssessmentData.recommendations.viabilityConclusion || 'N/A'}</p>
+                    <p><strong>Intervention Plan:</strong> ${(farmAssessmentData.recommendations.interventionPlan || []).join('; ') || 'No intervention plan specified.'}</p>
+                </div>
 
-                    <h5 class="mt-4">11. Viability Conclusion and Recommendation</h5>
-                    <p><strong>Viability Conclusion:</strong> ${farmAssessmentData.recommendations.viabilityConclusion || 'N/A'}</p>
-                    <p><strong>Intervention Plan:</strong> ${(farmAssessmentData.recommendations.interventionPlan || []).join('; ')}</p>
+                <div class="section mt-3">
+                    <div class="text-muted" style="text-align: right;">
+                        Comprehensive Report Generated: ${new Date().toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
-                    <p class="mt-5 text-end text-muted">Report Generated: ${new Date().toLocaleDateString()}</p>
-                `;
-            }
-
-            reportPreview.innerHTML = reportHtml;
-            showStatus(`Generated ${type} report preview.`);
-
-            // For actual PDF generation, you would use a library like jsPDF or html2pdf.js
-            // This would require including another CDN. For now, users can use browser's Print to PDF.
+    reportPreview.innerHTML = reportHtml;
+    showStatus(`Generating ${type} PDF report...`);
+    
+    // Enhanced PDF Generation Logic
+    const element = reportPreview;
+    const opt = {
+        margin: 0.5,
+        filename: `${type.charAt(0).toUpperCase() + type.slice(1)}_Report_${farmName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true,
+            letterRendering: true,
+            allowTaint: false
+        },
+        jsPDF: { 
+            unit: 'in', 
+            format: 'letter', 
+            orientation: 'portrait',
+            compress: true
+        },
+        pagebreak: { 
+            mode: ['avoid-all', 'css', 'legacy'],
+            before: '.page-break',
+            after: '.pdf-page'
         }
+    };
 
+    // Use html2pdf library to generate and save the PDF
+    html2pdf().set(opt).from(element).save().then(() => {
+        showStatus('PDF download started.');
+    }).catch(err => {
+        showStatus('Error generating PDF.', true);
+        console.error('PDF Generation Error:', err);
+    });
+}
         // --- Module Progress Tracking ---
         function updateModuleProgress(moduleName) {
             let progress = 0;
@@ -3073,5 +3740,12 @@
         deleteFarmBtn.addEventListener('click', deleteCurrentFarm);
 
     </script>
-</body>
-</html>
+
+
+
+
+
+            <script>// Write JavaScript here</script>
+        
+    
+</body><chatgpt-sidebar data-gpts-theme="light"></chatgpt-sidebar>
