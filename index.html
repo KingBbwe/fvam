@@ -3793,7 +3793,7 @@ function generateReport(type) {
                 const store = transaction.objectStore(STORE_NAME);
                 const request = store.getAll();
 
-                request.onsuccess = () => {
+                request.onsuccess = async () => {
                     const allData = request.result;
                     hideLoading();
                     console.log(`%cSuccess! Found ${allData.length} records.`, "color: green; font-weight: bold;");
@@ -3803,6 +3803,7 @@ function generateReport(type) {
                         return;
                     }
 
+                    // 1. Always trigger the download first as a safety backup
                     const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -3813,7 +3814,31 @@ function generateReport(type) {
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                     
-                    showStatus('Recovery complete. File download triggered.');
+                    // 2. Ask user if they want to load the data into the app immediately
+                    const shouldImport = confirm(`Found ${allData.length} records. A backup file has been downloaded.\n\nWould you like to IMPORT this data into the app right now for immediate use? (This will refresh your farm list)`);
+                    
+                    if (shouldImport) {
+                        showLoading();
+                        try {
+                            // Update the global list of farm IDs
+                            allFarmIds = allData.map(item => item.farmId);
+                            
+                            // Load the first farm from the recovered set
+                            if (allFarmIds.length > 0) {
+                                await loadFarm(allFarmIds[0]);
+                                updateFarmSelector();
+                                showStatus(`Successfully imported ${allData.length} farms.`);
+                                alert(`Success! ${allData.length} farms have been loaded into the app.`);
+                            }
+                        } catch (importError) {
+                            console.error("Import failed:", importError);
+                            alert("Failed to import data into the app: " + importError.message);
+                        } finally {
+                            hideLoading();
+                        }
+                    } else {
+                        showStatus('Recovery complete. Backup file downloaded.');
+                    }
                 };
 
                 request.onerror = () => {
