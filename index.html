@@ -429,7 +429,8 @@
                     <label for="farmSelector" class="form-label mb-0 me-2">Select Farm:</label>
                     <select class="form-select me-3 flex-grow-1" id="farmSelector" style="max-width: 200px;"><option value="farm-1760112596964-e71y0xl">Unnamed Farm 1</option></select>
                     <button class="btn btn-primary me-2 mt-2 mt-md-0" id="newFarmBtn"><i class="fas fa-plus"></i> New Farm</button>
-                    <button class="btn btn-secondary mt-2 mt-md-0" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete Farm</button>
+                    <button class="btn btn-secondary mt-2 mt-md-0 me-2" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete Farm</button>
+                    <button class="btn btn-warning mt-2 mt-md-0" id="emergencyRecoveryBtn"><i class="fas fa-file-export"></i> Emergency Recovery</button>
                 </div>
             </div>
 
@@ -904,8 +905,8 @@
     <script>
         // --- Supabase Configuration (IMPORTANT: Replace with your actual Supabase project URL and Anon Key) ---
         // You can find these in your Supabase project settings -> API
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // e.g., 'https://abcde12345.supabase.co'
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        const SUPABASE_URL = 'https://ynxmaxxqeksnlnwcvdkk.supabase.co'; // e.g., 'https://abcde12345.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueG1heHhxZWtzbmxud2N2ZGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODUxOTEsImV4cCI6MjA2OTM2MTE5MX0.wWnkkoNjegxWiA53IaBhGML7P2ADEklPEHTwX67X4Dg'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 
         // Initialize Supabase Client
         const supabase = SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'
@@ -3738,6 +3739,69 @@ function generateReport(type) {
 
         // Delete Farm button
         deleteFarmBtn.addEventListener('click', deleteCurrentFarm);
+
+        // Emergency Recovery button
+        const emergencyRecoveryBtn = document.getElementById('emergencyRecoveryBtn');
+        if (emergencyRecoveryBtn) {
+            emergencyRecoveryBtn.addEventListener('click', async () => {
+                if (confirm('This will attempt to extract all stored data from the browser\'s local database and download it as a JSON file. Use this if you are unable to access your data normally. Continue?')) {
+                    await forceCoughUpData();
+                }
+            });
+        }
+
+        async function forceCoughUpData() {
+            console.log("%c--- EMERGENCY DATA RECOVERY STARTED ---", "color: red; font-weight: bold; font-size: 16px;");
+            showLoading();
+            try {
+                const db = await new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject("Failed to open database: " + request.error);
+                });
+
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    throw new Error(`Object store "${STORE_NAME}" not found in database "${DB_NAME}".`);
+                }
+
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+                    const allData = request.result;
+                    hideLoading();
+                    console.log(`%cSuccess! Found ${allData.length} records.`, "color: green; font-weight: bold;");
+                    
+                    if (allData.length === 0) {
+                        alert("No data found in the local database.");
+                        return;
+                    }
+
+                    const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `recovered_farm_data_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showStatus('Recovery complete. File download triggered.');
+                };
+
+                request.onerror = () => {
+                    hideLoading();
+                    throw new Error("Failed to retrieve data: " + request.error);
+                };
+
+            } catch (error) {
+                hideLoading();
+                console.error("%cRECOVERY FAILED:", "color: red; font-weight: bold;", error);
+                alert("Recovery failed: " + error.message);
+            }
+        }
 
     </script>
 
