@@ -1476,11 +1476,18 @@
             try {
                 // Get current user ID (using anonymous sign-in for simplicity)
                 let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
-                if (authError) throw authError;
+                if (authError) {
+                    if (authError.message.includes("Anonymous sign-ins are disabled")) {
+                        console.error("Supabase Error: Anonymous sign-ins are disabled in your project settings.");
+                        showStatus("Cloud sync failed: Anonymous sign-ins must be enabled in Supabase dashboard.", true);
+                        return;
+                    }
+                    throw authError;
+                }
                 const userId = authData.user.id;
 
                 // Check if record exists
-                const { data: existingData, error: fetchError } = await supabase
+                const { data: existingData, error: fetchError } = await supabaseClient
                     .from('farm_assessments')
                     .select('*')
                     .eq('farm_id', farmId)
@@ -1526,7 +1533,13 @@
             showLoading();
             try {
                 let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
-                if (authError) throw authError;
+                if (authError) {
+                    if (authError.message.includes("Anonymous sign-ins are disabled")) {
+                        console.warn("Anonymous sign-ins are disabled. Operating in local-only mode.");
+                        return null; 
+                    }
+                    throw authError;
+                }
                 const userId = authData.user.id;
 
                 const { data, error } = await supabaseClient
@@ -1565,7 +1578,13 @@
             showLoading();
             try {
                 let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
-                if (authError) throw authError;
+                if (authError) {
+                    if (authError.message.includes("Anonymous sign-ins are disabled")) {
+                        console.warn("Anonymous sign-ins are disabled. Operating in local-only mode.");
+                        return null; 
+                    }
+                    throw authError;
+                }
                 const userId = authData.user.id;
 
                 const { error } = await supabaseClient
@@ -1593,7 +1612,13 @@
             showLoading();
             try {
                 let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
-                if (authError) throw authError;
+                if (authError) {
+                    if (authError.message.includes("Anonymous sign-ins are disabled")) {
+                        console.warn("Anonymous sign-ins are disabled. Operating in local-only mode.");
+                        return null; 
+                    }
+                    throw authError;
+                }
                 const userId = authData.user.id;
 
                 const { data, error } = await supabaseClient
