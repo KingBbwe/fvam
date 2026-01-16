@@ -905,13 +905,13 @@
     <script>
         // --- Supabase Configuration (IMPORTANT: Replace with your actual Supabase project URL and Anon Key) ---
         // You can find these in your Supabase project settings -> API
-        const SUPABASE_URL = 'https://ynxmaxxqeksnlnwcvdkk.supabase.co'; // e.g., 'https://abcde12345.supabase.co'
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueG1heHhxZWtzbmxud2N2ZGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODUxOTEsImV4cCI6MjA2OTM2MTE5MX0.wWnkkoNjegxWiA53IaBhGML7P2ADEklPEHTwX67X4Dg'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        const SUPABASE_URL = 'https://ynxmaxxqeksnlnwcvdkk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueG1heHhxZWtzbmxud2N2ZGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODUxOTEsImV4cCI6MjA2OTM2MTE5MX0.wWnkkoNjegxWiA53IaBhGML7P2ADEklPEHTwX67X4Dg';
 
         // Initialize Supabase Client
-        const supabase = SUPABASE_URL === 'https://ynxmaxxqeksnlnwcvdkk.supabase.co' || SUPABASE_ANON_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueG1heHhxZWtzbmxud2N2ZGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODUxOTEsImV4cCI6MjA2OTM2MTE5MX0.wWnkkoNjegxWiA53IaBhGML7P2ADEklPEHTwX67X4Dg'
+        const supabaseClient = (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY' || !SUPABASE_URL || !SUPABASE_ANON_KEY)
             ? null // Supabase not configured, will operate in IndexedDB-only mode
-            : Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            : supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // --- Global Variables ---
         let db; // IndexedDB instance
@@ -1468,14 +1468,14 @@
 
         // --- Supabase Functions ---
         async function syncToSupabase(farmId, data) {
-            if (!supabase) {
+            if (!supabaseClient) {
                 console.warn('Supabase not configured. Skipping cloud sync.');
                 return;
             }
             showLoading();
             try {
                 // Get current user ID (using anonymous sign-in for simplicity)
-                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
@@ -1493,7 +1493,7 @@
 
                 if (existingData) {
                     // Update existing record
-                    const { error: updateError } = await supabase
+                    const { error: updateError } = await supabaseClient
                         .from('farm_assessments')
                         .update({ data: JSON.parse(JSON.stringify(data)), updated_at: new Date().toISOString() })
                         .eq('farm_id', farmId)
@@ -1503,7 +1503,7 @@
                     showStatus('Data synced to cloud.');
                 } else {
                     // Insert new record
-                    const { error: insertError } = await supabase
+                    const { error: insertError } = await supabaseClient
                         .from('farm_assessments')
                         .insert([{ farm_id: farmId, user_id: userId, data: JSON.parse(JSON.stringify(data)) }]);
                     if (insertError) throw insertError;
@@ -1519,17 +1519,17 @@
         }
 
         async function loadFromSupabase(farmId) {
-            if (!supabase) {
+            if (!supabaseClient) {
                 console.warn('Supabase not configured. Skipping cloud load.');
                 return null;
             }
             showLoading();
             try {
-                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('farm_assessments')
                     .select('data')
                     .eq('farm_id', farmId)
@@ -1558,17 +1558,17 @@
         }
 
         async function deleteFarmDataSupabase(farmId) {
-            if (!supabase) {
+            if (!supabaseClient) {
                 console.warn('Supabase not configured. Skipping cloud delete.');
                 return;
             }
             showLoading();
             try {
-                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('farm_assessments')
                     .delete()
                     .eq('farm_id', farmId)
@@ -1586,17 +1586,17 @@
         }
 
         async function getAllFarmIdsSupabase() {
-            if (!supabase) {
+            if (!supabaseClient) {
                 console.warn('Supabase not configured. Skipping cloud farm list.');
                 return [];
             }
             showLoading();
             try {
-                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('farm_assessments')
                     .select('farm_id')
                     .eq('user_id', userId);
@@ -1622,7 +1622,7 @@
             let data = await loadFarmDataIndexedDB(farmId);
 
             // If not in IndexedDB or if Supabase is configured, try Supabase
-            if (!data && supabase) {
+            if (!data && supabaseClient) {
                 data = await loadFromSupabase(farmId);
                 if (data) {
                     // If loaded from Supabase, save it to IndexedDB for offline access
