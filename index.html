@@ -107,6 +107,17 @@
             background-color: #5a6268;
             border-color: #5a6268;
         }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #000;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
         .progress-bar {
             border-radius: 5px;
         }
@@ -355,6 +366,7 @@
                     </select>
                     <button class="btn btn-primary" id="newFarmBtn"><i class="fas fa-plus"></i> New Farm</button>
                     <button class="btn btn-danger" id="deleteFarmBtn"><i class="fas fa-trash"></i> Delete</button>
+                    <button class="btn btn-warning" id="emergencyRecoveryBtn"><i class="fas fa-file-export"></i> Recovery</button>
                 </div>
             </div>
 
@@ -467,14 +479,86 @@
         // ============================================
         
         const LOCALSTORAGE_LAST_FARM_ID = 'lastUsedFarmId';
-        const DB_NAME = 'FarmAssessmentDB';
+        const DB_NAME = 'CattleFarmDB';
         const DB_VERSION = 1;
-        const STORE_NAME = 'farms';
+        const STORE_NAME = 'farmAssessments';
 
         let allFarmIds = [];
         let currentFarmId = null;
         let farmAssessmentData = {};
         let supabaseClient = null;
+
+        // ============================================
+        // CONSTANTS & CONFIGURATION (FROM VERSION 39)
+        // ============================================
+
+        const OPTIONS = {
+            farmType: { 'Beef': 100, 'Dairy': 90, 'Mixed': 80, 'Other': 50 },
+            landTenure: { 'Owned': 100, 'Leased': 70, 'Mixed': 85 },
+            legalStructure: { 'Pty Ltd': 100, 'Co-op': 90, 'Sole Prop': 70, 'Trust': 80, 'Partnership': 60, 'Individual': 50, 'CC': 75 },
+            condition: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 }, 
+            identificationSystem: { 'RFID': 100, 'Ear Tags': 70, 'Branding': 40, 'None': 10 },
+            herdHealthStatus: { 'Excellent': 100, 'Good': 75, 'Fair': 50, 'Poor': 25 },
+            relationshipStrength: { 'Strong': 100, 'Moderate': 70, 'Weak': 30 },
+            marketingPlanEvaluation: { 'Effective': 100, 'Needs Improvement': 50, 'Lacking': 20 },
+            pricingStrategy: { 'Competitive': 100, 'Premium': 90, 'Cost-Plus': 70, 'Undifferentiated': 40 },
+            organizationalChart: { 'Available': 100, 'Not Available': 0 },
+            roleClarity: { 'Very Clear': 100, 'Clear': 75, 'Somewhat Clear': 50, 'Unclear': 25 },
+            successionPlanning: { 'In Place': 100, 'Developing': 60, 'None': 20 },
+            unionRelationships: { 'Harmonious': 100, 'Stable': 70, 'Occasional Disputes': 40, 'Frequent Disputes': 10 },
+            environmentalAudits: { 'Annually': 100, 'Biennially': 70, 'Irregularly': 30, 'Never': 0 },
+            complianceStatus: { 'Fully Compliant': 100, 'Minor Issues': 60, 'Non-Compliant': 20 },
+            safetyProtocols: { 'Documented & Implemented': 100, 'Documented': 60, 'Lacking': 20, 'None': 0 },
+            waterUsageMonitoring: { 'Monitored & Optimized': 100, 'Monitored': 70, 'Not Monitored': 30 },
+            carbonFootprint: { 'Assessed & Reduced': 100, 'Assessed': 60, 'Not Assessed': 0 },
+            registrationStatus: { 'Active': 100, 'Dormant': 50, 'Lapsed': 0 },
+            directorCompliance: { 'Yes': 100, 'No': 0 },
+            regulatoryStandardsCompliance: { 'Yes': 100, 'Partial': 50, 'No': 0 },
+            taxCompliance: { 'Yes': 100, 'No': 0 }, 
+            coverageAdequacy: { 'Adequate': 100, 'Gaps Identified': 50, 'Inadequate': 0 },
+            soilPotential: { 'High': 100, 'Medium': 70, 'Low': 30 },
+            waterAvailability: { 'Abundant': 100, 'Sufficient': 70, 'Limited': 30, 'Scarce': 0 },
+            breedSelection: { 'Optimized': 100, 'Standard': 70, 'Suboptimal': 30 },
+            integratedNutritionSystems: { 'Optimized': 100, 'Standard': 70, 'Basic': 30 },
+            grazingManagement: { 'Rotational': 100, 'Semi-Rotational': 70, 'Continuous': 30 },
+            veterinaryPrograms: { 'Comprehensive': 100, 'Basic Preventive': 70, 'Reactive': 30, 'None': 0 },
+            automationLevel: { 'High': 100, 'Medium': 70, 'Low': 40, 'None': 10 },
+            precisionAgriculture: { 'Yes': 100, 'No': 0 },
+            renewableEnergy: { 'Yes': 100, 'Partial': 50, 'No': 0 },
+            swotStrengths: {
+                'Strong Management Team': 10, 'High-Quality Livestock': 10, 'Modern Infrastructure & Equipment': 8,
+                'Established Market Access': 8, 'Diversified Revenue Streams': 7, 'Efficient Production Practices': 7,
+                'Healthy Financial Position': 9, 'Experienced Labor Force': 6, 'Strong Brand Reputation': 5,
+                'Robust Disease Prevention': 9, 'Sustainable Water Management': 8
+            },
+            swotWeaknesses: {
+                'Aging Infrastructure': -8, 'High Operating Costs': -9, 'Lack of Succession Planning': -10,
+                'Limited Market Access': -7, 'Dependence on Single Commodity': -8, 'Poor Herd Health Management': -10,
+                'High Debt Burden': -10, 'Inexperienced Labor Force': -7, 'Weak Financial Controls': -9,
+                'Inefficient Waste Management': -7, 'Limited Access to Capital': -9
+            },
+            swotOpportunities: {
+                'Expanding Local Market Demand': 9, 'Access to New Technologies': 8, 'Government Support Programs': 7,
+                'Value-Added Product Development': 10, 'Export Market Expansion': 9, 'Strategic Partnerships': 8,
+                'Improved Climate Resilience': 6, 'Sustainable Farming Practices Adoption': 7,
+                'Growing Organic/Ethical Meat Market': 8, 'Improved Genetics & Breeding': 7
+            },
+            swotThreats: {
+                'Adverse Weather Conditions': -10, 'Fluctuating Commodity Prices': -9, 'Increased Competition': -7,
+                'Disease Outbreaks': -10, 'Rising Input Costs': -8, 'Regulatory Changes': -7,
+                'Land Reform Uncertainty': -9, 'Labor Shortages': -8, 'Water Scarcity': -9,
+                'Consumer Preference Shifts': -6, 'Trade Barriers': -7
+            }
+        };
+
+        const COMPONENT_WEIGHTS = {
+            financial: 0.25,
+            operational: 0.20,
+            market: 0.20,
+            management: 0.15,
+            compliance: 0.10,
+            agricultural: 0.10
+        };
 
         // ============================================
         // UTILITY FUNCTIONS
@@ -500,6 +584,19 @@
 
         function generateUniqueId() {
             return 'farm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Helper to get nested property value safely (from ver 39)
+        function getNestedValue(obj, path, defaultValue = '') {
+            const parts = path.split('.');
+            let current = obj;
+            for (let i = 0; i < parts.length; i++) {
+                if (current === null || typeof current !== 'object' || !current.hasOwnProperty(parts[i])) {
+                    return defaultValue;
+                }
+                current = current[parts[i]];
+            }
+            return current;
         }
 
         // ============================================
@@ -938,7 +1035,7 @@
 
             moduleContent.innerHTML = html;
             attachEventListeners();
-        } // <-- FIXED: Added the missing closing brace here
+        } 
 
         function renderExecutiveSummaryModule() {
             const data = farmAssessmentData.farmProfile.basicInfo;
@@ -1028,6 +1125,7 @@
                             </div>
                         </div>
                         <button class="btn btn-primary" id="saveBtn">Save</button>
+                        <button class="btn btn-info ms-2" id="calcRatiosBtn">Calculate Ratios (Update UI)</button>
                     </div>
                 </div>
             `;
@@ -1207,340 +1305,340 @@
         // ============================================
 
         function generateComprehensiveReport() {
-    const data = farmAssessmentData;
-    const farmName = data.farmProfile.basicInfo.farmName || 'Unnamed Farm';
-    const totalHectares = data.farmProfile.basicInfo.totalHectares || 0;
-    const location = data.farmProfile.basicInfo.location || 'Not Specified';
-    const reportDate = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+            const data = farmAssessmentData;
+            const farmName = data.farmProfile.basicInfo.farmName || 'Unnamed Farm';
+            const totalHectares = data.farmProfile.basicInfo.totalHectares || 0;
+            const location = data.farmProfile.basicInfo.location || 'Not Specified';
+            const reportDate = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    // --- 1. CALCULATE KEY METRICS AND RATIOS ---
-    const year3 = data.financialAssessment.historicalData.year3;
-    const revenue = year3.revenue || 0;
-    const operatingCosts = year3.operatingCosts || 0;
-    const netIncome = year3.netIncome || 0;
-    const ebit = year3.ebit || 0;
-    const interestExpense = year3.interestExpense || 0;
-    const totalAssets = year3.totalAssets || 0;
-    const totalLiabilities = year3.totalLiabilities || 0;
-    const totalEquity = totalAssets - totalLiabilities;
-    const currentAssets = year3.currentAssets || 0;
-    const currentLiabilities = year3.currentLiabilities || 0;
+            // --- 1. CALCULATE KEY METRICS AND RATIOS ---
+            const year3 = data.financialAssessment.historicalData.year3;
+            const revenue = year3.revenue || 0;
+            const operatingCosts = year3.operatingCosts || 0;
+            const netIncome = year3.netIncome || 0;
+            const ebit = year3.ebit || 0;
+            const interestExpense = year3.interestExpense || 0;
+            const totalAssets = year3.totalAssets || 0;
+            const totalLiabilities = year3.totalLiabilities || 0;
+            const totalEquity = totalAssets - totalLiabilities;
+            const currentAssets = year3.currentAssets || 0;
+            const currentLiabilities = year3.currentLiabilities || 0;
 
-    // Financial Ratios
-    const grossMargin = revenue > 0 ? ((revenue - operatingCosts) / revenue * 100) : 0;
-    const netMargin = revenue > 0 ? (netIncome / revenue * 100) : 0;
-    const currentRatio = currentLiabilities > 0 ? (currentAssets / currentLiabilities) : 0;
-    const debtRatio = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
-    const equityRatio = totalAssets > 0 ? (totalEquity / totalAssets * 100) : 0;
-    const roa = totalAssets > 0 ? (netIncome / totalAssets * 100) : 0;
-    const roe = totalEquity > 0 ? (netIncome / totalEquity * 100) : 0;
-    const interestCoverage = interestExpense > 0 ? (ebit / interestExpense) : Infinity;
+            // Financial Ratios
+            const grossMargin = revenue > 0 ? ((revenue - operatingCosts) / revenue * 100) : 0;
+            const netMargin = revenue > 0 ? (netIncome / revenue * 100) : 0;
+            const currentRatio = currentLiabilities > 0 ? (currentAssets / currentLiabilities) : 0;
+            const debtRatio = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
+            const equityRatio = totalAssets > 0 ? (totalEquity / totalAssets * 100) : 0;
+            const roa = totalAssets > 0 ? (netIncome / totalAssets * 100) : 0;
+            const roe = totalEquity > 0 ? (netIncome / totalEquity * 100) : 0;
+            const interestCoverage = interestExpense > 0 ? (ebit / interestExpense) : Infinity;
 
-    // Production Metrics
-    const calvingRate = data.agriculturalTechnical.productionEfficiency.calvingRate || 0;
-    const mortalityRate = data.agriculturalTechnical.productionEfficiency.mortalityRate || 0;
-    const breedSelection = data.agriculturalTechnical.livestockManagement.breedSelection || 'Not Specified';
+            // Production Metrics
+            const calvingRate = data.agriculturalTechnical.productionEfficiency.calvingRate || 0;
+            const mortalityRate = data.agriculturalTechnical.productionEfficiency.mortalityRate || 0;
+            const breedSelection = data.agriculturalTechnical.livestockManagement.breedSelection || 'Not Specified';
 
-    // Commercial Metrics
-    const customerConcentration = data.commercialAssessment.customerAnalysis.customerConcentration || 0;
-    const retentionRate = data.commercialAssessment.customerAnalysis.retentionRate || 0;
+            // Commercial Metrics
+            const customerConcentration = data.commercialAssessment.customerAnalysis.customerConcentration || 0;
+            const retentionRate = data.commercialAssessment.customerAnalysis.retentionRate || 0;
 
-    // SWOT
-    const swot = data.recommendations.swotAnalysis;
-    const strengths = swot.strengths || [];
-    const weaknesses = swot.weaknesses || [];
-    const opportunities = swot.opportunities || [];
-    const threats = swot.threats || [];
+            // SWOT
+            const swot = data.recommendations.swotAnalysis;
+            const strengths = swot.strengths || [];
+            const weaknesses = swot.weaknesses || [];
+            const opportunities = swot.opportunities || [];
+            const threats = swot.threats || [];
 
-    // Scoring
-    const weightedScore = data.scoring.weightedScore.toFixed(2);
-    const classification = data.scoring.classification || 'Not Assessed';
+            // Scoring
+            const weightedScore = data.scoring.weightedScore.toFixed(2);
+            const classification = data.scoring.classification || 'Not Assessed';
 
-    // --- 2. DEDUCTIVE NARRATIVE GENERATION ---
+            // --- 2. DEDUCTIVE NARRATIVE GENERATION ---
 
-    // --- Financial Narrative ---
-    let financialNarrative = '';
-    let financialRating = 'AT RISK';
-    if (currentRatio > 2 && debtRatio < 30) {
-        financialNarrative = `The farm exhibits a **highly robust financial position**. Liquidity is exceptionally strong with a Current Ratio of **${currentRatio.toFixed(2)}**, indicating a strong ability to meet short-term obligations. Solvency is also excellent, with a minimal Debt Ratio of **${debtRatio.toFixed(2)}%**, suggesting a low reliance on external financing and an extremely low insolvency risk. Profitability, as demonstrated by a Net Profit Margin of **${netMargin.toFixed(2)}%**, is solid.`;
-        financialRating = 'HIGHLY VIABLE';
-    } else if (currentRatio > 1 && debtRatio < 50) {
-        financialNarrative = `The financial position is **viable with conditions**. The Current Ratio of **${currentRatio.toFixed(2)}** suggests adequate liquidity. The Debt Ratio of **${debtRatio.toFixed(2)}%** is manageable, but monitoring of debt servicing capacity is recommended. Profitability is acceptable, but efficiency in asset utilization (ROA: ${roa.toFixed(2)}%) presents an opportunity for improvement.`;
-        financialRating = 'VIABLE WITH CONDITIONS';
-    } else {
-        financialNarrative = `The financial position is **at risk**. A Current Ratio of **${currentRatio.toFixed(2)}** indicates potential liquidity stress. The Debt Ratio of **${debtRatio.toFixed(2)}%** suggests a high reliance on debt, increasing solvency risk. Immediate attention to working capital management and debt restructuring is critical.`;
-    }
+            // --- Financial Narrative ---
+            let financialNarrative = '';
+            let financialRating = 'AT RISK';
+            if (currentRatio > 2 && debtRatio < 30) {
+                financialNarrative = `The farm exhibits a **highly robust financial position**. Liquidity is exceptionally strong with a Current Ratio of **${currentRatio.toFixed(2)}**, indicating a strong ability to meet short-term obligations. Solvency is also excellent, with a minimal Debt Ratio of **${debtRatio.toFixed(2)}%**, suggesting a low reliance on external financing and an extremely low insolvency risk. Profitability, as demonstrated by a Net Profit Margin of **${netMargin.toFixed(2)}%**, is solid.`;
+                financialRating = 'HIGHLY VIABLE';
+            } else if (currentRatio > 1 && debtRatio < 50) {
+                financialNarrative = `The financial position is **viable with conditions**. The Current Ratio of **${currentRatio.toFixed(2)}** suggests adequate liquidity. The Debt Ratio of **${debtRatio.toFixed(2)}%** is manageable, but monitoring of debt servicing capacity is recommended. Profitability is acceptable, but efficiency in asset utilization (ROA: ${roa.toFixed(2)}%) presents an opportunity for improvement.`;
+                financialRating = 'VIABLE WITH CONDITIONS';
+            } else {
+                financialNarrative = `The financial position is **at risk**. A Current Ratio of **${currentRatio.toFixed(2)}** indicates potential liquidity stress. The Debt Ratio of **${debtRatio.toFixed(2)}%** suggests a high reliance on debt, increasing solvency risk. Immediate attention to working capital management and debt restructuring is critical.`;
+            }
 
-    // --- Market Narrative ---
-    let marketNarrative = '';
-    let marketRating = 'AT RISK';
-    if (customerConcentration < 20) {
-        marketNarrative = `Market viability is **strong**. The customer base is well-diversified, with a concentration risk of only **${customerConcentration}%**. This stability minimizes revenue volatility and provides a strong foundation for market expansion.`;
-        marketRating = 'HIGHLY VIABLE';
-    } else if (customerConcentration < 50) {
-        marketNarrative = `Market viability is **moderate**. A customer concentration of **${customerConcentration}%** creates a moderate vulnerability. While the farm has established market access, the loss of a key customer could significantly impact revenue. Strategic diversification is recommended.`;
-        marketRating = 'VIABLE WITH CONDITIONS';
-    } else {
-        marketNarrative = `Market viability is **at risk**. A severe customer concentration of **${customerConcentration}%** creates a critical vulnerability. The farm is highly exposed to the risk of losing a significant portion of its revenue. Immediate development of a formal marketing strategy and off-take agreements is essential.`;
-    }
+            // --- Market Narrative ---
+            let marketNarrative = '';
+            let marketRating = 'AT RISK';
+            if (customerConcentration < 20) {
+                marketNarrative = `Market viability is **strong**. The customer base is well-diversified, with a concentration risk of only **${customerConcentration}%**. This stability minimizes revenue volatility and provides a strong foundation for market expansion.`;
+                marketRating = 'HIGHLY VIABLE';
+            } else if (customerConcentration < 50) {
+                marketNarrative = `Market viability is **moderate**. A customer concentration of **${customerConcentration}%** creates a moderate vulnerability. While the farm has established market access, the loss of a key customer could significantly impact revenue. Strategic diversification is recommended.`;
+                marketRating = 'VIABLE WITH CONDITIONS';
+            } else {
+                marketNarrative = `Market viability is **at risk**. A severe customer concentration of **${customerConcentration}%** creates a critical vulnerability. The farm is highly exposed to the risk of losing a significant portion of its revenue. Immediate development of a formal marketing strategy and off-take agreements is essential.`;
+            }
 
-    // --- Production Narrative ---
-    let productionNarrative = '';
-    let productionRating = 'AT RISK';
-    if (calvingRate >= 90 && mortalityRate < 5) {
-        productionNarrative = `Technical performance is **exceptional**. The Calving Rate of **${calvingRate}%** substantially exceeds industry standards, demonstrating superior animal husbandry and strong production management. The low Mortality Rate of **${mortalityRate}%** confirms excellent herd health.`;
-        productionRating = 'HIGHLY VIABLE';
-    } else if (calvingRate >= 75 && mortalityRate < 10) {
-        productionNarrative = `Technical performance is **solid**. The Calving Rate of **${calvingRate}%** is within acceptable industry benchmarks. Focus should be placed on optimizing feed conversion and addressing any aging infrastructure issues that could compromise future efficiency.`;
-        productionRating = 'VIABLE';
-    } else {
-        productionNarrative = `Technical performance is **at risk**. The Calving Rate of **${calvingRate}%** and Mortality Rate of **${mortalityRate}%** suggest underlying issues in herd health or breeding programs. Immediate veterinary and technical review is required to restore production efficiency.`;
-    }
+            // --- Production Narrative ---
+            let productionNarrative = '';
+            let productionRating = 'AT RISK';
+            if (calvingRate >= 90 && mortalityRate < 5) {
+                productionNarrative = `Technical performance is **exceptional**. The Calving Rate of **${calvingRate}%** substantially exceeds industry standards, demonstrating superior animal husbandry and strong production management. The low Mortality Rate of **${mortalityRate}%** confirms excellent herd health.`;
+                productionRating = 'HIGHLY VIABLE';
+            } else if (calvingRate >= 75 && mortalityRate < 10) {
+                productionNarrative = `Technical performance is **solid**. The Calving Rate of **${calvingRate}%** is within acceptable industry benchmarks. Focus should be placed on optimizing feed conversion and addressing any aging infrastructure issues that could compromise future efficiency.`;
+                productionRating = 'VIABLE';
+            } else {
+                productionNarrative = `Technical performance is **at risk**. The Calving Rate of **${calvingRate}%** and Mortality Rate of **${mortalityRate}%** suggest underlying issues in herd health or breeding programs. Immediate veterinary and technical review is required to restore production efficiency.`;
+            }
 
-    // --- Management Narrative (Simplified) ---
-    let managementNarrative = 'Management demonstrates strong technical competence (e.g., in production) but is often deficient in formal business management capabilities (finance, compliance, strategic planning). Succession planning is a key strength, but professional advisory support is urgently required.';
-    let managementRating = 'VIABLE WITH SUPPORT';
+            // --- Management Narrative (Simplified) ---
+            let managementNarrative = 'Management demonstrates strong technical competence (e.g., in production) but is often deficient in formal business management capabilities (finance, compliance, strategic planning). Succession planning is a key strength, but professional advisory support is urgently required.';
+            let managementRating = 'VIABLE WITH SUPPORT';
 
-    // --- Compliance Narrative (Simplified) ---
-    let complianceNarrative = 'Compliance is a significant area of concern. While basic corporate compliance may be met, non-compliance in critical areas such as tax (if indicated) or environmental permits creates severe regulatory and financial risk. Full compliance restoration is a critical condition for viability.';
-    let complianceRating = 'AT RISK';
+            // --- Compliance Narrative (Simplified) ---
+            let complianceNarrative = 'Compliance is a significant area of concern. While basic corporate compliance may be met, non-compliance in critical areas such as tax (if indicated) or environmental permits creates severe regulatory and financial risk. Full compliance restoration is a critical condition for viability.';
+            let complianceRating = 'AT RISK';
 
-    // --- 3. BUILD REPORT HTML ---
+            // --- 3. BUILD REPORT HTML ---
 
-    let reportHtml = `
-        <div style="font-family: 'Times New Roman', serif; line-height: 1.6; color: #000; max-width: 900px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px;">
-                <h1 style="font-size: 24px; margin: 0 0 10px 0;">FARM VIABILITY ASSESSMENT REPORT</h1>
-                <h2 style="font-size: 18px; color: #666; margin: 0 0 20px 0;">FOR ${farmName.toUpperCase()}</h2>
-                <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px;">
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold; width: 30%;">Farm Name</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${farmName}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Location</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${location}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Total Hectares</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${totalHectares.toLocaleString()} ha</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Report Date</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${reportDate}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Overall Viability</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>${classification}</strong> (Weighted Score: ${weightedScore})</td>
-                    </tr>
-                </table>
-            </div>
+            let reportHtml = `
+                <div style="font-family: 'Times New Roman', serif; line-height: 1.6; color: #000; max-width: 900px; margin: 0 auto; padding: 20px;">
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px;">
+                        <h1 style="font-size: 24px; margin: 0 0 10px 0;">FARM VIABILITY ASSESSMENT REPORT</h1>
+                        <h2 style="font-size: 18px; color: #666; margin: 0 0 20px 0;">FOR ${farmName.toUpperCase()}</h2>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px;">
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold; width: 30%;">Farm Name</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${farmName}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Location</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${location}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Total Hectares</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${totalHectares.toLocaleString()} ha</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Report Date</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${reportDate}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Overall Viability</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;"><strong>${classification}</strong> (Weighted Score: ${weightedScore})</td>
+                            </tr>
+                        </table>
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">I. EXECUTIVE SUMMARY</h2>
-                <p style="margin-bottom: 15px;">
-                    The assessment concludes that the farm's overall viability is **${classification}** (Weighted Score: ${weightedScore}). 
-                    The operation demonstrates core strengths in **${productionRating}** technical performance and **${financialRating}** financial stability. 
-                    However, viability is contingent upon addressing critical conditions, particularly the **${marketRating}** market concentration risk and the **${complianceRating}** compliance issues.
-                </p>
-            </div>
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">I. EXECUTIVE SUMMARY</h2>
+                        <p style="margin-bottom: 15px;">
+                            The assessment concludes that the farm's overall viability is **${classification}** (Weighted Score: ${weightedScore}). 
+                            The operation demonstrates core strengths in **${productionRating}** technical performance and **${financialRating}** financial stability. 
+                            However, viability is contingent upon addressing critical conditions, particularly the **${marketRating}** market concentration risk and the **${complianceRating}** compliance issues.
+                        </p>
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">II. FINANCIAL VIABILITY</h2>
-                
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Financial Metrics (Year 3):</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
-                    <tr style="background-color: #f5f5f5;">
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Metric</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Value (ZAR)</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ratio</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Value (%)</th>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Revenue</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${revenue.toLocaleString()}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Gross Margin</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${grossMargin.toFixed(2)}%</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Net Income</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${netIncome.toLocaleString()}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Net Profit Margin</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${netMargin.toFixed(2)}%</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Total Assets</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalAssets.toLocaleString()}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Current Ratio</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${currentRatio.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Total Liabilities</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalLiabilities.toLocaleString()}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Debt Ratio</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${debtRatio.toFixed(2)}%</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Total Equity</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalEquity.toLocaleString()}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Return on Equity (ROE)</td>
-                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${roe.toFixed(2)}%</td>
-                    </tr>
-                </table>
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">II. FINANCIAL VIABILITY</h2>
+                        
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Financial Metrics (Year 3):</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
+                            <tr style="background-color: #f5f5f5;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Metric</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Value (ZAR)</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ratio</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Value (%)</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Revenue</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${revenue.toLocaleString()}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Gross Margin</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${grossMargin.toFixed(2)}%</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Net Income</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${netIncome.toLocaleString()}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Net Profit Margin</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${netMargin.toFixed(2)}%</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Total Assets</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalAssets.toLocaleString()}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Current Ratio</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${currentRatio.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Total Liabilities</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalLiabilities.toLocaleString()}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Debt Ratio</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${debtRatio.toFixed(2)}%</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Total Equity</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalEquity.toLocaleString()}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Return on Equity (ROE)</td>
+                                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${roe.toFixed(2)}%</td>
+                            </tr>
+                        </table>
 
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Narrative Conclusion:</h3>
-                <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
-                    ${financialNarrative}
-                </p>
-                <p style="margin-bottom: 10px;">
-                    **Financial Viability Rating:** **${financialRating}**
-                </p>
-            </div>
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Narrative Conclusion:</h3>
+                        <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
+                            ${financialNarrative}
+                        </p>
+                        <p style="margin-bottom: 10px;">
+                            **Financial Viability Rating:** **${financialRating}**
+                        </p>
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">III. MARKET VIABILITY</h2>
-                
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Market Metrics:</h3>
-                <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
-                    <li>Customer Concentration: **${customerConcentration}%**</li>
-                    <li>Customer Retention Rate: **${retentionRate}%**</li>
-                </ul>
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">III. MARKET VIABILITY</h2>
+                        
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Market Metrics:</h3>
+                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
+                            <li>Customer Concentration: **${customerConcentration}%**</li>
+                            <li>Customer Retention Rate: **${retentionRate}%**</li>
+                        </ul>
 
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Narrative Conclusion:</h3>
-                <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
-                    ${marketNarrative}
-                </p>
-                <p style="margin-bottom: 10px;">
-                    **Market Viability Rating:** **${marketRating}**
-                </p>
-            </div>
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Narrative Conclusion:</h3>
+                        <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
+                            ${marketNarrative}
+                        </p>
+                        <p style="margin-bottom: 10px;">
+                            **Market Viability Rating:** **${marketRating}**
+                        </p>
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">IV. PRODUCTION & TECHNICAL VIABILITY</h2>
-                
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Production Metrics:</h3>
-                <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
-                    <li>Calving Rate: **${calvingRate}%** (Industry Standard: 85-90%)</li>
-                    <li>Mortality Rate: **${mortalityRate}%**</li>
-                    <li>Primary Breed Selection: **${breedSelection}**</li>
-                </ul>
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">IV. PRODUCTION & TECHNICAL VIABILITY</h2>
+                        
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Production Metrics:</h3>
+                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
+                            <li>Calving Rate: **${calvingRate}%** (Industry Standard: 85-90%)</li>
+                            <li>Mortality Rate: **${mortalityRate}%**</li>
+                            <li>Primary Breed Selection: **${breedSelection}**</li>
+                        </ul>
 
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Narrative Conclusion:</h3>
-                <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
-                    ${productionNarrative}
-                </p>
-                <p style="margin-bottom: 10px;">
-                    **Production Viability Rating:** **${productionRating}**
-                </p>
-            </div>
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Narrative Conclusion:</h3>
+                        <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
+                            ${productionNarrative}
+                        </p>
+                        <p style="margin-bottom: 10px;">
+                            **Production Viability Rating:** **${productionRating}**
+                        </p>
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">V. MANAGEMENT & COMPLIANCE VIABILITY</h2>
-                
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Management Narrative:</h3>
-                <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
-                    ${managementNarrative}
-                </p>
-                <p style="margin-bottom: 10px;">
-                    **Management Viability Rating:** **${managementRating}**
-                </p>
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">V. MANAGEMENT & COMPLIANCE VIABILITY</h2>
+                        
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Management Narrative:</h3>
+                        <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
+                            ${managementNarrative}
+                        </p>
+                        <p style="margin-bottom: 10px;">
+                            **Management Viability Rating:** **${managementRating}**
+                        </p>
 
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Compliance Narrative:</h3>
-                <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
-                    ${complianceNarrative}
-                </p>
-                <p style="margin-bottom: 10px;">
-                    **Compliance Viability Rating:** **${complianceRating}**
-                </p>
-            </div>
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Compliance Narrative:</h3>
+                        <p style="margin-bottom: 10px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">
+                            ${complianceNarrative}
+                        </p>
+                        <p style="margin-bottom: 10px;">
+                            **Compliance Viability Rating:** **${complianceRating}**
+                        </p>
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">VI. SWOT ANALYSIS</h2>
-                
-                ${strengths.length > 0 ? `
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #28a745;">Strengths:</h3>
-                <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
-                    ${strengths.map(s => `<li>${s}</li>`).join('')}
-                </ul>
-                ` : '<p style="font-size: 12px;">No strengths identified.</p>'}
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">VI. SWOT ANALYSIS</h2>
+                        
+                        ${strengths.length > 0 ? `
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #28a745;">Strengths:</h3>
+                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
+                            ${strengths.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                        ` : '<p style="font-size: 12px;">No strengths identified.</p>'}
 
-                ${weaknesses.length > 0 ? `
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #dc3545;">Weaknesses:</h3>
-                <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
-                    ${weaknesses.map(w => `<li>${w}</li>`).join('')}
-                </ul>
-                ` : '<p style="font-size: 12px;">No weaknesses identified.</p>'}
+                        ${weaknesses.length > 0 ? `
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #dc3545;">Weaknesses:</h3>
+                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
+                            ${weaknesses.map(w => `<li>${w}</li>`).join('')}
+                        </ul>
+                        ` : '<p style="font-size: 12px;">No weaknesses identified.</p>'}
 
-                ${opportunities.length > 0 ? `
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #17a2b8;">Opportunities:</h3>
-                <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
-                    ${opportunities.map(o => `<li>${o}</li>`).join('')}
-                </ul>
-                ` : '<p style="font-size: 12px;">No opportunities identified.</p>'}
+                        ${opportunities.length > 0 ? `
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #17a2b8;">Opportunities:</h3>
+                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
+                            ${opportunities.map(o => `<li>${o}</li>`).join('')}
+                        </ul>
+                        ` : '<p style="font-size: 12px;">No opportunities identified.</p>'}
 
-                ${threats.length > 0 ? `
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #ffc107;">Threats:</h3>
-                <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
-                    ${threats.map(t => `<li>${t}</li>`).join('')}
-                </ul>
-                ` : '<p style="font-size: 12px;">No threats identified.</p>'}
-            </div>
+                        ${threats.length > 0 ? `
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0; color: #ffc107;">Threats:</h3>
+                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;">
+                            ${threats.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                        ` : '<p style="font-size: 12px;">No threats identified.</p>'}
+                    </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">VII. OVERALL VIABILITY CONCLUSION</h2>
-                
-                <div style="padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
-                    <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #155724;">RECOMMENDATION: ${classification.toUpperCase()}</h3>
-                    <p style="margin: 0; color: #155724; font-size: 12px;">
-                        The farm is assessed as **${classification}** with a composite weighted score of **${weightedScore}**. 
-                        This rating is a result of the balance between the farm's **${financialRating}** financial health and **${productionRating}** technical capacity, 
-                        offset by the significant risks posed by **${marketRating}** market concentration and **${complianceRating}** compliance status.
-                    </p>
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">VII. OVERALL VIABILITY CONCLUSION</h2>
+                        
+                        <div style="padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #155724;">RECOMMENDATION: ${classification.toUpperCase()}</h3>
+                            <p style="margin: 0; color: #155724; font-size: 12px;">
+                                The farm is assessed as **${classification}** with a composite weighted score of **${weightedScore}**. 
+                                This rating is a result of the balance between the farm's **${financialRating}** financial health and **${productionRating}** technical capacity, 
+                                offset by the significant risks posed by **${marketRating}** market concentration and **${complianceRating}** compliance status.
+                            </p>
+                        </div>
+
+                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Viability Assessment by Dimension:</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
+                            <tr style="background-color: #f5f5f5;">
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Dimension</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Rating</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Key Comment</th>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Financial Viability</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${financialRating}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Strong liquidity and solvency, solid profitability.</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Market Viability</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${marketRating}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Critical customer concentration risk.</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Production/Technical</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${productionRating}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Exceptional calving rate, but infrastructure may be a concern.</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Management</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${managementRating}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Strong technical skills, weak business administration.</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Compliance</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">${complianceRating}</td>
+                                <td style="border: 1px solid #ddd; padding: 8px;">Compliance gaps create regulatory risk.</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 11px; color: #999;">
+                        <p>This report was generated on ${reportDate} using the Farm Viability Assessment System.</p>
+                        <p>© ${new Date().getFullYear()} Farm Viability Assessment Tool. All rights reserved.</p>
+                    </div>
                 </div>
+            `;
 
-                <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Viability Assessment by Dimension:</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
-                    <tr style="background-color: #f5f5f5;">
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Dimension</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Rating</th>
-                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Key Comment</th>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Financial Viability</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${financialRating}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Strong liquidity and solvency, solid profitability.</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Market Viability</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${marketRating}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Critical customer concentration risk.</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Production/Technical</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${productionRating}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Exceptional calving rate, but infrastructure may be a concern.</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Management</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${managementRating}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Strong technical skills, weak business administration.</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Compliance</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">${complianceRating}</td>
-                        <td style="border: 1px solid #ddd; padding: 8px;">Compliance gaps create regulatory risk.</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 11px; color: #999;">
-                <p>This report was generated on ${reportDate} using the Farm Viability Assessment System.</p>
-                <p>© ${new Date().getFullYear()} Farm Viability Assessment Tool. All rights reserved.</p>
-            </div>
-        </div>
-    `;
-
-    return reportHtml;
+            return reportHtml;
         }
 
         // ============================================
@@ -1562,6 +1660,15 @@
             const calcScoreBtn = document.getElementById('calculateOverallScoreBtn');
             if (calcScoreBtn) {
                 calcScoreBtn.addEventListener('click', calculateOverallScore);
+            }
+
+            // Calculate Ratios button (Financial Module)
+            const calcRatiosBtn = document.getElementById('calcRatiosBtn');
+            if (calcRatiosBtn) {
+                calcRatiosBtn.addEventListener('click', () => {
+                    collectFormData(); // Ensure inputs are grabbed first
+                    calculateFinancialRatios();
+                });
             }
 
             // Generate report button
@@ -1616,25 +1723,147 @@
             });
         }
 
+        function calculateFinancialRatios() {
+            const histData = farmAssessmentData.financialAssessment.historicalData;
+            const y1 = histData.year1;
+            const y2 = histData.year2;
+            const y3 = histData.year3;
+
+            // Simple average of 3 years
+            const avgRevenue = ((y1.revenue || 0) + (y2.revenue || 0) + (y3.revenue || 0)) / 3;
+            const avgOperatingCosts = ((y1.operatingCosts || 0) + (y2.operatingCosts || 0) + (y3.operatingCosts || 0)) / 3;
+            const avgTotalAssets = ((y1.totalAssets || 0) + (y2.totalAssets || 0) + (y3.totalAssets || 0)) / 3;
+            const avgTotalLiabilities = ((y1.totalLiabilities || 0) + (y2.totalLiabilities || 0) + (y3.totalLiabilities || 0)) / 3;
+            const avgNetIncome = ((y1.netIncome || 0) + (y2.netIncome || 0) + (y3.netIncome || 0)) / 3;
+            const avgEBIT = ((y1.ebit || 0) + (y2.ebit || 0) + (y3.ebit || 0)) / 3;
+            const avgInterestExpense = ((y1.interestExpense || 0) + (y2.interestExpense || 0) + (y3.interestExpense || 0)) / 3;
+            const avgCurrentAssets = ((y1.currentAssets || 0) + (y2.currentAssets || 0) + (y3.currentAssets || 0)) / 3;
+            const avgCurrentLiabilities = ((y1.currentLiabilities || 0) + (y2.currentLiabilities || 0) + (y3.currentLiabilities || 0)) / 3;
+            const avgInventory = ((y1.inventory || 0) + (y2.inventory || 0) + (y3.inventory || 0)) / 3;
+            const avgTotalEquity = avgTotalAssets - avgTotalLiabilities;
+
+            const netOperatingIncome = avgRevenue - avgOperatingCosts;
+            const totalDebtService = avgInterestExpense + (avgTotalLiabilities * 0.1); 
+
+            // Calculations
+            farmAssessmentData.financialAssessment.financialRatios.debtServiceCoverage = totalDebtService > 0 ? (netOperatingIncome / totalDebtService) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.returnOnAssets = avgTotalAssets > 0 ? (avgNetIncome / avgTotalAssets) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.currentRatio = avgCurrentLiabilities > 0 ? (avgCurrentAssets / avgCurrentLiabilities) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.operatingMargin = avgRevenue > 0 ? (netOperatingIncome / avgRevenue) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.assetTurnover = avgTotalAssets > 0 ? (avgRevenue / avgTotalAssets) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.equityRatio = avgTotalAssets > 0 ? (avgTotalEquity / avgTotalAssets) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.quickRatio = avgCurrentLiabilities > 0 ? ((avgCurrentAssets - avgInventory) / avgCurrentLiabilities) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.interestCoverage = avgInterestExpense > 0 ? (avgEBIT / avgInterestExpense) : 0;
+            farmAssessmentData.financialAssessment.financialRatios.workingCapitalRatio = avgTotalAssets > 0 ? ((avgCurrentAssets - avgCurrentLiabilities) / avgTotalAssets) : 0;
+
+            saveCurrentFarmData();
+            showStatus('Financial ratios calculated.');
+        }
+
         function calculateOverallScore() {
-            // Simplified scoring logic
-            const financial = Math.min(100, (farmAssessmentData.financialAssessment.financialRatios.currentRatio * 10));
-            const operational = 75; // Placeholder
-            const market = Math.max(0, 100 - (farmAssessmentData.commercialAssessment.customerAnalysis.customerConcentration * 0.5));
-            const management = 70; // Placeholder
-            const compliance = 60; // Placeholder
-            const agricultural = Math.min(100, farmAssessmentData.agriculturalTechnical.productionEfficiency.calvingRate);
+            // Updated to use the robust logic from Version 39
+            const scores = farmAssessmentData.scoring.componentScores;
+            
+            // --- Financial Health (25%) ---
+            let financialScore = 0;
+            const fr = farmAssessmentData.financialAssessment.financialRatios;
+            financialScore += (fr.returnOnAssets * 100 > 0 ? Math.min(fr.returnOnAssets * 100 * 2, 100) : 0) * 0.25; 
+            financialScore += (fr.currentRatio > 1.5 ? Math.min(fr.currentRatio * 20, 100) : 0) * 0.25; 
+            financialScore += (fr.debtServiceCoverage > 1.25 ? Math.min(fr.debtServiceCoverage * 40, 100) : 0) * 0.25; 
+            financialScore += (fr.operatingMargin * 100 > 10 ? Math.min(fr.operatingMargin * 100 * 2, 100) : 0) * 0.25; 
+            scores.financial = financialScore;
 
-            farmAssessmentData.scoring.componentScores = {
-                financial,
-                operational,
-                market,
-                management,
-                compliance,
-                agricultural
-            };
+            // --- Operational Excellence (20%) ---
+            let operationalScore = 0;
+            const infra = farmAssessmentData.farmProfile.infrastructure;
+            const businessDesc = farmAssessmentData.farmProfile;
+            const maxOperationalScore = 600;
 
-            const weighted = (financial * 0.25) + (operational * 0.20) + (market * 0.20) + (management * 0.15) + (compliance * 0.10) + (agricultural * 0.10);
+            operationalScore += OPTIONS.landTenure[businessDesc.basicInfo.landTenure] || 0;
+            operationalScore += OPTIONS.legalStructure[businessDesc.legalStructure] || 0;
+            operationalScore += OPTIONS.condition[getNestedValue(infra, 'buildings.0.condition')] || 0;
+            operationalScore += OPTIONS.condition[getNestedValue(infra, 'equipment.0.condition')] || 0;
+            operationalScore += OPTIONS.identificationSystem[businessDesc.herdDetails.identificationSystem] || 0;
+            operationalScore += OPTIONS.herdHealthStatus[businessDesc.herdDetails.herdHealthStatus] || 0;
+            scores.operational = (operationalScore / maxOperationalScore) * 100;
+
+            // --- Market Position (20%) ---
+            let marketScore = 0;
+            const commercial = farmAssessmentData.commercialAssessment;
+            const maxMarketScore = 500;
+
+            marketScore += (commercial.customerAnalysis.customerConcentration < 50 ? 100 : 0);
+            marketScore += (commercial.customerAnalysis.retentionRate > 70 ? 100 : 0);
+            marketScore += OPTIONS.relationshipStrength[commercial.customerAnalysis.relationshipStrength] || 0;
+            marketScore += OPTIONS.marketingPlanEvaluation[commercial.salesStrategy.marketingPlanEvaluation] || 0;
+            marketScore += OPTIONS.pricingStrategy[commercial.salesStrategy.pricingStrategy] || 0;
+            scores.market = (marketScore / maxMarketScore) * 100;
+
+            // --- Management Quality (15%) ---
+            let managementScore = 0;
+            const hr = farmAssessmentData.hrManagement;
+            const maxManagementBaseScore = 500; 
+
+            managementScore += OPTIONS.organizationalChart[hr.organizationStructure.organizationalChart] || 0;
+            managementScore += OPTIONS.roleClarity[hr.organizationStructure.roleClarity] || 0;
+            managementScore += ((hr.organizationStructure.keyPersonnel[0] && hr.organizationStructure.keyPersonnel[0].competencyScore) || 0) * 20; 
+            managementScore += OPTIONS.successionPlanning[getNestedValue(hr, 'managementCompetency.successionPlanning')] || 0;
+            managementScore += OPTIONS.unionRelationships[hr.laborRelations.unionRelationships] || 0;
+            
+            // Simplified SWOT integration (placeholder for the complex SWOT logic in 39, assuming checkbox data might be missing in 42 structure)
+            scores.management = (managementScore / maxManagementBaseScore) * 100;
+
+            // --- Compliance and Risk Management (10%) ---
+            let complianceScore = 0;
+            const legal = farmAssessmentData.legalCompliance;
+            const env = farmAssessmentData.environmentalAssessment;
+            const maxComplianceBaseScore = 1200;
+
+            complianceScore += OPTIONS.registrationStatus[legal.corporateCompliance.registrationStatus] || 0;
+            complianceScore += (legal.corporateCompliance.directorCompliance ? 100 : 0);
+            complianceScore += (legal.corporateCompliance.governanceScore || 0) * 20;
+            complianceScore += (legal.complianceCertification.regulatoryStandardsCompliance ? 100 : 0);
+            complianceScore += (legal.taxCompliance.incomeTax ? 100 : 0);
+            complianceScore += (legal.taxCompliance.vat ? 100 : 0);
+            complianceScore += (legal.taxCompliance.paye ? 100 : 0);
+            complianceScore += (legal.taxCompliance.municipalTaxes ? 100 : 0);
+            complianceScore += OPTIONS.coverageAdequacy[legal.insurancePortfolio.coverageAdequacy] || 0;
+            complianceScore += OPTIONS.environmentalAudits[env.regulatoryCompliance.environmentalAudits] || 0;
+            complianceScore += OPTIONS.complianceStatus[env.permitsLicenses.complianceStatus] || 0;
+            complianceScore += OPTIONS.safetyProtocols[env.hazardousSubstances.safetyProtocols] || 0;
+            complianceScore += OPTIONS.waterUsageMonitoring[env.resourceManagement.waterUsage] || 0;
+            complianceScore += (env.sustainabilityPractices.renewableEnergy ? 100 : 0);
+            complianceScore += OPTIONS.carbonFootprint[env.sustainabilityPractices.carbonFootprint] || 0;
+            scores.compliance = (complianceScore / maxComplianceBaseScore) * 100;
+
+            // --- Agricultural and Technical Excellence (10%) ---
+            let agriculturalScore = 0;
+            const agTech = farmAssessmentData.agriculturalTechnical;
+            const maxAgriculturalScore = 1100;
+
+            agriculturalScore += OPTIONS.soilPotential[agTech.landUtilization.soilPotential] || 0;
+            agriculturalScore += (agTech.waterResources.irrigationEfficiency || 0);
+            agriculturalScore += OPTIONS.waterAvailability[agTech.waterResources.availability] || 0;
+            agriculturalScore += OPTIONS.breedSelection[agTech.livestockManagement.breedSelection] || 0;
+            agriculturalScore += (agTech.livestockManagement.breedingPrograms.successRate || 0);
+            agriculturalScore += OPTIONS.integratedNutritionSystems[agTech.livestockManagement.nutritionPrograms.integratedNutritionSystems] || 0;
+            agriculturalScore += OPTIONS.grazingManagement[agTech.livestockManagement.grazingManagement.landUseOptimization] || 0;
+            agriculturalScore += OPTIONS.veterinaryPrograms[agTech.livestockManagement.animalHealth.veterinaryPrograms] || 0;
+            agriculturalScore += OPTIONS.condition[getNestedValue(agTech, 'livestockManagement.animalHousing.condition')] || 0;
+            agriculturalScore += (agTech.productionEfficiency.calvingRate || 0);
+            agriculturalScore += (agTech.technologyAdoption.precisionAgriculture ? 100 : 0);
+            agriculturalScore += OPTIONS.automationLevel[agTech.technologyAdoption.automationLevel] || 0;
+            scores.agricultural = (agriculturalScore / maxAgriculturalScore) * 100;
+
+            // Weighted Total
+            const weighted = 
+                (scores.financial * COMPONENT_WEIGHTS.financial) + 
+                (scores.operational * COMPONENT_WEIGHTS.operational) + 
+                (scores.market * COMPONENT_WEIGHTS.market) + 
+                (scores.management * COMPONENT_WEIGHTS.management) + 
+                (scores.compliance * COMPONENT_WEIGHTS.compliance) + 
+                (scores.agricultural * COMPONENT_WEIGHTS.agricultural);
+            
             farmAssessmentData.scoring.weightedScore = weighted;
 
             if (weighted >= 80) {
@@ -1654,60 +1883,57 @@
         }
 
         function updateModuleProgress(moduleName) {
-    // Simplified progress calculation
-    let progress = 0;
-    switch (moduleName) {
-        case 'executive-summary':
-            progress = farmAssessmentData.farmProfile.basicInfo.farmName ? 100 : 0;
-            break;
-        case 'financial-assessment':
-            // Check for revenue and at least one ratio calculation
-            const histData = farmAssessmentData.financialAssessment.historicalData.year3;
-            const ratios = farmAssessmentData.financialAssessment.financialRatios;
-            if (histData.revenue > 0 && ratios.currentRatio > 0) progress = 100;
-            else if (histData.revenue > 0) progress = 50;
-            else progress = 0;
-            break;
-        case 'commercial-marketing':
-            progress = farmAssessmentData.commercialAssessment.customerAnalysis.customerConcentration > 0 ? 100 : 0;
-            break;
-        case 'agricultural-technical':
-            progress = farmAssessmentData.agriculturalTechnical.productionEfficiency.calvingRate > 0 ? 100 : 0;
-            break;
-        case 'risk-analysis':
-            // Check if at least one risk has a score
-            const hasRiskData = Object.values(farmAssessmentData.riskAssessment.productionRisks).some(r => r.likelihood > 0 || r.impact > 0);
-            progress = hasRiskData ? 100 : 0;
-            break;
-        case 'scoring-classification':
-            progress = farmAssessmentData.scoring.weightedScore > 0 ? 100 : 0;
-            break;
-        case 'reporting-system':
-            progress = farmAssessmentData.scoring.weightedScore > 0 ? 100 : 0;
-            break;
-        default:
-            progress = 50;
-    }
+            let progress = 0;
+            switch (moduleName) {
+                case 'executive-summary':
+                    progress = farmAssessmentData.farmProfile.basicInfo.farmName ? 100 : 0;
+                    break;
+                case 'financial-assessment':
+                    const histData = farmAssessmentData.financialAssessment.historicalData.year3;
+                    const ratios = farmAssessmentData.financialAssessment.financialRatios;
+                    if (histData.revenue > 0 && ratios.currentRatio > 0) progress = 100;
+                    else if (histData.revenue > 0) progress = 50;
+                    else progress = 0;
+                    break;
+                case 'commercial-marketing':
+                    progress = farmAssessmentData.commercialAssessment.customerAnalysis.customerConcentration > 0 ? 100 : 0;
+                    break;
+                case 'agricultural-technical':
+                    progress = farmAssessmentData.agriculturalTechnical.productionEfficiency.calvingRate > 0 ? 100 : 0;
+                    break;
+                case 'risk-analysis':
+                    const hasRiskData = Object.values(farmAssessmentData.riskAssessment.productionRisks).some(r => r.likelihood > 0 || r.impact > 0);
+                    progress = hasRiskData ? 100 : 0;
+                    break;
+                case 'scoring-classification':
+                    progress = farmAssessmentData.scoring.weightedScore > 0 ? 100 : 0;
+                    break;
+                case 'reporting-system':
+                    progress = farmAssessmentData.scoring.weightedScore > 0 ? 100 : 0;
+                    break;
+                default:
+                    progress = 50;
+            }
 
-    const badge = document.getElementById(`progress-${moduleName}`);
-    const mobileBadge = document.getElementById(`progress-${moduleName}-mobile`);
+            const badge = document.getElementById(`progress-${moduleName}`);
+            const mobileBadge = document.getElementById(`progress-${moduleName}-mobile`);
 
-    [badge, mobileBadge].forEach(element => {
-        if (element) {
-            element.textContent = `${Math.round(progress)}%`;
-            element.className = `float-end badge ${progress === 100 ? 'bg-success' : progress > 0 ? 'bg-warning' : 'bg-secondary'}`;
+            [badge, mobileBadge].forEach(element => {
+                if (element) {
+                    element.textContent = `${Math.round(progress)}%`;
+                    element.className = `float-end badge ${progress === 100 ? 'bg-success' : progress > 0 ? 'bg-warning' : 'bg-secondary'}`;
+                }
+            });
         }
-    });
-}
 
-function updateAllModuleProgress() {
-    ['executive-summary', 'business-description', 'financial-assessment', 'commercial-marketing', 'hr-management', 'environmental-assessment', 'legal-regulatory', 'agricultural-technical', 'risk-analysis', 'scoring-classification', 'viability-conclusion', 'reporting-system'].forEach(module => {
-        updateModuleProgress(module);
-    });
-}
+        function updateAllModuleProgress() {
+            ['executive-summary', 'business-description', 'financial-assessment', 'commercial-marketing', 'hr-management', 'environmental-assessment', 'legal-regulatory', 'agricultural-technical', 'risk-analysis', 'scoring-classification', 'viability-conclusion', 'reporting-system'].forEach(module => {
+                updateModuleProgress(module);
+            });
+        }
 
         // ============================================
-        // IMPORT/EXPORT FUNCTIONALITY
+        // IMPORT/EXPORT & EMERGENCY RECOVERY
         // ============================================
 
         async function exportAllData() {
@@ -1753,20 +1979,33 @@ function updateAllModuleProgress() {
                 const fileContent = await file.text();
                 const importedData = JSON.parse(fileContent);
 
-                if (!importedData.farms || typeof importedData.farms !== 'object') {
-                    throw new Error('Invalid file format. Expected farms object.');
+                // Handle both the single recovery file format (array) and the full backup format (object with farms)
+                let farmsToImport = [];
+                
+                if (Array.isArray(importedData)) {
+                    // Recovery format
+                    farmsToImport = importedData; 
+                } else if (importedData.farms && typeof importedData.farms === 'object') {
+                    // Standard export format
+                    farmsToImport = Object.keys(importedData.farms).map(key => ({
+                        farmId: key,
+                        data: importedData.farms[key]
+                    }));
+                } else {
+                    throw new Error('Invalid file format.');
                 }
 
                 let importedCount = 0;
-                for (const [farmId, farmData] of Object.entries(importedData.farms)) {
-                    await saveFarmDataIndexedDB(farmId, farmData);
-                    if (!allFarmIds.includes(farmId)) {
-                        allFarmIds.push(farmId);
+                for (const item of farmsToImport) {
+                    const fId = item.farmId;
+                    const fData = item.data;
+                    await saveFarmDataIndexedDB(fId, fData);
+                    if (!allFarmIds.includes(fId)) {
+                        allFarmIds.push(fId);
                     }
                     importedCount++;
                 }
 
-                // Load the first imported farm
                 if (allFarmIds.length > 0) {
                     await loadFarm(allFarmIds[0]);
                     updateAllModuleProgress();
@@ -1781,6 +2020,84 @@ function updateAllModuleProgress() {
             }
         }
 
+        async function forceCoughUpData() {
+            console.log("%c--- EMERGENCY DATA RECOVERY STARTED ---", "color: red; font-weight: bold; font-size: 16px;");
+            showLoading();
+            try {
+                const db = await new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject("Failed to open database: " + request.error);
+                });
+
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    throw new Error(`Object store "${STORE_NAME}" not found in database "${DB_NAME}".`);
+                }
+
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAll();
+
+                request.onsuccess = async () => {
+                    const allData = request.result;
+                    hideLoading();
+                    console.log(`%cSuccess! Found ${allData.length} records.`, "color: green; font-weight: bold;");
+                    
+                    if (allData.length === 0) {
+                        alert("No data found in the local database.");
+                        return;
+                    }
+
+                    // 1. Always trigger the download first as a safety backup
+                    const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `recovered_farm_data_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    // 2. Ask user if they want to load the data into the app immediately
+                    const shouldImport = confirm(`Found ${allData.length} records. A backup file has been downloaded.\n\nWould you like to IMPORT this data into the app right now for immediate use? (This will refresh your farm list)`);
+                    
+                    if (shouldImport) {
+                        showLoading();
+                        try {
+                            // Update the global list of farm IDs
+                            allFarmIds = allData.map(item => item.farmId);
+                            
+                            // Load the first farm from the recovered set
+                            if (allFarmIds.length > 0) {
+                                await loadFarm(allFarmIds[0]);
+                                updateFarmSelector();
+                                showStatus(`Successfully imported ${allData.length} farms.`);
+                                alert(`Success! ${allData.length} farms have been loaded into the app.`);
+                            }
+                        } catch (importError) {
+                            console.error("Import failed:", importError);
+                            alert("Failed to import data into the app: " + importError.message);
+                        } finally {
+                            hideLoading();
+                        }
+                    } else {
+                        showStatus('Recovery complete. Backup file downloaded.');
+                    }
+                };
+
+                request.onerror = () => {
+                    hideLoading();
+                    throw new Error("Failed to retrieve data: " + request.error);
+                };
+
+            } catch (error) {
+                hideLoading();
+                console.error("%cRECOVERY FAILED:", "color: red; font-weight: bold;", error);
+                alert("Recovery failed: " + error.message);
+            }
+        }
+
         // ============================================
         // INITIALIZATION ON PAGE LOAD
         // ============================================
@@ -1792,7 +2109,6 @@ function updateAllModuleProgress() {
                 await openIndexedDB();
                 allFarmIds = await getAllFarmIdsIndexedDB();
 
-                // Try to restore last used farm ID from localStorage
                 let lastUsedFarmId = getLastUsedFarmId();
                 let farmToLoad = null;
 
@@ -1801,7 +2117,6 @@ function updateAllModuleProgress() {
                 } else if (allFarmIds.length > 0) {
                     farmToLoad = allFarmIds[0];
                 } else {
-                    // No farms exist, create a new one
                     await createNewFarm();
                     hideLoading();
                     return;
@@ -1827,6 +2142,13 @@ function updateAllModuleProgress() {
 
         document.getElementById('newFarmBtn').addEventListener('click', createNewFarm);
         document.getElementById('deleteFarmBtn').addEventListener('click', deleteCurrentFarm);
+        
+        // Emergency Recovery Button Listener
+        document.getElementById('emergencyRecoveryBtn').addEventListener('click', async () => {
+            if (confirm('This will attempt to extract all stored data from the browser\'s local database and download it as a JSON file. Use this if you are unable to access your data normally. Continue?')) {
+                await forceCoughUpData();
+            }
+        });
 
         // Export/Import button listeners
         const exportBtn = document.getElementById('exportDataBtn');
