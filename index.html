@@ -133,17 +133,6 @@
         .status-panel.error {
             background-color: #dc3545;
         }
-        .report-section {
-            margin-bottom: 2rem;
-            page-break-inside: avoid;
-        }
-        .report-section-title {
-            font-size: 14pt;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 0.5rem;
-        }
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -336,16 +325,6 @@
                         <span class="float-end badge bg-secondary" id="progress-reporting-system">0%</span>
                     </a>
                 </li>
-                <li class="nav-item mt-4 pt-3 border-top">
-                    <a class="nav-link" href="#" id="exportDataBtn">
-                        <i class="fas fa-download"></i> Export Data
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="importDataBtn">
-                        <i class="fas fa-upload"></i> Import (Restore)
-                    </a>
-                </li>
             </ul>
         </nav>
 
@@ -427,16 +406,6 @@
                         <a class="nav-link" href="#" data-module="reporting-system" data-bs-dismiss="offcanvas">
                             <i class="fas fa-file-alt"></i> Reporting System
                             <span class="float-end badge bg-secondary" id="progress-reporting-system-mobile">0%</span>
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4 pt-3 border-top">
-                        <a class="nav-link" href="#" id="exportDataBtnMobile">
-                            <i class="fas fa-download"></i> Export Data
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="importDataBtnMobile">
-                            <i class="fas fa-upload"></i> Import (Restore)
                         </a>
                     </li>
                 </ul>
@@ -916,9 +885,6 @@
         </div>
     </div>
 
-    <!-- Hidden file input for import -->
-    <input type="file" id="importFileInput" accept=".json" style="display: none;">
-
     <!-- Status Panel for messages -->
     <div id="statusPanel" class="status-panel" style="display: block;">Loaded data for farm: Unnamed Farm</div>
 
@@ -939,17 +905,33 @@
     <script>
         // --- Supabase Configuration (IMPORTANT: Replace with your actual Supabase project URL and Anon Key) ---
         // You can find these in your Supabase project settings -> API
-        const SUPABASE_URL = 'https://ynxmaxxqeksnlnwcvdkk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlueG1heHhxZWtzbmxud2N2ZGtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3ODUxOTEsImV4cCI6MjA2OTM2MTE5MX0.wWnkkoNjegxWiA53IaBhGML7P2ADEklPEHTwX67X4Dg';
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // e.g., 'https://abcde12345.supabase.co'
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // e.g., 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 
-        // Initialize Supabase Client
-        const supabaseClient = SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'
-            ? null // Supabase not configured, will operate in IndexedDB-only mode
-            : Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Initialize Supabase Client (will be set after DOMContentLoaded when Supabase library is loaded)
+        let supabase = null;
+
+        // Function to safely initialize Supabase client
+        function initializeSupabaseClient() {
+            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+                if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+                    try {
+                        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                        console.log('Supabase client initialized successfully.');
+                    } catch (error) {
+                        console.error('Error initializing Supabase client:', error);
+                        supabase = null;
+                    }
+                } else {
+                    console.warn('Supabase credentials not configured. Operating in IndexedDB-only mode.');
+                }
+            } else {
+                console.warn('Supabase library not loaded. Operating in IndexedDB-only mode.');
+            }
+        }
 
         // --- Global Variables ---
         let db; // IndexedDB instance
-        const LOCALSTORAGE_LAST_FARM_ID = 'lastUsedFarmId';
         const DB_NAME = 'CattleFarmDB';
         const DB_VERSION = 1;
         const STORE_NAME = 'farmAssessments';
@@ -967,6 +949,7 @@
         const farmSelector = document.getElementById('farmSelector');
         const newFarmBtn = document.getElementById('newFarmBtn');
         const deleteFarmBtn = document.getElementById('deleteFarmBtn');
+        const emergencyRecoveryBtn = document.getElementById('emergencyRecoveryBtn');
         const statusPanel = document.getElementById('statusPanel');
         const loadingOverlay = document.getElementById('loadingOverlay');
 
@@ -1323,22 +1306,6 @@
             return 'farm-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
         }
 
-        // ============================================
-        // PERSISTENCE: SAVE AND RESTORE LAST USED FARM
-        // ============================================
-
-        function saveLastUsedFarmId(farmId) {
-            localStorage.setItem(LOCALSTORAGE_LAST_FARM_ID, farmId);
-        }
-
-        function getLastUsedFarmId() {
-            return localStorage.getItem(LOCALSTORAGE_LAST_FARM_ID);
-        }
-
-        function clearLastUsedFarmId() {
-            localStorage.removeItem(LOCALSTORAGE_LAST_FARM_ID);
-        }
-
         // Helper to get nested property value safely
         function getNestedValue(obj, path, defaultValue = '') {
             const parts = path.split('.');
@@ -1519,19 +1486,19 @@
 
         // --- Supabase Functions ---
         async function syncToSupabase(farmId, data) {
-            if (!supabaseClient) {
+            if (!supabase) {
                 console.warn('Supabase not configured. Skipping cloud sync.');
                 return;
             }
             showLoading();
             try {
                 // Get current user ID (using anonymous sign-in for simplicity)
-                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
                 // Check if record exists
-                const { data: existingData, error: fetchError } = await supabaseClient
+                const { data: existingData, error: fetchError } = await supabase
                     .from('farm_assessments')
                     .select('*')
                     .eq('farm_id', farmId)
@@ -1544,7 +1511,7 @@
 
                 if (existingData) {
                     // Update existing record
-                    const { error: updateError } = await supabaseClient
+                    const { error: updateError } = await supabase
                         .from('farm_assessments')
                         .update({ data: JSON.parse(JSON.stringify(data)), updated_at: new Date().toISOString() })
                         .eq('farm_id', farmId)
@@ -1554,7 +1521,7 @@
                     showStatus('Data synced to cloud.');
                 } else {
                     // Insert new record
-                    const { error: insertError } = await supabaseClient
+                    const { error: insertError } = await supabase
                         .from('farm_assessments')
                         .insert([{ farm_id: farmId, user_id: userId, data: JSON.parse(JSON.stringify(data)) }]);
                     if (insertError) throw insertError;
@@ -1570,17 +1537,17 @@
         }
 
         async function loadFromSupabase(farmId) {
-            if (!supabaseClient) {
+            if (!supabase) {
                 console.warn('Supabase not configured. Skipping cloud load.');
                 return null;
             }
             showLoading();
             try {
-                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
-                const { data, error } = await supabaseClient
+                const { data, error } = await supabase
                     .from('farm_assessments')
                     .select('data')
                     .eq('farm_id', farmId)
@@ -1609,17 +1576,17 @@
         }
 
         async function deleteFarmDataSupabase(farmId) {
-            if (!supabaseClient) {
+            if (!supabase) {
                 console.warn('Supabase not configured. Skipping cloud delete.');
                 return;
             }
             showLoading();
             try {
-                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
-                const { error } = await supabaseClient
+                const { error } = await supabase
                     .from('farm_assessments')
                     .delete()
                     .eq('farm_id', farmId)
@@ -1637,17 +1604,17 @@
         }
 
         async function getAllFarmIdsSupabase() {
-            if (!supabaseClient) {
+            if (!supabase) {
                 console.warn('Supabase not configured. Skipping cloud farm list.');
                 return [];
             }
             showLoading();
             try {
-                let { data: authData, error: authError } = await supabaseClient.auth.signInAnonymously();
+                let { data: authData, error: authError } = await supabase.auth.signInAnonymously();
                 if (authError) throw authError;
                 const userId = authData.user.id;
 
-                const { data, error } = await supabaseClient
+                const { data, error } = await supabase
                     .from('farm_assessments')
                     .select('farm_id')
                     .eq('user_id', userId);
@@ -1668,13 +1635,12 @@
         async function loadFarm(farmId) {
             showLoading();
             currentFarmId = farmId;
-            saveLastUsedFarmId(farmId); // Remember the last used farm
 
             // Try loading from IndexedDB first
             let data = await loadFarmDataIndexedDB(farmId);
 
             // If not in IndexedDB or if Supabase is configured, try Supabase
-            if (!data && supabaseClient) {
+            if (!data && supabase) {
                 data = await loadFromSupabase(farmId);
                 if (data) {
                     // If loaded from Supabase, save it to IndexedDB for offline access
@@ -1889,16 +1855,6 @@
                 const generateDetailedReportBtn = document.getElementById('generateDetailedReportBtn');
                 if (generateDetailedReportBtn) {
                     generateDetailedReportBtn.addEventListener('click', () => generateReport('detailed'));
-                }
-                const generateComprehensiveReportBtn = document.getElementById('generateComprehensiveReportBtn');
-                if (generateComprehensiveReportBtn) {
-                    generateComprehensiveReportBtn.addEventListener('click', () => {
-                        const reportHtml = generateComprehensiveReport();
-                        const preview = document.getElementById('reportPreview');
-                        if (preview) {
-                            preview.innerHTML = reportHtml;
-                        }
-                    });
                 }
             }
         }
@@ -2755,8 +2711,7 @@
                     <div class="card-body">
                         <p>Generate various professional reports for the current farm. The report will be generated as a downloadable PDF.</p>
                         <button class="btn btn-primary me-2" id="generateExecutiveReportBtn"><i class="fas fa-file-pdf"></i> Generate Executive Summary Report</button>
-                        <button class="btn btn-secondary me-2" id="generateDetailedReportBtn"><i class="fas fa-file-pdf"></i> Generate Detailed Assessment Report</button>
-                        <button class="btn btn-success" id="generateComprehensiveReportBtn"><i class="fas fa-file-alt"></i> Generate Comprehensive Report</button>
+                        <button class="btn btn-secondary" id="generateDetailedReportBtn"><i class="fas fa-file-pdf"></i> Generate Detailed Assessment Report</button>
 
                         <h4 class="mt-4 mb-3">Generated Report Preview</h4>
                         <!-- Container to give the white "page" a background -->
@@ -3691,173 +3646,6 @@ function generateReport(type) {
         }
 
         // --- Custom Confirmation Dialog (replaces alert/confirm) ---
-        function generateComprehensiveReport() {
-            const data = farmAssessmentData;
-            const farmName = data.farmProfile.basicInfo.farmName || 'Unnamed Farm';
-            const totalHectares = data.farmProfile.basicInfo.totalHectares || 0;
-            const location = data.farmProfile.basicInfo.location || 'Not Specified';
-            const reportDate = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
-
-            const year3 = data.financialAssessment.historicalData.year3;
-            const revenue = year3.revenue || 0;
-            const operatingCosts = year3.operatingCosts || 0;
-            const netIncome = year3.netIncome || 0;
-            const ebit = year3.ebit || 0;
-            const interestExpense = year3.interestExpense || 0;
-            const totalAssets = year3.totalAssets || 0;
-            const totalLiabilities = year3.totalLiabilities || 0;
-            const totalEquity = totalAssets - totalLiabilities;
-            const currentAssets = year3.currentAssets || 0;
-            const currentLiabilities = year3.currentLiabilities || 0;
-
-            const grossMargin = revenue > 0 ? ((revenue - operatingCosts) / revenue * 100) : 0;
-            const netMargin = revenue > 0 ? (netIncome / revenue * 100) : 0;
-            const currentRatio = currentLiabilities > 0 ? (currentAssets / currentLiabilities) : 0;
-            const debtRatio = totalAssets > 0 ? (totalLiabilities / totalAssets * 100) : 0;
-            const roa = totalAssets > 0 ? (netIncome / totalAssets * 100) : 0;
-            const roe = totalEquity > 0 ? (netIncome / totalEquity * 100) : 0;
-
-            const calvingRate = data.agriculturalTechnical.productionEfficiency.calvingRate || 0;
-            const mortalityRate = data.agriculturalTechnical.productionEfficiency.mortalityRate || 0;
-            const breedSelection = data.agriculturalTechnical.livestockManagement.breedSelection || 'Not Specified';
-            const customerConcentration = data.commercialAssessment.customerAnalysis.customerConcentration || 0;
-            const retentionRate = data.commercialAssessment.customerAnalysis.retentionRate || 0;
-
-            const swot = data.recommendations.swotAnalysis;
-            const strengths = swot.strengths || [];
-            const weaknesses = swot.weaknesses || [];
-            const opportunities = swot.opportunities || [];
-            const threats = swot.threats || [];
-
-            const weightedScore = (data.scoring.weightedScore || 0).toFixed(2);
-            const classification = data.scoring.classification || 'Not Assessed';
-
-            let financialNarrative = '', financialRating = 'AT RISK';
-            if (currentRatio > 2 && debtRatio < 30) {
-                financialNarrative = `The farm exhibits a highly robust financial position. Liquidity is exceptionally strong with a Current Ratio of ${currentRatio.toFixed(2)}, indicating a strong ability to meet short-term obligations. Solvency is excellent, with a minimal Debt Ratio of ${debtRatio.toFixed(2)}%.`;
-                financialRating = 'HIGHLY VIABLE';
-            } else if (currentRatio > 1 && debtRatio < 50) {
-                financialNarrative = `The financial position is viable with conditions. The Current Ratio of ${currentRatio.toFixed(2)} suggests adequate liquidity. The Debt Ratio of ${debtRatio.toFixed(2)}% is manageable, but monitoring of debt servicing capacity is recommended.`;
-                financialRating = 'VIABLE WITH CONDITIONS';
-            } else {
-                financialNarrative = `The financial position is at risk. A Current Ratio of ${currentRatio.toFixed(2)} indicates potential liquidity stress. The Debt Ratio of ${debtRatio.toFixed(2)}% suggests high reliance on debt, increasing solvency risk.`;
-            }
-
-            let marketNarrative = '', marketRating = 'AT RISK';
-            if (customerConcentration < 20) {
-                marketNarrative = `Market viability is strong. The customer base is well-diversified, with a concentration risk of only ${customerConcentration}%.`;
-                marketRating = 'HIGHLY VIABLE';
-            } else if (customerConcentration < 50) {
-                marketNarrative = `Market viability is moderate. A customer concentration of ${customerConcentration}% creates moderate vulnerability. Strategic diversification is recommended.`;
-                marketRating = 'VIABLE WITH CONDITIONS';
-            } else {
-                marketNarrative = `Market viability is at risk. A severe customer concentration of ${customerConcentration}% creates a critical vulnerability.`;
-            }
-
-            let productionNarrative = '', productionRating = 'AT RISK';
-            if (calvingRate >= 90 && mortalityRate < 5) {
-                productionNarrative = `Technical performance is exceptional. The Calving Rate of ${calvingRate}% substantially exceeds industry standards. The low Mortality Rate of ${mortalityRate}% confirms excellent herd health.`;
-                productionRating = 'HIGHLY VIABLE';
-            } else if (calvingRate >= 75 && mortalityRate < 10) {
-                productionNarrative = `Technical performance is solid. The Calving Rate of ${calvingRate}% is within acceptable industry benchmarks.`;
-                productionRating = 'VIABLE';
-            } else {
-                productionNarrative = `Technical performance is at risk. The Calving Rate of ${calvingRate}% and Mortality Rate of ${mortalityRate}% suggest underlying issues in herd health or breeding programs.`;
-            }
-
-            const managementNarrative = 'Management demonstrates strong technical competence but may be deficient in formal business management capabilities. Professional advisory support is recommended.';
-            const managementRating = 'VIABLE WITH SUPPORT';
-            const complianceNarrative = 'Compliance is a significant area of concern. Non-compliance in critical areas creates severe regulatory and financial risk. Full compliance restoration is a critical condition for viability.';
-            const complianceRating = 'AT RISK';
-
-            return `
-                <div style="font-family: 'Times New Roman', serif; line-height: 1.6; color: #000; max-width: 900px; margin: 0 auto; padding: 20px;">
-                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px;">
-                        <h1 style="font-size: 24px; margin: 0 0 10px 0;">FARM VIABILITY ASSESSMENT REPORT</h1>
-                        <h2 style="font-size: 18px; color: #666; margin: 0 0 20px 0;">FOR ${farmName.toUpperCase()}</h2>
-                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px;">
-                            <tr><td style="border: 1px solid #ddd; padding: 8px; font-weight: bold; width: 30%;">Farm Name</td><td style="border: 1px solid #ddd; padding: 8px;">${farmName}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Location</td><td style="border: 1px solid #ddd; padding: 8px;">${location}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Total Hectares</td><td style="border: 1px solid #ddd; padding: 8px;">${totalHectares.toLocaleString()} ha</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Report Date</td><td style="border: 1px solid #ddd; padding: 8px;">${reportDate}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Overall Viability</td><td style="border: 1px solid #ddd; padding: 8px;"><strong>${classification}</strong> (Score: ${weightedScore})</td></tr>
-                        </table>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">I. EXECUTIVE SUMMARY</h2>
-                        <p>The assessment concludes that the farm's overall viability is <strong>${classification}</strong> (Score: ${weightedScore}). The operation demonstrates strengths in <strong>${productionRating}</strong> technical performance and <strong>${financialRating}</strong> financial stability. Viability is contingent upon addressing the <strong>${marketRating}</strong> market concentration risk and <strong>${complianceRating}</strong> compliance issues.</p>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">II. FINANCIAL VIABILITY</h2>
-                        <h3 style="font-size: 13px; font-weight: bold; margin: 15px 0 10px 0;">Key Financial Metrics (Year 3):</h3>
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px;">
-                            <tr style="background-color: #f5f5f5;"><th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Metric</th><th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Value (ZAR)</th><th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Ratio</th><th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Value</th></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Revenue</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${revenue.toLocaleString()}</td><td style="border: 1px solid #ddd; padding: 8px;">Gross Margin</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${grossMargin.toFixed(2)}%</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Net Income</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${netIncome.toLocaleString()}</td><td style="border: 1px solid #ddd; padding: 8px;">Net Profit Margin</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${netMargin.toFixed(2)}%</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Total Assets</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalAssets.toLocaleString()}</td><td style="border: 1px solid #ddd; padding: 8px;">Current Ratio</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${currentRatio.toFixed(2)}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Total Liabilities</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalLiabilities.toLocaleString()}</td><td style="border: 1px solid #ddd; padding: 8px;">Debt Ratio</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${debtRatio.toFixed(2)}%</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Total Equity</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${totalEquity.toLocaleString()}</td><td style="border: 1px solid #ddd; padding: 8px;">Return on Equity (ROE)</td><td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${roe.toFixed(2)}%</td></tr>
-                        </table>
-                        <p style="padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">${financialNarrative}</p>
-                        <p><strong>Financial Viability Rating: ${financialRating}</strong></p>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">III. MARKET VIABILITY</h2>
-                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;"><li>Customer Concentration: <strong>${customerConcentration}%</strong></li><li>Customer Retention Rate: <strong>${retentionRate}%</strong></li></ul>
-                        <p style="padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">${marketNarrative}</p>
-                        <p><strong>Market Viability Rating: ${marketRating}</strong></p>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">IV. PRODUCTION &amp; TECHNICAL VIABILITY</h2>
-                        <ul style="margin-bottom: 15px; padding-left: 20px; font-size: 12px;"><li>Calving Rate: <strong>${calvingRate}%</strong> (Industry Standard: 85-90%)</li><li>Mortality Rate: <strong>${mortalityRate}%</strong></li><li>Primary Breed: <strong>${breedSelection}</strong></li></ul>
-                        <p style="padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">${productionNarrative}</p>
-                        <p><strong>Production Viability Rating: ${productionRating}</strong></p>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">V. MANAGEMENT &amp; COMPLIANCE VIABILITY</h2>
-                        <p style="padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">${managementNarrative}</p>
-                        <p><strong>Management Rating: ${managementRating}</strong></p>
-                        <p style="margin-top: 15px; padding: 10px; background-color: #e8f4f8; border-left: 4px solid #007bff;">${complianceNarrative}</p>
-                        <p><strong>Compliance Rating: ${complianceRating}</strong></p>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">VI. SWOT ANALYSIS</h2>
-                        ${strengths.length > 0 ? `<h3 style="font-size: 13px; font-weight: bold; color: #28a745;">Strengths:</h3><ul>${strengths.map(s => `<li>${s}</li>`).join('')}</ul>` : '<p>No strengths identified.</p>'}
-                        ${weaknesses.length > 0 ? `<h3 style="font-size: 13px; font-weight: bold; color: #dc3545;">Weaknesses:</h3><ul>${weaknesses.map(w => `<li>${w}</li>`).join('')}</ul>` : '<p>No weaknesses identified.</p>'}
-                        ${opportunities.length > 0 ? `<h3 style="font-size: 13px; font-weight: bold; color: #17a2b8;">Opportunities:</h3><ul>${opportunities.map(o => `<li>${o}</li>`).join('')}</ul>` : '<p>No opportunities identified.</p>'}
-                        ${threats.length > 0 ? `<h3 style="font-size: 13px; font-weight: bold; color: #ffc107;">Threats:</h3><ul>${threats.map(t => `<li>${t}</li>`).join('')}</ul>` : '<p>No threats identified.</p>'}
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">VII. OVERALL VIABILITY CONCLUSION</h2>
-                        <div style="padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 15px;">
-                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #155724;">RECOMMENDATION: ${classification.toUpperCase()}</h3>
-                            <p style="margin: 0; color: #155724; font-size: 12px;">Overall viability rated <strong>${classification}</strong> with composite score of <strong>${weightedScore}</strong>.</p>
-                        </div>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                            <tr style="background-color: #f5f5f5;"><th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Dimension</th><th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Rating</th></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Financial Viability</td><td style="border: 1px solid #ddd; padding: 8px;">${financialRating}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Market Viability</td><td style="border: 1px solid #ddd; padding: 8px;">${marketRating}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Production/Technical</td><td style="border: 1px solid #ddd; padding: 8px;">${productionRating}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Management</td><td style="border: 1px solid #ddd; padding: 8px;">${managementRating}</td></tr>
-                            <tr><td style="border: 1px solid #ddd; padding: 8px;">Compliance</td><td style="border: 1px solid #ddd; padding: 8px;">${complianceRating}</td></tr>
-                        </table>
-                    </div>
-
-                    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 11px; color: #999;">
-                        <p>Generated on ${reportDate} using the Farm Viability Assessment System.</p>
-                        <p>© ${new Date().getFullYear()} Farm Viability Assessment Tool. All rights reserved.</p>
-                    </div>
-                </div>
-            `;
-        }
-
         function showCustomConfirm(message) {
             return new Promise((resolve) => {
                 const modalHtml = `
@@ -3917,11 +3705,15 @@ function generateReport(type) {
         // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', async () => {
             showLoading();
+            
+            // Initialize Supabase client after library is loaded
+            initializeSupabaseClient();
+            
             await openIndexedDB();
             allFarmIds = await getAllFarmIdsIndexedDB();
 
             // Merge with Supabase IDs if configured
-            if (supabaseClient) {
+            if (supabase) {
                 const supabaseFarmIds = await getAllFarmIdsSupabase();
                 // Simple merge: add any Supabase IDs not already in IndexedDB
                 supabaseFarmIds.forEach(id => {
@@ -3934,12 +3726,7 @@ function generateReport(type) {
             if (allFarmIds.length === 0) {
                 await createNewFarm(); // Create a default farm if none exist
             } else {
-                // Load last used farm or default to first
-                const lastUsedFarmId = getLastUsedFarmId();
-                const farmToLoad = (lastUsedFarmId && allFarmIds.includes(lastUsedFarmId))
-                    ? lastUsedFarmId
-                    : allFarmIds[0];
-                await loadFarm(farmToLoad);
+                await loadFarm(allFarmIds[0]); // Load the first farm by default
             }
             updateAllModuleProgress(); // Initial progress update
             setDynamicCopyright(); // Set the copyright year on load
@@ -3970,92 +3757,21 @@ function generateReport(type) {
         });
 
         // New Farm button
-        newFarmBtn.addEventListener('click', createNewFarm);
+        if (newFarmBtn) newFarmBtn.addEventListener('click', createNewFarm);
 
         // Delete Farm button
-        deleteFarmBtn.addEventListener('click', deleteCurrentFarm);
+        if (deleteFarmBtn) deleteFarmBtn.addEventListener('click', deleteCurrentFarm);
 
-        // ============================================
-        // IMPORT / EXPORT & EMERGENCY RECOVERY
-        // ============================================
-
-        async function exportAllData() {
-            try {
-                showLoading();
-                const allData = {};
-                for (const farmId of allFarmIds) {
-                    const data = await loadFarmDataIndexedDB(farmId);
-                    allData[farmId] = data;
+        // Emergency Recovery button listener
+        if (emergencyRecoveryBtn) {
+            emergencyRecoveryBtn.addEventListener('click', async () => {
+                if (confirm('This will attempt to extract all stored data from the browser\'s local database and download it as a JSON file. Use this if you are unable to access your data normally. Continue?')) {
+                    await forceCoughUpData();
                 }
-                const exportData = {
-                    version: '1.0',
-                    exportDate: new Date().toISOString(),
-                    farms: allData
-                };
-                const dataStr = JSON.stringify(exportData, null, 2);
-                const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                const url = URL.createObjectURL(dataBlob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `farm-assessment-backup-${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-                hideLoading();
-                showStatus('Data exported successfully.');
-            } catch (error) {
-                hideLoading();
-                console.error('Export error:', error);
-                showStatus('Error exporting data: ' + error.message, true);
-            }
+            });
         }
 
-        async function importData(file) {
-            try {
-                showLoading();
-                const fileContent = await file.text();
-                const importedData = JSON.parse(fileContent);
-
-                let farmsToImport = [];
-                if (Array.isArray(importedData)) {
-                    // Recovery format
-                    farmsToImport = importedData;
-                } else if (importedData.farms && typeof importedData.farms === 'object') {
-                    // Standard export format
-                    farmsToImport = Object.keys(importedData.farms).map(key => ({
-                        farmId: key,
-                        data: importedData.farms[key]
-                    }));
-                } else {
-                    throw new Error('Invalid file format.');
-                }
-
-                let importedCount = 0;
-                for (const item of farmsToImport) {
-                    const fId = item.farmId;
-                    const fData = item.data;
-                    await saveFarmDataIndexedDB(fId, fData);
-                    if (!allFarmIds.includes(fId)) {
-                        allFarmIds.push(fId);
-                    }
-                    importedCount++;
-                }
-
-                if (allFarmIds.length > 0) {
-                    await loadFarm(allFarmIds[0]);
-                    updateAllModuleProgress();
-                    updateFarmSelector();
-                }
-                hideLoading();
-                showStatus(`Successfully imported ${importedCount} farm(s).`);
-            } catch (error) {
-                hideLoading();
-                console.error('Import error:', error);
-                showStatus('Error importing data: ' + error.message, true);
-            }
-        }
-
+        // --- Emergency Data Recovery Function ---
         async function forceCoughUpData() {
             console.log('%c--- EMERGENCY DATA RECOVERY STARTED ---', 'color: red; font-weight: bold; font-size: 16px;');
             showLoading();
@@ -4129,66 +3845,6 @@ function generateReport(type) {
             }
         }
 
-        function collectFormData() {
-            const inputs = document.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                const name = input.name;
-                if (!name) return;
-
-                const keys = name.split('.');
-                let obj = farmAssessmentData;
-
-                for (let i = 0; i < keys.length - 1; i++) {
-                    if (!obj[keys[i]]) {
-                        obj[keys[i]] = {};
-                    }
-                    obj = obj[keys[i]];
-                }
-
-                const lastKey = keys[keys.length - 1];
-                if (input.type === 'checkbox') {
-                    obj[lastKey] = input.checked;
-                } else if (input.type === 'number') {
-                    obj[lastKey] = parseFloat(input.value) || 0;
-                } else {
-                    obj[lastKey] = input.value;
-                }
-            });
-        }
-
-        // Emergency Recovery button listener
-        document.getElementById('emergencyRecoveryBtn').addEventListener('click', async () => {
-            if (confirm('This will attempt to extract all stored data from the browser\'s local database and download it as a JSON file. Use this if you are unable to access your data normally. Continue?')) {
-                await forceCoughUpData();
-            }
-        });
-
-        // Export/Import button listeners
-        const exportBtn = document.getElementById('exportDataBtn');
-        const importBtn = document.getElementById('importDataBtn');
-        const exportBtnMobile = document.getElementById('exportDataBtnMobile');
-        const importBtnMobile = document.getElementById('importDataBtnMobile');
-        const importFileInput = document.getElementById('importFileInput');
-
-        if (exportBtn) exportBtn.addEventListener('click', (e) => { e.preventDefault(); exportAllData(); });
-        if (importBtn) importBtn.addEventListener('click', (e) => { e.preventDefault(); importFileInput.click(); });
-        if (exportBtnMobile) exportBtnMobile.addEventListener('click', (e) => { e.preventDefault(); exportAllData(); });
-        if (importBtnMobile) importBtnMobile.addEventListener('click', (e) => { e.preventDefault(); importFileInput.click(); });
-
-        importFileInput.addEventListener('change', async (e) => {
-            if (e.target.files && e.target.files[0]) {
-                await importData(e.target.files[0]);
-                e.target.value = ''; // Reset file input
-            }
-        });
-
-    </script>
-
-
-
-
-
-            <script>// Write JavaScript here</script>
-        
-    
-</body><chatgpt-sidebar data-gpts-theme="light"></chatgpt-sidebar>
+      </script>
+</body>
+</html>>
